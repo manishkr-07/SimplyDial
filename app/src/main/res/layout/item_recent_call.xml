@@ -61,7 +61,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:gravity="center"
-        android:textColor="@color/md_grey_black"
+        android:textColor="?android:textColorSecondary"
         android:textSize="@dimen/small_text_size"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@+id/item_recents_sim_image"

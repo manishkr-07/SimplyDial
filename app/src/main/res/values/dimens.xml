@@ -8,8 +8,9 @@
     <dimen name="caller_avatar_max_size">172dp</dimen>
     <dimen name="end_call_button_margin">34dp</dimen>
     <dimen name="dialpad_bottom_padding">114dp</dimen>
-    <dimen name="call_control_max_height">240dp</dimen>
-    <dimen name="call_control_button_size">72dp</dimen>
+    <dimen name="call_control_max_height">300dp</dimen>
+    <dimen name="call_control_button_size">85dp</dimen>
+    <dimen name="call_end_button_size">85dp</dimen>
     <dimen name="recyclerview_fab_padding">100dp</dimen>
 
     <dimen name="caller_name_text_size">34sp</dimen>
@@ -18,4 +19,10 @@
     <!-- keep these 2 values in dp to avoid scaling -->
     <dimen name="dialpad_text_size">28dp</dimen>
     <dimen name="dialpad_letters_text_size">12dp</dimen>
+
+    <!-- Fastscroller -->
+    <dimen name="fastscroller_width">48dp</dimen>
+    <dimen name="fastscroller_bubble_end_margin">60dp</dimen>
+    <dimen name="fastscroller_bubble_text_size">40sp</dimen>
+    <dimen name="fastscroller_bubble_min_width">72dp</dimen>
 </resources>

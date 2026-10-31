@@ -24,6 +24,7 @@ class CallManager {
         fun onCallAdded(call: Call) {
             this.call = call
             calls.add(call)
+            updateState()
             for (listener in listeners) {
                 listener.onPrimaryCallChanged(call)
             }
@@ -60,9 +61,12 @@ class CallManager {
                 1 -> SingleCall(calls.first())
                 2 -> {
                     val active = calls.find { it.getStateCompat() == Call.STATE_ACTIVE }
+                    val ringing = calls.find { it.getStateCompat() == Call.STATE_RINGING }
                     val newCall = calls.find { it.getStateCompat() == Call.STATE_CONNECTING || it.getStateCompat() == Call.STATE_DIALING }
                     val onHold = calls.find { it.getStateCompat() == Call.STATE_HOLDING }
-                    if (active != null && newCall != null) {
+                    if (ringing != null && (active != null || onHold != null)) {
+                        TwoCalls(ringing, active ?: onHold!!)
+                    } else if (active != null && newCall != null) {
                         TwoCalls(newCall, active)
                     } else if (newCall != null && onHold != null) {
                         TwoCalls(newCall, onHold)
@@ -149,8 +153,33 @@ class CallManager {
             return calls.find { it.isConference() }?.children ?: emptyList()
         }
 
+        fun getRingingCall(): Call? {
+            return calls.firstOrNull { it.getStateCompat() == Call.STATE_RINGING }
+        }
+
+        fun getActiveCall(): Call? {
+            return calls.firstOrNull { it.getStateCompat() == Call.STATE_ACTIVE }
+        }
+
+        fun getOngoingCall(): Call? {
+            return getActiveCall() ?: calls.firstOrNull { it.getStateCompat() == Call.STATE_HOLDING }
+        }
+
+        fun isCallWaiting(): Boolean {
+            return getOngoingCall() != null && getRingingCall() != null
+        }
+
         fun accept() {
             call?.answer(VideoProfile.STATE_AUDIO_ONLY)
+        }
+
+        fun acceptRingingOrPrimary() {
+            val ringingCall = getRingingCall()
+            if (ringingCall != null) {
+                ringingCall.answer(VideoProfile.STATE_AUDIO_ONLY)
+            } else {
+                accept()
+            }
         }
 
         fun reject() {
@@ -161,6 +190,15 @@ class CallManager {
                 } else if (state != Call.STATE_DISCONNECTED && state != Call.STATE_DISCONNECTING) {
                     call!!.disconnect()
                 }
+            }
+        }
+
+        fun rejectRingingOrPrimary() {
+            val ringingCall = getRingingCall()
+            if (ringingCall != null) {
+                ringingCall.reject(false, null)
+            } else {
+                reject()
             }
         }
 

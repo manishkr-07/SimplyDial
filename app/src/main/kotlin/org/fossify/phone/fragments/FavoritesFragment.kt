@@ -4,7 +4,6 @@ import android.content.Context
 import android.util.AttributeSet
 import com.google.gson.Gson
 import org.fossify.commons.adapters.MyRecyclerViewAdapter
-import org.fossify.commons.extensions.areSystemAnimationsEnabled
 import org.fossify.commons.extensions.baseConfig
 import org.fossify.commons.extensions.beGone
 import org.fossify.commons.extensions.beVisible
@@ -42,6 +41,7 @@ class FavoritesFragment(context: Context, attributeSet: AttributeSet) : MyViewPa
         super.onFinishInflate()
         binding = FragmentLettersLayoutBinding.bind(FragmentFavoritesBinding.bind(this).favoritesFragment)
         innerBinding = LettersInnerBinding(binding)
+        binding.fragmentList.itemAnimator = null
     }
 
     override fun setupFragment() {
@@ -53,6 +53,7 @@ class FavoritesFragment(context: Context, attributeSet: AttributeSet) : MyViewPa
 
         binding.fragmentPlaceholder.text = context.getString(placeholderResId)
         binding.fragmentPlaceholder2.beGone()
+        binding.horizontalAlphabetSlider.beGone()
     }
 
     override fun setupColors(textColor: Int, primaryColor: Int, properPrimaryColor: Int) {
@@ -60,11 +61,7 @@ class FavoritesFragment(context: Context, attributeSet: AttributeSet) : MyViewPa
             fragmentPlaceholder.setTextColor(textColor)
             (fragmentList.adapter as? MyRecyclerViewAdapter)?.updateTextColor(textColor)
 
-            letterFastscroller.textColor = textColor.getColorStateList()
-            letterFastscroller.pressedTextColor = properPrimaryColor
-            letterFastscrollerThumb.setupWithFastScroller(letterFastscroller)
-            letterFastscrollerThumb.textColor = properPrimaryColor.getContrastColor()
-            letterFastscrollerThumb.thumbColor = properPrimaryColor.getColorStateList()
+            horizontalAlphabetSlider.updateColors()
         }
     }
 
@@ -130,7 +127,9 @@ class FavoritesFragment(context: Context, attributeSet: AttributeSet) : MyViewPa
                     activity?.startCallWithConfirmationCheck(it as Contact)
                 },
                 profileIconClick = {
-                    activity?.startContactDetailsIntent(it as Contact)
+                    if (context.config.enableProfilePictureClick) {
+                        activity?.startContactDetailsIntent(it as Contact)
+                    }
                 }).apply {
                 binding.fragmentList.adapter = this
 
@@ -148,9 +147,6 @@ class FavoritesFragment(context: Context, attributeSet: AttributeSet) : MyViewPa
                 }
             }
 
-            if (context.areSystemAnimationsEnabled) {
-                binding.fragmentList.scheduleLayoutAnimation()
-            }
         } else {
             currAdapter.viewType = viewType
             currAdapter.updateItems(allContacts)
@@ -187,7 +183,7 @@ class FavoritesFragment(context: Context, attributeSet: AttributeSet) : MyViewPa
     }
 
     private fun setupLetterFastScroller(contacts: List<Contact>) {
-        binding.letterFastscroller.setupWithContacts(binding.fragmentList, contacts)
+        binding.horizontalAlphabetSlider.setupWithContacts(binding.fragmentList, contacts)
     }
 
     override fun onSearchClosed() {
@@ -213,10 +209,10 @@ class FavoritesFragment(context: Context, attributeSet: AttributeSet) : MyViewPa
         val spanCount = context.config.contactsGridColumnCount
 
         val layoutManager = if (viewType == VIEW_TYPE_GRID) {
-            binding.letterFastscroller.beGone()
+            binding.horizontalAlphabetSlider.beGone()
             MyGridLayoutManager(context, spanCount)
         } else {
-            binding.letterFastscroller.beVisible()
+            binding.horizontalAlphabetSlider.beVisible()
             MyLinearLayoutManager(context)
         }
         binding.fragmentList.layoutManager = layoutManager

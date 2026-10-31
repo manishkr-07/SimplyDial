@@ -5,6 +5,7 @@ import android.content.ContentValues
 import android.content.Context
 import android.provider.CallLog.Calls
 import android.telephony.PhoneNumberUtils
+import android.util.LruCache
 import org.fossify.commons.extensions.*
 import org.fossify.commons.helpers.*
 import org.fossify.commons.models.contacts.Contact
@@ -18,10 +19,29 @@ class RecentsHelper(private val context: Context) {
     companion object {
         private const val COMPARABLE_PHONE_NUMBER_LENGTH = 9
         const val QUERY_LIMIT = 100
+        private const val CACHE_VALIDITY_MS = 300000L // 5 minute cache (increased from 1 minute)
     }
 
     private val contentUri = Calls.CONTENT_URI
     private var queryLimit = QUERY_LIMIT
+    
+    // Contact cache to avoid reloading on every refresh
+    private var cachedContacts: List<Contact>? = null
+    private var cacheTimestamp: Long = 0L
+    
+    // Number/name/photo caches with bounded size to avoid memory spikes
+    private val numberToNameCache = LruCache<String, String>(2000)
+    private val numberToPhotoCache = LruCache<String, String>(1000)
+    
+    /**
+     * Clear the contacts cache to force reload on next call
+     */
+    fun clearCache() {
+        cachedContacts = null
+        cacheTimestamp = 0L
+        numberToNameCache.evictAll()
+        numberToPhotoCache.evictAll()
+    }
 
     fun getRecentCalls(
         previousRecents: List<RecentCall> = ArrayList(),
@@ -34,42 +54,60 @@ class RecentsHelper(private val context: Context) {
             return
         }
 
-        ContactsHelper(context).getContacts(getAll = true, showOnlyContactsWithNumbers = true) { contacts ->
-            ensureBackgroundThread {
-                val privateContacts = MyContactsContentProvider.getContacts(context, privateCursor)
-                if (privateContacts.isNotEmpty()) {
-                    contacts.addAll(privateContacts)
-                }
-
-                this.queryLimit = queryLimit
-                val recentCalls = if (previousRecents.isNotEmpty()) {
-                    val previousRecentCalls = previousRecents
-                        .flatMap { it.groupedCalls ?: listOf(it) }
-                        .map { it.copy(groupedCalls = null) }
-
-                    val newerRecents = getRecents(
-                        contacts = contacts,
-                        selection = "${Calls.DATE} > ?",
-                        selectionParams = arrayOf("${previousRecentCalls.first().startTS}")
-                    )
-
-                    val olderRecents = getRecents(
-                        contacts = contacts,
-                        selection = "${Calls.DATE} < ?",
-                        selectionParams = arrayOf("${previousRecentCalls.last().startTS}")
-                    )
-
-                    newerRecents + previousRecentCalls + olderRecents
-                } else {
-                    getRecents(contacts)
-                }
-
-                callback(
-                    recentCalls
-                        .sortedByDescending { it.startTS }
-                        .distinctBy { it.id }
-                )
+        // Use cached contacts if available and recent
+        val currentTime = System.currentTimeMillis()
+        if (cachedContacts != null && (currentTime - cacheTimestamp) < CACHE_VALIDITY_MS) {
+            processRecentCalls(cachedContacts!!, privateCursor, previousRecents, callback)
+        } else {
+            ContactsHelper(context).getContacts(getAll = true, showOnlyContactsWithNumbers = true) { contacts ->
+                cachedContacts = contacts
+                cacheTimestamp = currentTime
+                processRecentCalls(contacts, privateCursor, previousRecents, callback)
             }
+        }
+    }
+    
+    private fun processRecentCalls(
+        contacts: List<Contact>,
+        privateCursor: android.database.Cursor?,
+        previousRecents: List<RecentCall>,
+        callback: (List<RecentCall>) -> Unit
+    ) {
+        ensureBackgroundThread {
+            val allContacts = contacts.toMutableList()
+            val privateContacts = MyContactsContentProvider.getContacts(context, privateCursor)
+            if (privateContacts.isNotEmpty()) {
+                allContacts.addAll(privateContacts)
+            }
+
+            this@RecentsHelper.queryLimit = queryLimit
+            val recentCalls = if (previousRecents.isNotEmpty()) {
+                val previousRecentCalls = previousRecents
+                    .flatMap { it.groupedCalls ?: listOf(it) }
+                    .map { it.copy(groupedCalls = null) }
+
+                val newerRecents = getRecents(
+                    contacts = allContacts,
+                    selection = "${Calls.DATE} > ?",
+                    selectionParams = arrayOf("${previousRecentCalls.first().startTS}")
+                )
+
+                val olderRecents = getRecents(
+                    contacts = allContacts,
+                    selection = "${Calls.DATE} < ?",
+                    selectionParams = arrayOf("${previousRecentCalls.last().startTS}")
+                )
+
+                newerRecents + previousRecentCalls + olderRecents
+            } else {
+                getRecents(allContacts)
+            }
+
+            callback(
+                recentCalls
+                    .sortedByDescending { it.startTS }
+                    .distinctBy { it.id }
+            )
         }
     }
 
@@ -82,6 +120,90 @@ class RecentsHelper(private val context: Context) {
             callback(
                 groupSubsequentCalls(calls = recentCalls)
             )
+        }
+    }
+
+    /**
+     * Ultra-fast call log loader: uses only cached fields from CallLog and avoids loading Contacts.
+     * Intended for initial and incremental UI population.
+     */
+    fun getRecentCallsFast(
+        queryLimit: Int = QUERY_LIMIT,
+        callback: (List<RecentCall>) -> Unit
+    ) {
+        if (!context.hasPermission(PERMISSION_READ_CALL_LOG)) {
+            callback(emptyList())
+            return
+        }
+        ensureBackgroundThread {
+            val projection = arrayOf(
+                Calls._ID,
+                Calls.NUMBER,
+                Calls.CACHED_NAME,
+                Calls.CACHED_PHOTO_URI,
+                Calls.DATE,
+                Calls.DURATION,
+                Calls.TYPE,
+                Calls.PHONE_ACCOUNT_ID
+            )
+
+            val accountIdToSimAccountMap = HashMap<String, SIMAccount>()
+            context.getAvailableSIMCardLabels().forEach {
+                accountIdToSimAccountMap[it.handle.id] = it
+            }
+
+            val cursor = if (isNougatPlus()) {
+                val limitedUri = contentUri.buildUpon()
+                    .appendQueryParameter(Calls.LIMIT_PARAM_KEY, queryLimit.toString())
+                    .build()
+                val sortOrder = "${Calls.DATE} DESC"
+                context.contentResolver.query(limitedUri, projection, null, null, sortOrder)
+            } else {
+                val sortOrder = "${Calls.DATE} DESC LIMIT $queryLimit"
+                context.contentResolver.query(contentUri, projection, null, null, sortOrder)
+            }
+
+            val recentCalls = mutableListOf<RecentCall>()
+            cursor?.use {
+                if (!cursor.moveToFirst()) return@use
+                var previousStartTS = 0L
+                do {
+                    val id = cursor.getIntValue(Calls._ID)
+                    val number = cursor.getStringValueOrNull(Calls.NUMBER)
+                    val isUnknownNumber = number == null || number == "-1"
+                    var name = cursor.getStringValueOrNull(Calls.CACHED_NAME)
+                    if (name.isNullOrEmpty() || name == "-1") name = number.orEmpty()
+                    if (name.isEmpty()) name = context.getString(R.string.unknown)
+                    val photoUri = cursor.getStringValue(Calls.CACHED_PHOTO_URI) ?: ""
+                    val startTS = cursor.getLongValue(Calls.DATE)
+                    if (previousStartTS == startTS) continue else previousStartTS = startTS
+                    val duration = cursor.getIntValue(Calls.DURATION)
+                    val type = cursor.getIntValue(Calls.TYPE)
+                    val accountId = cursor.getStringValue(Calls.PHONE_ACCOUNT_ID)
+                    val simAccount = accountIdToSimAccountMap[accountId]
+
+                    recentCalls.add(
+                        RecentCall(
+                            id = id,
+                            phoneNumber = number.orEmpty(),
+                            name = name,
+                            photoUri = photoUri,
+                            startTS = startTS,
+                            duration = duration,
+                            type = type,
+                            simID = simAccount?.id ?: -1,
+                            simColor = simAccount?.color ?: -1,
+                            specificNumber = "",
+                            specificType = "",
+                            isUnknownNumber = isUnknownNumber
+                        )
+                    )
+                } while (cursor.moveToNext() && recentCalls.size < queryLimit)
+            }
+
+            val blockedNumbers = context.getBlockedNumbers()
+            val filtered = recentCalls.filter { !context.isNumberBlocked(it.phoneNumber, blockedNumbers) }
+            callback(filtered)
         }
     }
 
@@ -130,8 +252,9 @@ class RecentsHelper(private val context: Context) {
     ): List<RecentCall> {
         val recentCalls = mutableListOf<RecentCall>()
         var previousStartTS = 0L
-        val contactsNumbersMap = HashMap<String, String>()
-        val contactPhotosMap = HashMap<String, String>()
+        // Use cached maps instead of creating new ones each time
+        val contactsNumbersMap = numberToNameCache
+        val contactPhotosMap = numberToPhotoCache
 
         val projection = arrayOf(
             Calls._ID,
@@ -189,8 +312,9 @@ class RecentsHelper(private val context: Context) {
                 }
 
                 if (name == number && !isUnknownNumber) {
-                    if (contactsNumbersMap.containsKey(number)) {
-                        name = contactsNumbersMap[number]!!
+                    val cached = contactsNumbersMap.get(number)
+                    if (cached != null) {
+                        name = cached
                     } else {
                         val normalizedNumber = number.normalizePhoneNumber()
                         if (normalizedNumber!!.length >= COMPARABLE_PHONE_NUMBER_LENGTH) {
@@ -201,7 +325,7 @@ class RecentsHelper(private val context: Context) {
                                             normalizedNumber.length - COMPARABLE_PHONE_NUMBER_LENGTH
                                         )
                                     ) {
-                                        contactsNumbersMap[number] = contact.getNameToDisplay()
+                                        contactsNumbersMap.put(number, contact.getNameToDisplay())
                                         return@firstOrNull true
                                     }
                                 }
@@ -217,13 +341,14 @@ class RecentsHelper(private val context: Context) {
 
                 var photoUri = cursor.getStringValue(Calls.CACHED_PHOTO_URI) ?: ""
                 if (photoUri.isEmpty() && !number.isNullOrEmpty()) {
-                    if (contactPhotosMap.containsKey(number)) {
-                        photoUri = contactPhotosMap[number]!!
+                    val cachedPhoto = contactPhotosMap.get(number)
+                    if (cachedPhoto != null) {
+                        photoUri = cachedPhoto
                     } else {
                         val contact = contacts.firstOrNull { it.doesHavePhoneNumber(number) }
                         if (contact != null) {
                             photoUri = contact.photoUri
-                            contactPhotosMap[number] = contact.photoUri
+                            contactPhotosMap.put(number, contact.photoUri)
                         }
                     }
                 }

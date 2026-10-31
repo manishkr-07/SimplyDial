@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_launcher_name">Phone</string>
+    <string name="app_launcher_name">SimplyDial</string>
     <string name="default_phone_app_prompt">Please make this app the default Phone app</string>
     <string name="allow_displaying_over_other_apps">Please allow displaying over other apps for reliable behaviour</string>
+    
+    <!-- Theme Settings -->
+    <string name="dark_theme">Dark Theme</string>
+    <string name="dark_theme_desc">Enable elegant dark theme (independent of system settings)</string>
 
     <!-- Contacts -->
     <string name="could_not_access_contacts">Could not access your contacts</string>
@@ -16,6 +20,10 @@
     <string name="show_grouped_calls">Show grouped calls</string>
     <string name="clear_call_history">Clear call history</string>
     <string name="show_call_details">Show call details</string>
+    <string name="filter_all">All</string>
+    <string name="filter_missed">Missed</string>
+    <string name="filter_incoming">Incoming</string>
+    <string name="filter_outgoing">Outgoing</string>
 
     <!-- Dialpad -->
     <string name="dialpad">Dialpad</string>
@@ -24,6 +32,34 @@
     <string name="call_number">Call number</string>
     <string name="dialpad_beeps">Enable beeps on dialpad button clicks</string>
     <string name="dialpad_vibrations">Enable vibrations on dialpad button clicks</string>
+    <string name="voice_dial">Voice dial</string>
+    
+    <!-- Video Calling -->
+    <string name="video_call">Video Call</string>
+    <string name="start_video_call">Start Video Call</string>
+    <string name="video_call_with">Video call with %s</string>
+    <string name="share_meeting_link">Share Meeting Link</string>
+    <string name="joining_video_call">Joining video call...</string>
+    <string name="video_call_error">Unable to start video call</string>
+    <string name="video_call_link_sent">Video call link sent successfully</string>
+    <string name="send_video_link">Send video call link</string>
+    <string name="no_sms_app">No SMS app found</string>
+    
+    <!-- Video Call Options Dialog -->
+    <string name="choose_video_call_method">Choose Video Call Method</string>
+    <string name="send_sms_and_start_call">Send SMS &amp; Start Call</string>
+    <string name="send_sms_and_start_call_desc">Automatically send SMS with video link, then start call in your app</string>
+    <string name="generate_and_share_link">Generate &amp; Share Link</string>
+    <string name="generate_and_share_link_desc">Create a link to share anywhere, then start call in your app</string>
+    <string name="direct_app_to_app_call">Direct App-to-App Call</string>
+    <string name="direct_app_to_app_call_desc">For contacts using the same app - instant video call</string>
+    
+    <!-- Incoming Video Call -->
+    <string name="incoming_video_call">Incoming Video Call</string>
+    <string name="video_call_notification">Video call from %s</string>
+    <string name="contact_not_app_user">This contact doesn\'t have the app. Use SMS or Link sharing option instead.</string>
+    <string name="sending_video_call_request">Sending video call request...</string>
+    <string name="video_call_request_sent">Video call request sent to %s</string>
 
     <!-- Dialer -->
     <string name="dialer">Dialer</string>
@@ -67,6 +103,15 @@
     <string name="call_is_being_connected">Your call is being connected…</string>
     <string name="call_notification_channel">Call status</string>
     <string name="call_notification_channel_high_priority">Call status (high priority)</string>
+    <string name="missed_call_during_another_call">Missed during another call</string>
+    <string name="missed_call_during_another_call_from">Missed during another call: %s</string>
+    <string name="call_attempted_during_another_call">Call attempted during another call</string>
+    <string name="call_attempted_during_another_call_desc">Someone tried calling you while you were on another call.</string>
+    <string name="call_waiting">Call waiting</string>
+    <string name="incoming_call_while_on_call">Incoming call while on another call</string>
+    <string name="incoming_call_while_on_call_desc">Someone is calling you while you are already on a call.</string>
+    <string name="choose_contact">Choose contact</string>
+    <string name="no_contact_found">No contact found.</string>
 
     <!-- Speed dial -->
     <string name="speed_dial">Speed dial</string>
@@ -83,16 +128,117 @@
     <string name="export_call_history">Export call history</string>
     <string name="import_call_history">Import call history</string>
     <string name="calling_accounts">Calling accounts</string>
+    <string name="app_language_preference">App Language</string>
+    <string name="change_app_language">Change app language</string>
 
+    <!-- Language Selection -->
+    <string name="select_language">Select Language</string>
+    <string name="choose_your_language">Choose your preferred language</string>
+    <string name="language_english">English</string>
+    <string name="language_hindi">हिंदी (Hindi)</string>
+    <string name="language_changed_restart">Language changed. Restart the app to apply changes.</string>
+    
+    <!-- Voice Dial Language -->
+    <string name="select_voice_language">Select Voice Recognition Language</string>
+    <string name="choose_voice_language">Choose language for voice commands</string>
+    <string name="voice_dial_language">Voice Dial Language</string>
+    <string name="change_voice_dial_language">Change voice recognition language</string>
+
+    <!-- Call Recording -->
+    <string name="call_recording">Call Recording</string>
+    <string name="recording_started">Recording started</string>
+    <string name="recording_stopped">Recording stopped</string>
+    <string name="recording_saved">Recording saved (%s)</string>
+    <string name="recording_failed">Failed to start recording</string>
+    <string name="recording_permission_required">Recording Permission Required</string>
+    <string name="recording_permission_message">To record calls, this app needs permission to access your microphone. This permission is only used during call recording.</string>
+    <string name="recording_permission_denied">Recording permission denied. Cannot record calls.</string>
+    <string name="recording_permission_permanently_denied">Recording permission permanently denied. Please enable it in app settings.</string>
+    <string name="go_to_settings">Go to Settings</string>
+    <string name="storage_permission_required">Storage Permission Required</string>
+    <string name="storage_permission_message">To save recordings, this app needs permission to access storage.</string>
+    <string name="recording_in_progress">Recording in progress…</string>
+    <string name="stop_recording">Stop recording</string>
+    <string name="start_recording">Start recording</string>
+    <string name="device_not_supported">Your device does not support call recording.</string>
+    
+    <!-- Call Recording Consent (MANDATORY for Google Play) -->
+    <string name="call_recording_consent_title">Call Recording Legal Notice</string>
+    <string name="call_recording_consent_message">Call recording laws vary by jurisdiction and require informing the other party before recording. This app complies with these requirements by playing an audible beep tone when recording starts and stops.</string>
+    <string name="call_recording_requirements_header">This app will:</string>
+    <string name="recording_requirement_1">• Play a beep sound to the other party when recording starts</string>
+    <string name="recording_requirement_2">• Play a beep sound when recording stops</string>
+    <string name="recording_requirement_3">• Store recordings locally on your device</string>
+    <string name="call_recording_legal_notice">By continuing, you consent to comply with all applicable call recording laws in your jurisdiction. You are responsible for ensuring legal compliance.</string>
+    <string name="i_understand_and_consent">I Understand and Consent</string>
+    <string name="consent_granted">Consent granted. You can now record calls.</string>
+    <string name="consent_required_to_record">Consent is required to use call recording feature.</string>
+    <string name="warning">Warning</string>
+    
+    <!-- Recording History -->
+    <string name="recording_history">Recording History</string>
+    <string name="no_recordings_found">No recordings found</string>
+    <string name="play_recording">Play recording</string>
+    <string name="stop_playback">Stop playback</string>
+    <string name="share_recording">Share recording</string>
+    <string name="delete_recording">Delete recording</string>
+    <string name="delete_recording_confirmation">Are you sure you want to delete %s?</string>
+    <string name="recording_deleted">Recording deleted</string>
+    <string name="playback_error">Error playing recording</string>
+    <string name="share_error">Error sharing recording</string>
+    <string name="delete_error">Error deleting recording</string>
+    <string name="file_not_found">File not found</string>
+    
     <!-- FAQ -->
     <string name="faq_1_title">I hear incoming calls, but the screen doesn\'t turn on. What can I do?</string>
     <string name="faq_1_text">Such issues can have many device and system specific reasons, hard to say in general. You should look around in your device settings and make sure that the app is allowed to pop up when in background and allow displaying over other apps.</string>
     <string name="faq_2_title">Why emergency calls don\'t work properly?</string>
     <string name="faq_2_text">Due to system restrictions, emergency calls can only be made through your system\'s default dialer or phone app. To ensure emergency calls work properly, you need to keep the system app installed and enabled.</string>
     <string name="faq_3_title">Why are some of my contacts missing from the app?</string>
-    <string name="faq_3_text">Fossify Phone only displays contacts that have a phone number associated with them. Contacts without a phone number are not shown in the app.</string>
+    <string name="faq_3_text">SimplyDial only displays contacts that have a phone number associated with them. Contacts without a phone number are not shown in the app.</string>
+    
+    <!-- Call Confirmation Dialog -->
+    <string name="call_confirmation">Call Confirmation</string>
+    <string name="call_question">Do you want to call %s?</string>
+    <string name="tap_to_call">Tap to Call</string>
+    
+    <!-- Settings -->
+    <string name="view_recording_history">View recording history</string>
+    <string name="enable_profile_picture_click">Enable profile picture click</string>
+    <string name="enable_profile_picture_click_desc">Tap contact profile picture to view contact details</string>
+    <string name="enable_messages_joystick">Enable Messages Joystick</string>
+    
+    <!-- Common Dialogs -->
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    
     <!--
         Haven't found some strings? There's more at
         https://github.com/FossifyOrg/Commons/tree/master/commons/src/main/res
     -->
+    <!-- About Section & Open Source Links -->
+    <string name="about_simplydial">About SimplyDial</string>
+    <string name="about_app_title">About &amp; Project Story</string>
+    <string name="about_app_desc">Creators, version, license &amp; open-source links</string>
+    <string name="about_website_label">Website</string>
+    <string name="about_website_val">manish.dev (manishkr-dev.vercel.app)</string>
+    <string name="about_website_url">https://manishkr-dev.vercel.app/</string>
+    <string name="about_github_label">GitHub</string>
+    <string name="about_github_val">github.com/manishkr-07 (Manish Kumar)</string>
+    <string name="about_github_url">https://github.com/manishkr-07</string>
+    <string name="about_support_label">Support &amp; Feedback</string>
+    <string name="about_support_val">manis781701@zohomail.in / manish.dev</string>
+    <string name="about_community_label">Community</string>
+    <string name="about_community_val">Discord, Reddit, Telegram &amp; Email</string>
+    <string name="about_community_toast">Community channels are coming soon! Stay tuned.</string>
+    <string name="simplydial_tagline">Connect with Ease</string>
+    <string name="created_owned_by">Created &amp; Initiated by</string>
+    <string name="collaborated_managed_by">Co-Developed &amp; Managed by</string>
+    <string name="piyush_kumar">Piyush Kumar</string>
+    <string name="manish_kumar">Manish Kumar</string>
+    <string name="open_source_license">License: GNU General Public License v3.0</string>
+    <string name="about_reddit_url">https://www.reddit.com/r/SimplyDial07/</string>
+    <string name="about_discord_url">https://discord.gg/hQebWS8qZ</string>
+    <string name="about_telegram_url">https://t.me/SimplyDial</string>
+    <string name="about_support_email">manis781701@zohomail.in</string>
 </resources>

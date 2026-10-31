@@ -7,35 +7,67 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.telecom.Call
+import android.view.View
 import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
-import org.fossify.commons.extensions.notificationManager
-import org.fossify.commons.extensions.setText
-import org.fossify.commons.extensions.setVisibleIf
-import org.fossify.commons.helpers.isOreoPlus
 import org.fossify.phone.R
 import org.fossify.phone.activities.CallActivity
 import org.fossify.phone.extensions.powerManager
+import org.fossify.phone.extensions.getStateCompat
 import org.fossify.phone.receivers.CallActionReceiver
 
 class CallNotificationManager(private val context: Context) {
     private val CALL_NOTIFICATION_ID = 42
+    private val CALL_WAITING_NOTIFICATION_ID = 43
     private val ACCEPT_CALL_CODE = 0
     private val DECLINE_CALL_CODE = 1
-    private val notificationManager = context.notificationManager
+    private val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
     private val callContactAvatarHelper = CallContactAvatarHelper(context)
+
+    private val CALL_WAITING_CHANNEL = "simple_dialer_call_waiting_active_v3"
+    private val CALL_WAITING_CHANNEL_HIGH_PRIORITY = "simple_dialer_call_waiting_active_high_priority_v3"
 
     @SuppressLint("NewApi")
     fun setupNotification(forceLowPriority: Boolean = false) {
-        getCallContact(context.applicationContext, CallManager.getPrimaryCall()) { callContact ->
+        val primaryCall = CallManager.getPrimaryCall()
+        notificationManager.cancel(CALL_WAITING_NOTIFICATION_ID)
+        setupNotificationForCall(primaryCall, notificationId = CALL_NOTIFICATION_ID, forceLowPriority = forceLowPriority, isCallWaitingNotification = false)
+    }
+
+    @SuppressLint("NewApi")
+    fun setupCallWaitingNotifications(ongoingCall: Call?, ringingCall: Call?, forceLowPriority: Boolean = false) {
+        if (ongoingCall == null || ringingCall == null) {
+            notificationManager.cancel(CALL_WAITING_NOTIFICATION_ID)
+            setupNotification()
+            return
+        }
+
+        setupNotificationForCall(ongoingCall, notificationId = CALL_NOTIFICATION_ID, forceLowPriority = true, isCallWaitingNotification = false)
+        setupNotificationForCall(ringingCall, notificationId = CALL_WAITING_NOTIFICATION_ID, forceLowPriority = forceLowPriority, isCallWaitingNotification = true)
+    }
+
+    private fun setupNotificationForCall(call: Call?, notificationId: Int, forceLowPriority: Boolean, isCallWaitingNotification: Boolean) {
+        getCallContact(context.applicationContext, call) { callContact ->
             val callContactAvatar = callContactAvatarHelper.getCallContactAvatar(callContact)
-            val callState = CallManager.getState()
+            val callState = call?.getStateCompat() ?: Call.STATE_DISCONNECTED
             val isHighPriority = context.powerManager.isInteractive && callState == Call.STATE_RINGING && !forceLowPriority
-            val channelId = if (isHighPriority) "simple_dialer_call_high_priority" else "simple_dialer_call"
-            if (isOreoPlus()) {
-                val importance = if (isHighPriority) NotificationManager.IMPORTANCE_HIGH else NotificationManager.IMPORTANCE_DEFAULT
-                val name = if (isHighPriority) {
+            val channelId = when {
+                isCallWaitingNotification && isHighPriority -> CALL_WAITING_CHANNEL_HIGH_PRIORITY
+                isCallWaitingNotification -> CALL_WAITING_CHANNEL
+                isHighPriority -> "simple_dialer_call_high_priority"
+                else -> "simple_dialer_call"
+            }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                val importance = if (isCallWaitingNotification || isHighPriority) {
+                    NotificationManager.IMPORTANCE_HIGH
+                } else {
+                    NotificationManager.IMPORTANCE_DEFAULT
+                }
+                val name = if (isCallWaitingNotification) {
+                    context.getString(R.string.call_waiting)
+                } else if (isHighPriority) {
                     context.getString(R.string.call_notification_channel_high_priority)
                 } else {
                     context.getString(R.string.call_notification_channel)
@@ -43,6 +75,13 @@ class CallNotificationManager(private val context: Context) {
 
                 NotificationChannel(channelId, name, importance).apply {
                     setSound(null, null)
+                    if (isCallWaitingNotification) {
+                        enableVibration(true)
+                        vibrationPattern = longArrayOf(0, 200, 200, 200)
+                    } else {
+                        enableVibration(false)
+                        setVibrationPattern(null)
+                    }
                     notificationManager.createNotificationChannel(this)
                 }
             }
@@ -60,7 +99,7 @@ class CallNotificationManager(private val context: Context) {
             val declinePendingIntent =
                 PendingIntent.getBroadcast(context, DECLINE_CALL_CODE, declineCallIntent, PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_MUTABLE)
 
-            var callerName = if (callContact.name.isNotEmpty()) callContact.name else context.getString(R.string.unknown_caller)
+            var callerName = if (callContact.name.isNotEmpty()) callContact.name else callContact.number.ifEmpty { context.getString(R.string.unknown_caller) }
             if (callContact.numberLabel.isNotEmpty()) {
                 callerName += " - ${callContact.numberLabel}"
             }
@@ -73,10 +112,21 @@ class CallNotificationManager(private val context: Context) {
                 else -> R.string.ongoing_call
             }
 
+            val statusText = if (isCallWaitingNotification) {
+                if (callContact.number.isNotEmpty() && callContact.name.isNotEmpty()) {
+                    "${callContact.number} • ${context.getString(R.string.call_waiting)}"
+                } else {
+                    context.getString(R.string.call_waiting)
+                }
+            } else {
+                context.getString(contentTextId)
+            }
+
             val collapsedView = RemoteViews(context.packageName, R.layout.call_notification).apply {
-                setText(R.id.notification_caller_name, callerName)
-                setText(R.id.notification_call_status, context.getString(contentTextId))
-                setVisibleIf(R.id.notification_accept_call, callState == Call.STATE_RINGING)
+                setTextViewText(R.id.notification_caller_name, callerName)
+                setTextViewText(R.id.notification_call_status, statusText)
+                setViewVisibility(R.id.notification_accept_call, if (callState == Call.STATE_RINGING) View.VISIBLE else View.GONE)
+                setViewVisibility(R.id.notification_decline_call, View.VISIBLE)
 
                 setOnClickPendingIntent(R.id.notification_decline_call, declinePendingIntent)
                 setOnClickPendingIntent(R.id.notification_accept_call, acceptPendingIntent)
@@ -89,28 +139,45 @@ class CallNotificationManager(private val context: Context) {
             val builder = NotificationCompat.Builder(context, channelId)
                 .setSmallIcon(R.drawable.ic_phone_vector)
                 .setContentIntent(openAppPendingIntent)
-                .setPriority(if (isHighPriority) NotificationManager.IMPORTANCE_HIGH else NotificationCompat.PRIORITY_DEFAULT)
+                .setContentTitle(callerName)
+                .setContentText(statusText)
+                .setPriority(if (isHighPriority || isCallWaitingNotification) NotificationCompat.PRIORITY_HIGH else NotificationCompat.PRIORITY_DEFAULT)
                 .setCategory(Notification.CATEGORY_CALL)
                 .setCustomContentView(collapsedView)
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setOngoing(true)
+                .setOnlyAlertOnce(false)
                 .setSound(null)
-                .setUsesChronometer(callState == Call.STATE_ACTIVE)
+                .setUsesChronometer(!isCallWaitingNotification && callState == Call.STATE_ACTIVE)
                 .setChannelId(channelId)
                 .setStyle(NotificationCompat.DecoratedCustomViewStyle())
 
-            if (isHighPriority) {
+            if (isCallWaitingNotification) {
+                builder.setVibrate(longArrayOf(0, 200, 200, 200))
+            } else {
+                builder.setDefaults(0)
+                builder.setVibrate(null)
+            }
+
+            if (isHighPriority || isCallWaitingNotification) {
                 builder.setFullScreenIntent(openAppPendingIntent, true)
             }
 
+            if (callState == Call.STATE_RINGING) {
+                builder.addAction(R.drawable.ic_call_end, context.getString(R.string.decline), declinePendingIntent)
+                builder.addAction(R.drawable.ic_call_accept, context.getString(R.string.accept), acceptPendingIntent)
+            }
+
             val notification = builder.build()
-            // it's rare but possible for the call state to change by now
-            if (CallManager.getState() == callState) {
-                notificationManager.notify(CALL_NOTIFICATION_ID, notification)
+            val currentState = call?.getStateCompat()
+            if (currentState == callState) {
+                notificationManager.notify(notificationId, notification)
             }
         }
     }
 
     fun cancelNotification() {
         notificationManager.cancel(CALL_NOTIFICATION_ID)
+        notificationManager.cancel(CALL_WAITING_NOTIFICATION_ID)
     }
 }

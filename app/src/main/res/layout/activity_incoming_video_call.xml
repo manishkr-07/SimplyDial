@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/black"
+    android:padding="32dp">
+
+    <!-- Caller info container -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:orientation="vertical"
+        android:gravity="center">
+
+        <!-- Video call icon -->
+        <ImageView
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:src="@drawable/ic_video_call_vector"
+            android:tint="?android:textColorPrimary"
+            android:contentDescription="@string/video_call" />
+
+        <!-- Incoming video call text -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/incoming_video_call"
+            android:textColor="?android:textColorPrimary"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:layout_marginTop="24dp" />
+
+        <!-- Caller name -->
+        <TextView
+            android:id="@+id/callerName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="?android:textColorPrimary"
+            android:textSize="32sp"
+            android:textStyle="bold"
+            android:layout_marginTop="16dp"
+            android:text="Contact Name" />
+
+        <!-- Caller number -->
+        <TextView
+            android:id="@+id/callerNumber"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="?attr/android:textColorSecondary"
+            android:textSize="18sp"
+            android:layout_marginTop="8dp"
+            android:text="+1 234 567 8900" />
+
+    </LinearLayout>
+
+    <!-- Action buttons at bottom -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginBottom="48dp">
+
+        <!-- Decline button -->
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/declineButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_call_end"
+            android:contentDescription="@string/decline_call"
+            app:fabSize="normal"
+            app:tint="?attr/colorOnPrimary"
+            app:backgroundTint="@color/call_reject"
+            android:layout_marginEnd="48dp" />
+
+        <!-- Accept button -->
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/acceptButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_video_call_vector"
+            android:contentDescription="@string/accept_call"
+            app:fabSize="normal"
+            app:tint="?attr/colorOnPrimary"
+            app:backgroundTint="@color/call_accept"
+            android:layout_marginStart="48dp" />
+
+    </LinearLayout>
+
+</RelativeLayout>

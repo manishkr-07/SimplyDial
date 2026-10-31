@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Black Diamond Theme - Neon Gradient for Call FAB -->
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="@color/dark_neon_glow">
+    <item>
+        <shape android:shape="oval">
+            <gradient
+                android:type="radial"
+                android:gradientRadius="100%p"
+                android:startColor="#00E5FF"
+                android:centerColor="#00D4E8"
+                android:endColor="#00B8D4" />
+        </shape>
+    </item>
+</ripple>

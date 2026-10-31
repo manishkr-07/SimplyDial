@@ -10,10 +10,12 @@ import android.graphics.drawable.Icon
 import android.graphics.drawable.LayerDrawable
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.provider.Settings
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.snackbar.Snackbar
 import me.grantland.widget.AutofitHelper
@@ -32,6 +34,8 @@ import org.fossify.phone.adapters.ViewPagerAdapter
 import org.fossify.phone.databinding.ActivityMainBinding
 import org.fossify.phone.dialogs.ChangeSortingDialog
 import org.fossify.phone.dialogs.FilterContactSourcesDialog
+import org.fossify.phone.dialogs.LanguageBottomSheetDialog
+import org.fossify.phone.extensions.applyLanguageConfiguration
 import org.fossify.phone.extensions.clearMissedCalls
 import org.fossify.phone.extensions.config
 import org.fossify.phone.extensions.launchCreateNewContactIntent
@@ -40,8 +44,12 @@ import org.fossify.phone.fragments.FavoritesFragment
 import org.fossify.phone.fragments.MyViewPagerFragment
 import org.fossify.phone.fragments.RecentsFragment
 import org.fossify.phone.helpers.OPEN_DIAL_PAD_AT_LAUNCH
+import org.fossify.phone.interfaces.RefreshItemsListener
 import org.fossify.phone.helpers.RecentsHelper
 import org.fossify.phone.helpers.tabsList
+import org.fossify.phone.helpers.ThemeManager
+import org.fossify.phone.helpers.VideoCallManager
+import org.fossify.phone.dialogs.VideoCallRejoinDialog
 import org.fossify.phone.models.Events
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
@@ -51,6 +59,8 @@ class MainActivity : SimpleActivity() {
     private val binding by viewBinding(ActivityMainBinding::inflate)
 
     private var launchedDialer = false
+    private val searchHandler = Handler(Looper.getMainLooper())
+    private var searchRunnable: Runnable? = null
     private var storedShowTabs = 0
     private var storedFontSize = 0
     private var storedStartNameWithSurname = false
@@ -59,6 +69,10 @@ class MainActivity : SimpleActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         isMaterialActivity = true
         super.onCreate(savedInstanceState)
+        
+        // Apply saved language configuration
+        applyLanguageConfiguration()
+        
         setContentView(binding.root)
         appLaunched(BuildConfig.APPLICATION_ID)
         setupOptionsMenu()
@@ -98,6 +112,9 @@ class MainActivity : SimpleActivity() {
 
         setupTabs()
         Contact.sorting = config.sorting
+        
+        // Show language selection dialog on first launch
+        showLanguageSelectionIfNeeded()
     }
 
     override fun onResume() {
@@ -139,9 +156,14 @@ class MainActivity : SimpleActivity() {
         }
 
         checkShortcuts()
+        // Don't auto-refresh recents - let fragment load lazily when visible
+        
+        // Check if there's an active video call and show rejoin dialog
         Handler().postDelayed({
-            getRecentsFragment()?.refreshItems()
-        }, 2000)
+            if (VideoCallManager.hasActiveVideoCall()) {
+                VideoCallRejoinDialog.showIfNeeded(this)
+            }
+        }, 300)
     }
 
     override fun onPause() {
@@ -170,6 +192,8 @@ class MainActivity : SimpleActivity() {
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
+        // Force light mode even if configuration changes to dark mode
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         refreshItems()
     }
 
@@ -195,7 +219,7 @@ class MainActivity : SimpleActivity() {
             findItem(R.id.create_new_contact).isVisible = currentFragment == getContactsFragment()
             findItem(R.id.change_view_type).isVisible = currentFragment == getFavoritesFragment()
             findItem(R.id.column_count).isVisible = currentFragment == getFavoritesFragment() && config.viewType == VIEW_TYPE_GRID
-            findItem(R.id.more_apps_from_us).isVisible = !resources.getBoolean(R.bool.hide_google_relations)
+
         }
     }
 
@@ -211,8 +235,12 @@ class MainActivity : SimpleActivity() {
                 }
             }
 
-            onSearchTextChangedListener = { text ->
-                getCurrentFragment()?.onSearchQueryChanged(text)
+onSearchTextChangedListener = { text ->
+                // 300ms debounce to avoid query spam
+                searchRunnable?.let { searchHandler.removeCallbacks(it) }
+                val r = Runnable { getCurrentFragment()?.onSearchQueryChanged(text) }
+                searchRunnable = r
+                searchHandler.postDelayed(r, 300)
             }
 
             getToolbar().setOnMenuItemClickListener { menuItem ->
@@ -221,11 +249,9 @@ class MainActivity : SimpleActivity() {
                     R.id.create_new_contact -> launchCreateNewContactIntent()
                     R.id.sort -> showSortingDialog(showCustomSorting = getCurrentFragment() is FavoritesFragment)
                     R.id.filter -> showFilterDialog()
-                    R.id.more_apps_from_us -> launchMoreAppsFromUsIntent()
                     R.id.settings -> launchSettings()
                     R.id.change_view_type -> changeViewType()
                     R.id.column_count -> changeColumnCount()
-                    R.id.about -> launchAbout()
                     else -> return@setOnMenuItemClickListener false
                 }
                 return@setOnMenuItemClickListener true
@@ -364,7 +390,8 @@ class MainActivity : SimpleActivity() {
     }
 
     private fun initFragments() {
-        binding.viewPager.offscreenPageLimit = 2
+        // Reduce offscreen page limit to save memory - load pages on demand
+        binding.viewPager.offscreenPageLimit = 1
         binding.viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
             override fun onPageScrollStateChanged(state: Int) {}
 
@@ -376,6 +403,9 @@ class MainActivity : SimpleActivity() {
                     it?.finishActMode()
                 }
                 refreshMenuItems()
+                
+                // Trigger lazy loading for the selected fragment
+                (getCurrentFragment() as? RefreshItemsListener)?.refreshItems(invalidate = false)
             }
         })
 
@@ -491,7 +521,7 @@ class MainActivity : SimpleActivity() {
         cacheContacts()
         getContactsFragment()?.refreshItems()
         getFavoritesFragment()?.refreshItems()
-        getRecentsFragment()?.refreshItems()
+        // Don't auto-refresh recents - it loads lazily when tab becomes visible
     }
 
     private fun getAllFragments(): ArrayList<MyViewPagerFragment<*>?> {
@@ -555,21 +585,7 @@ class MainActivity : SimpleActivity() {
     }
 
     private fun launchAbout() {
-        val licenses = LICENSE_GLIDE or LICENSE_INDICATOR_FAST_SCROLL or LICENSE_AUTOFITTEXTVIEW
-
-        val faqItems = arrayListOf(
-            FAQItem(R.string.faq_1_title, R.string.faq_1_text),
-            FAQItem(R.string.faq_2_title, R.string.faq_2_text),
-            FAQItem(R.string.faq_3_title, R.string.faq_3_text),
-            FAQItem(R.string.faq_9_title_commons, R.string.faq_9_text_commons)
-        )
-
-        if (!resources.getBoolean(R.bool.hide_google_relations)) {
-            faqItems.add(FAQItem(R.string.faq_2_title_commons, R.string.faq_2_text_commons))
-            faqItems.add(FAQItem(R.string.faq_6_title_commons, R.string.faq_6_text_commons))
-        }
-
-        startAboutActivity(R.string.app_name, licenses, BuildConfig.VERSION_NAME, faqItems, true)
+        org.fossify.phone.dialogs.AboutSimplyDialDialog(this)
     }
 
     private fun showSortingDialog(showCustomSorting: Boolean) {
@@ -611,20 +627,38 @@ class MainActivity : SimpleActivity() {
     }
 
     fun cacheContacts() {
-        val privateCursor = getMyContactsCursor(favoritesOnly = false, withPhoneNumbersOnly = true)
-        ContactsHelper(this).getContacts(getAll = true, showOnlyContactsWithNumbers = true) { contacts ->
-            if (SMT_PRIVATE !in config.ignoredContactSources) {
-                val privateContacts = MyContactsContentProvider.getContacts(this, privateCursor)
-                if (privateContacts.isNotEmpty()) {
-                    contacts.addAll(privateContacts)
-                    contacts.sort()
+        // Cache contacts in background to avoid blocking UI
+        ensureBackgroundThread {
+            val privateCursor = getMyContactsCursor(favoritesOnly = false, withPhoneNumbersOnly = true)
+            ContactsHelper(this).getContacts(getAll = true, showOnlyContactsWithNumbers = true) { contacts ->
+                ensureBackgroundThread {
+                    if (SMT_PRIVATE !in config.ignoredContactSources) {
+                        val privateContacts = MyContactsContentProvider.getContacts(this, privateCursor)
+                        if (privateContacts.isNotEmpty()) {
+                            contacts.addAll(privateContacts)
+                            contacts.sort()
+                        }
+                    }
+
+                    try {
+                        runOnUiThread {
+                            cachedContacts.clear()
+                            cachedContacts.addAll(contacts)
+                        }
+                    } catch (ignored: Exception) {
+                    }
                 }
             }
+        }
+    }
 
-            try {
-                cachedContacts.clear()
-                cachedContacts.addAll(contacts)
-            } catch (ignored: Exception) {
+    private fun showLanguageSelectionIfNeeded() {
+        if (!config.isLanguageSelected) {
+            // Show language selection immediately, no need for delay
+            if (!isDestroyed && !isFinishing) {
+                LanguageBottomSheetDialog.show(supportFragmentManager) { selectedLanguage ->
+                    // Language has been selected and saved
+                }
             }
         }
     }

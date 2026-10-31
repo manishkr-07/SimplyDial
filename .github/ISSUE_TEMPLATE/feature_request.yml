@@ -1,52 +1,44 @@
 name: Feature request
-description: Suggest an idea for this project
+description: Suggest an idea or enhancement for SimplyDial
 labels: [ "feature request", "needs triage" ]
 body:
   - type: markdown
     attributes:
       value: |
         ## Hi there 👋
-        Thanks for helping us improve Fossify Phone by suggesting a feature!
-        Please fill in as much information as possible about your feature request to avoid unnecessary and time-consuming back-and-forth communication.
+        Thanks for helping make **SimplyDial** better!
+        Share your ideas for new features, accessibility enhancements (EaseUI), or design improvements.
 
   - type: checkboxes
     id: checklist
     attributes:
       label: "Checklist"
       options:
-        - label: "I made sure that there are **no existing issues** - [open](https://github.com/FossifyOrg/Phone/issues) or [closed](https://github.com/FossifyOrg/Phone/issues?q=is%3Aissue+is%3Aclosed) - to which I could contribute my information."
+        - label: "I made sure that there are **no existing open issues** for this feature."
           required: true
-        - label: "I made sure that there are **no existing discussions** - [open](https://github.com/orgs/FossifyOrg/discussions?discussions_q=is:open+label:phone) or [closed](https://github.com/orgs/FossifyOrg/discussions?discussions_q=is:closed+label:phone) - to which I could contribute my information."
+        - label: "This request focuses on a single feature concept."
           required: true
-        - label: "I have read the FAQs inside the app (Menu -> About -> FAQs) and my problem isn't listed."
-          required: true
-        - label: "**I have taken the time to fill in all the required details. I understand that the request will be dismissed otherwise.**"
-          required: true
-        - label: "This issue contains only one feature request."
-          required: true
-        - label: "I have read and understood the [contribution guidelines](https://github.com/FossifyOrg/Phone/blob/master/CONTRIBUTING.md)."
+        - label: "I have read and understood the [contribution guidelines](CONTRIBUTING.md)."
           required: true
 
   - type: textarea
     id: feature-description
     attributes:
-      label: Feature description
-      description: |
-        Explain how you want the app's look or behavior to change to suit your needs.
+      label: Feature Description
+      description: "Explain what feature or capability you would like to see in SimplyDial."
     validations:
       required: true
 
   - type: textarea
-    id: why-is-the-feature-requested
+    id: use-case
     attributes:
-      label: Why do you want this feature?
-      description: |
-        Describe any problem or limitation you come across while using the app which would be solved by this feature.
+      label: Why is this needed?
+      description: "Describe the use-case or problem this feature solves (e.g. accessibility, senior care, productivity)."
     validations:
       required: true
 
   - type: textarea
-    id: additional-information
+    id: proposed-solution
     attributes:
-      label: Additional information
-      description: Any other information you'd like to include, for instance sketches, mockups, pictures of rabbits, etc.
+      label: Proposed Solution or Mockups (Optional)
+      description: "Any ideas on how this should look or work?"

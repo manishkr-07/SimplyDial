@@ -9,7 +9,7 @@
         android:id="@+id/dialpad_toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="@color/color_primary"
+        android:background="?attr/colorPrimary"
         app:menu="@menu/menu_dialpad"
         app:title="@string/dialpad"
         app:titleTextAppearance="@style/AppTheme.ActionBar.TitleTextStyle" />
@@ -112,18 +112,51 @@
             app:layout_constraintBottom_toTopOf="@+id/dialpad_call_button" />
 
         <ImageView
+            android:id="@+id/dialpad_voice_button"
+            android:layout_width="@dimen/dialpad_button_size"
+            android:layout_height="@dimen/dialpad_button_size"
+            android:layout_marginBottom="@dimen/activity_margin"
+            android:layout_marginEnd="@dimen/small_margin"
+            android:background="@drawable/circle_button_background_ripple"
+            android:contentDescription="@string/voice_dial"
+            android:elevation="@dimen/small_margin"
+            android:padding="@dimen/normal_margin"
+            android:src="@drawable/ic_mic_vector"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/dialpad_call_button"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintHorizontal_chainStyle="packed" />
+
+        <ImageView
             android:id="@+id/dialpad_call_button"
             android:layout_width="@dimen/dialpad_button_size"
             android:layout_height="@dimen/dialpad_button_size"
             android:layout_marginBottom="@dimen/activity_margin"
+            android:layout_marginStart="@dimen/small_margin"
+            android:layout_marginEnd="@dimen/small_margin"
             android:background="@drawable/circle_button_background_ripple"
             android:contentDescription="@string/call_number"
             android:elevation="@dimen/small_margin"
             android:padding="@dimen/normal_margin"
             android:src="@drawable/ic_phone_vector"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/dialpad_video_call_button"
+            app:layout_constraintStart_toEndOf="@+id/dialpad_voice_button" />
+            
+        <ImageView
+            android:id="@+id/dialpad_video_call_button"
+            android:layout_width="@dimen/dialpad_button_size"
+            android:layout_height="@dimen/dialpad_button_size"
+            android:layout_marginBottom="@dimen/activity_margin"
+            android:layout_marginStart="@dimen/small_margin"
+            android:background="@drawable/circle_button_background_ripple"
+            android:contentDescription="@string/video_call"
+            android:elevation="@dimen/small_margin"
+            android:padding="@dimen/normal_margin"
+            android:src="@drawable/ic_video_call_vector"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toEndOf="@+id/dialpad_call_button" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -1,9 +1,23 @@
 package org.fossify.phone.activities
 
+import android.os.Bundle
+import androidx.appcompat.app.AppCompatDelegate
 import org.fossify.commons.activities.BaseSimpleActivity
 import org.fossify.phone.R
+import org.fossify.phone.helpers.ThemeManager
 
 open class SimpleActivity : BaseSimpleActivity() {
+    
+    override fun onCreate(savedInstanceState: Bundle?) {
+        // Apply theme based on system dark mode setting
+        // ThemeManager automatically detects and applies:
+        // - Light Theme (Default) when system is in light mode
+        // - Black Diamond Dark Theme when system dark mode is enabled
+        ThemeManager.applyTheme(this)
+        
+        super.onCreate(savedInstanceState)
+    }
+    
     override fun getAppIconIDs() = arrayListOf(
         R.mipmap.ic_launcher_red,
         R.mipmap.ic_launcher_pink,

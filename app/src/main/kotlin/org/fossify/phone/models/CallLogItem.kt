@@ -8,10 +8,13 @@ sealed class CallLogItem {
         val dayCode: String,
     ) : CallLogItem()
 
+    data class Placeholder(val key: Int) : CallLogItem()
+
     fun getItemId(): Int {
         return when (this) {
             is Date -> -(timestamp / (DAY_SECONDS * 1000L)).toInt()
             is RecentCall -> id
+            is Placeholder -> -1_000_000 - key
         }
     }
 }

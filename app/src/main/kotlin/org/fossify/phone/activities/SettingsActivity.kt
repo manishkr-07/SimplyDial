@@ -9,14 +9,11 @@ import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
 import org.fossify.commons.activities.ManageBlockedNumbersActivity
 import org.fossify.commons.dialogs.ChangeDateTimeFormatDialog
-import org.fossify.commons.dialogs.FeatureLockedDialog
 import org.fossify.commons.dialogs.RadioGroupDialog
-import org.fossify.commons.extensions.addLockedLabelIfNeeded
 import org.fossify.commons.extensions.baseConfig
 import org.fossify.commons.extensions.beVisibleIf
 import org.fossify.commons.extensions.getFontSizeText
 import org.fossify.commons.extensions.getProperPrimaryColor
-import org.fossify.commons.extensions.isOrWasThankYouInstalled
 import org.fossify.commons.extensions.showErrorToast
 import org.fossify.commons.extensions.toast
 import org.fossify.commons.extensions.updateTextColors
@@ -37,10 +34,15 @@ import org.fossify.commons.models.RadioItem
 import org.fossify.phone.R
 import org.fossify.phone.databinding.ActivitySettingsBinding
 import org.fossify.phone.dialogs.ExportCallHistoryDialog
+import org.fossify.phone.dialogs.LanguageBottomSheetDialog
 import org.fossify.phone.dialogs.ManageVisibleTabsDialog
+import org.fossify.phone.dialogs.VoiceDialLanguageDialog
+import org.fossify.phone.extensions.applyLanguageConfiguration
 import org.fossify.phone.extensions.canLaunchAccountsConfiguration
 import org.fossify.phone.extensions.config
 import org.fossify.phone.extensions.launchAccountsConfiguration
+import org.fossify.phone.helpers.LANGUAGE_ENGLISH
+import org.fossify.phone.helpers.LANGUAGE_HINDI
 import org.fossify.phone.helpers.RecentsHelper
 import org.fossify.phone.models.RecentCall
 import java.util.Locale
@@ -79,6 +81,10 @@ class SettingsActivity : SimpleActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         isMaterialActivity = true
         super.onCreate(savedInstanceState)
+        
+        // Apply saved language configuration
+        applyLanguageConfiguration()
+        
         setContentView(binding.root)
         setupOptionsMenu()
         refreshMenuItems()
@@ -93,37 +99,42 @@ class SettingsActivity : SimpleActivity() {
         super.onResume()
         setupToolbar(binding.settingsToolbar, NavigationIcon.Arrow)
 
-        setupCustomizeColors()
         setupUseEnglish()
         setupLanguage()
+        setupAppLanguage()
+        setupVoiceDialLanguage()
         setupManageBlockedNumbers()
         setupManageSpeedDial()
         setupChangeDateTimeFormat()
         setupFontSize()
+        setupDarkTheme()
         setupManageShownTabs()
         setupDefaultTab()
         setupDialPadOpen()
         setupGroupSubsequentCalls()
         setupStartNameWithSurname()
         setupFormatPhoneNumbers()
+        setupEnableProfilePictureClick()
         setupDialpadVibrations()
         setupDialpadNumbers()
         setupDialpadBeeps()
         setupShowCallConfirmation()
         setupDisableProximitySensor()
         setupDisableSwipeToAnswer()
+        setupEnableMessagesJoystick()
         setupAlwaysShowFullscreen()
         setupCallsExport()
         setupCallsImport()
+        setupAboutSection()
         updateTextColors(binding.settingsHolder)
 
         binding.apply {
             arrayOf(
-                settingsColorCustomizationSectionLabel,
                 settingsGeneralSettingsLabel,
                 settingsStartupLabel,
                 settingsCallsLabel,
-                settingsMigrationSectionLabel
+                settingsMigrationSectionLabel,
+                settingsAboutSectionLabel
             ).forEach {
                 it.setTextColor(getProperPrimaryColor())
             }
@@ -151,12 +162,6 @@ class SettingsActivity : SimpleActivity() {
         }
     }
 
-    private fun setupCustomizeColors() {
-        binding.settingsColorCustomizationHolder.setOnClickListener {
-            startCustomizationActivity()
-        }
-    }
-
     private fun setupUseEnglish() {
         binding.apply {
             settingsUseEnglishHolder.beVisibleIf((config.wasUseEnglishToggled || Locale.getDefault().language != "en") && !isTiramisuPlus())
@@ -179,17 +184,43 @@ class SettingsActivity : SimpleActivity() {
         }
     }
 
+    private fun setupAppLanguage() {
+        binding.apply {
+            settingsAppLanguageValue.text = getLanguageDisplayName(config.appLanguage)
+            settingsAppLanguageHolder.setOnClickListener {
+                LanguageBottomSheetDialog.show(supportFragmentManager) { selectedLanguage ->
+                    settingsAppLanguageValue.text = getLanguageDisplayName(selectedLanguage)
+                }
+            }
+        }
+    }
+
+    private fun getLanguageDisplayName(languageCode: String): String {
+        return when (languageCode) {
+            LANGUAGE_ENGLISH -> getString(R.string.language_english)
+            LANGUAGE_HINDI -> getString(R.string.language_hindi)
+            else -> getString(R.string.language_english)
+        }
+    }
+
+    private fun setupVoiceDialLanguage() {
+        binding.apply {
+            settingsVoiceDialLanguageValue.text = getLanguageDisplayName(config.voiceDialLanguage)
+            settingsVoiceDialLanguageHolder.setOnClickListener {
+                VoiceDialLanguageDialog.show(supportFragmentManager) { selectedLanguage ->
+                    settingsVoiceDialLanguageValue.text = getLanguageDisplayName(selectedLanguage)
+                }
+            }
+        }
+    }
+
     private fun setupManageBlockedNumbers() {
         binding.apply {
-            settingsManageBlockedNumbersLabel.text = addLockedLabelIfNeeded(R.string.manage_blocked_numbers)
+            settingsManageBlockedNumbersLabel.text = getString(R.string.manage_blocked_numbers)
             settingsManageBlockedNumbersHolder.beVisibleIf(isNougatPlus())
             settingsManageBlockedNumbersHolder.setOnClickListener {
-                if (isOrWasThankYouInstalled()) {
-                    Intent(this@SettingsActivity, ManageBlockedNumbersActivity::class.java).apply {
-                        startActivity(this)
-                    }
-                } else {
-                    FeatureLockedDialog(this@SettingsActivity) { }
+                Intent(this@SettingsActivity, ManageBlockedNumbersActivity::class.java).apply {
+                    startActivity(this)
                 }
             }
         }
@@ -222,6 +253,19 @@ class SettingsActivity : SimpleActivity() {
             RadioGroupDialog(this@SettingsActivity, items, config.fontSize) {
                 config.fontSize = it as Int
                 binding.settingsFontSize.text = getFontSizeText()
+            }
+        }
+    }
+
+    private fun setupDarkTheme() {
+        binding.apply {
+            settingsDarkTheme.isChecked = config.isDarkThemeEnabled
+            settingsDarkThemeHolder.setOnClickListener {
+                settingsDarkTheme.toggle()
+                config.isDarkThemeEnabled = settingsDarkTheme.isChecked
+                // Restart app to apply theme change
+                finishAffinity()
+                startActivity(Intent(this@SettingsActivity, MainActivity::class.java))
             }
         }
     }
@@ -296,6 +340,16 @@ class SettingsActivity : SimpleActivity() {
         }
     }
 
+    private fun setupEnableProfilePictureClick() {
+        binding.apply {
+            settingsEnableProfilePictureClick.isChecked = config.enableProfilePictureClick
+            settingsEnableProfilePictureClickHolder.setOnClickListener {
+                settingsEnableProfilePictureClick.toggle()
+                config.enableProfilePictureClick = settingsEnableProfilePictureClick.isChecked
+            }
+        }
+    }
+
     private fun setupDialpadVibrations() {
         binding.apply {
             settingsDialpadVibration.isChecked = config.dialpadVibration
@@ -366,6 +420,16 @@ class SettingsActivity : SimpleActivity() {
         }
     }
 
+    private fun setupEnableMessagesJoystick() {
+        binding.apply {
+            settingsEnableMessagesJoystick.isChecked = config.enableMessagesJoystick
+            settingsEnableMessagesJoystickHolder.setOnClickListener {
+                settingsEnableMessagesJoystick.toggle()
+                config.enableMessagesJoystick = settingsEnableMessagesJoystick.isChecked
+            }
+        }
+    }
+
     private fun setupCallsExport() {
         binding.settingsExportCallsHolder.setOnClickListener {
             ExportCallHistoryDialog(this) { filename ->
@@ -420,6 +484,39 @@ class SettingsActivity : SimpleActivity() {
             } catch (e: Exception) {
                 showErrorToast(e)
             }
+        }
+    }
+
+    private fun setupAboutSection() {
+        binding.apply {
+            settingsAboutAppHolder.setOnClickListener {
+                org.fossify.phone.dialogs.AboutSimplyDialDialog(this@SettingsActivity)
+            }
+
+            settingsWebsiteHolder.setOnClickListener {
+                openExternalUrl(getString(R.string.about_website_url))
+            }
+
+            settingsGithubHolder.setOnClickListener {
+                openExternalUrl(getString(R.string.about_github_url))
+            }
+
+            settingsSupportHolder.setOnClickListener {
+                openExternalUrl(getString(R.string.about_website_url))
+            }
+
+            settingsCommunityHolder.setOnClickListener {
+                org.fossify.phone.dialogs.AboutSimplyDialDialog(this@SettingsActivity)
+            }
+        }
+    }
+
+    private fun openExternalUrl(url: String) {
+        try {
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+            startActivity(intent)
+        } catch (e: Exception) {
+            toast("Could not open link: $url")
         }
     }
 }

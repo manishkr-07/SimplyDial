@@ -55,19 +55,39 @@ import org.fossify.phone.extensions.areMultipleSIMsAvailable
 import org.fossify.phone.extensions.boundingBox
 import org.fossify.phone.extensions.config
 import org.fossify.phone.extensions.disableKeyboard
+import org.fossify.phone.dialogs.VoiceDialLanguageDialog
+import org.fossify.phone.dialogs.VideoCallOptionsDialog
 import org.fossify.phone.extensions.getKeyEvent
 import org.fossify.phone.extensions.setupWithContacts
+import org.fossify.phone.extensions.startCallIntent
 import org.fossify.phone.extensions.startCallWithConfirmationCheck
 import org.fossify.phone.extensions.startContactDetailsIntent
 import org.fossify.phone.helpers.DIALPAD_TONE_LENGTH_MS
 import org.fossify.phone.helpers.RecentsHelper
 import org.fossify.phone.helpers.ToneGeneratorHelper
 import org.fossify.phone.models.SpeedDial
+import org.fossify.phone.services.GeminiService
+import org.fossify.phone.services.ContactResolver
+import org.fossify.phone.services.DialerService
+import android.widget.Toast
+import android.Manifest
+import android.app.Activity
+import android.app.AlertDialog
+import android.content.pm.PackageManager
+import android.speech.RecognizerIntent
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import java.util.Locale
 import kotlin.math.roundToInt
+import org.fossify.phone.helpers.JitsiMeetHelper
 
 class DialpadActivity : SimpleActivity() {
     private val binding by viewBinding(ActivityDialpadBinding::inflate)
+
+    companion object {
+        private const val REQUEST_VOICE_RECOGNITION = 1021
+        private const val REQUEST_RECORD_AUDIO_PERMISSION = 1022
+    }
 
     private var allContacts = ArrayList<Contact>()
     private var speedDialValues = ArrayList<SpeedDial>()
@@ -76,6 +96,7 @@ class DialpadActivity : SimpleActivity() {
     private val longPressTimeout = ViewConfiguration.getLongPressTimeout().toLong()
     private val longPressHandler = Handler(Looper.getMainLooper())
     private val pressedKeys = mutableSetOf<Char>()
+    private lateinit var jitsiMeetHelper: JitsiMeetHelper
 
     private var hasRussianLocale = false
     private val russianCharsMap by lazy {
@@ -96,6 +117,9 @@ class DialpadActivity : SimpleActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         hasRussianLocale = Locale.getDefault().language == "ru"
+        
+        // Initialize Jitsi Meet helper for video calling
+        jitsiMeetHelper = JitsiMeetHelper(this)
 
         binding.apply {
             updateMaterialActivityViews(
@@ -201,6 +225,16 @@ class DialpadActivity : SimpleActivity() {
             dialpadClearChar.setOnLongClickListener { clearInput(); true }
             dialpadCallButton.setOnClickListener { initCall(dialpadInput.value) }
             dialpadCallButton.setOnLongClickListener { initCallWithSimSelector() }
+            dialpadVideoCallButton.setOnClickListener { initVideoCall(dialpadInput.value) }
+            dialpadVoiceButton.setOnClickListener {
+                // Request RECORD_AUDIO permission if not granted
+                if (ContextCompat.checkSelfPermission(this@DialpadActivity, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(this@DialpadActivity, arrayOf(Manifest.permission.RECORD_AUDIO), REQUEST_RECORD_AUDIO_PERMISSION)
+                } else {
+                    // Show language selection dialog before starting voice recognition
+                    showVoiceLanguageSelectionDialog()
+                }
+            }
             dialpadInput.onTextChangeListener { dialpadValueChanged(it) }
             dialpadInput.requestFocus()
             dialpadInput.disableKeyboard()
@@ -218,6 +252,13 @@ class DialpadActivity : SimpleActivity() {
             )
             dialpadCallButton.setImageDrawable(callIcon)
             dialpadCallButton.background.applyColorFilter(properPrimaryColor)
+            
+            val videoCallIcon = resources.getColoredDrawableWithColor(
+                drawableId = R.drawable.ic_video_call_vector,
+                color = properPrimaryColor.getContrastColor()
+            )
+            dialpadVideoCallButton.setImageDrawable(videoCallIcon)
+            dialpadVideoCallButton.background.applyColorFilter(properPrimaryColor)
 
             letterFastscroller.textColor = getProperTextColor().getColorStateList()
             letterFastscroller.pressedTextColor = properPrimaryColor
@@ -356,7 +397,9 @@ class DialpadActivity : SimpleActivity() {
                 clearInputWithDelay()
             },
             profileIconClick = {
-                startContactDetailsIntent(it as Contact)
+                if (config.enableProfilePictureClick) {
+                    startContactDetailsIntent(it as Contact)
+                }
             }).apply {
             binding.dialpadList.adapter = this
         }
@@ -369,6 +412,201 @@ class DialpadActivity : SimpleActivity() {
         super.onActivityResult(requestCode, resultCode, resultData)
         if (requestCode == REQUEST_CODE_SET_DEFAULT_DIALER && isDefaultDialer()) {
             dialpadValueChanged(binding.dialpadInput.value)
+        }
+        if (requestCode == REQUEST_VOICE_RECOGNITION && resultCode == Activity.RESULT_OK && resultData != null) {
+            val matches = resultData.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
+            val spoken = matches?.firstOrNull()?.trim() ?: ""
+            if (spoken.isNotEmpty()) {
+                handleSpokenDialRequest(spoken)
+            }
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == REQUEST_RECORD_AUDIO_PERMISSION) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                showVoiceLanguageSelectionDialog()
+            } else {
+                // permission denied — could show a Snackbar or dialog; keep it simple for now
+            }
+        }
+    }
+
+    private fun showVoiceLanguageSelectionDialog() {
+        // Check if voice dial language has already been selected
+        if (config.isVoiceDialLanguageSelected) {
+            // Use saved language preference directly
+            startVoiceRecognition(config.voiceDialLanguage)
+        } else {
+            // Show dialog for first-time selection
+            VoiceDialLanguageDialog.show(supportFragmentManager) { selectedLanguage ->
+                // Language selected, now start voice recognition with selected language
+                startVoiceRecognition(selectedLanguage)
+            }
+        }
+    }
+
+    private fun startVoiceRecognition(languageCode: String) {
+        try {
+            // visual feedback: reduce alpha to indicate listening
+            binding.dialpadVoiceButton.alpha = 0.6f
+            
+            // Map language code to locale for voice recognition
+            val locale = when (languageCode) {
+                "hi" -> "hi-IN"  // Hindi (India)
+                "en" -> "en-US"  // English (US)
+                else -> "en-US"
+            }
+            
+            val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
+                putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+                putExtra(RecognizerIntent.EXTRA_LANGUAGE, locale)
+                putExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE, locale)
+                putExtra(RecognizerIntent.EXTRA_ONLY_RETURN_LANGUAGE_PREFERENCE, locale)
+                putExtra(RecognizerIntent.EXTRA_PROMPT, getString(R.string.voice_dial))
+                putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 3)
+            }
+            startActivityForResult(intent, REQUEST_VOICE_RECOGNITION)
+        } catch (e: Exception) {
+            binding.dialpadVoiceButton.alpha = 1f
+            Toast.makeText(this, "Voice recognition not available", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun handleSpokenDialRequest(spoken: String) {
+        // Restore UI
+        binding.dialpadVoiceButton.alpha = 1f
+
+        // If the spoken text looks like a phone number (contains digits), extract digits and call
+        val digits = spoken.filter { it.isDigit() || it == '+' }
+        if (digits.isNotEmpty()) {
+            initCall(digits, spoken)
+            return
+        }
+
+        // Normalize spoken text: strip common verbs and politeness so matching works better
+        val cleaned = spoken
+            .lowercase(Locale.getDefault())
+            .replace("please", "")
+            .replace("kindly", "")
+            .replace("could you", "")
+            .replace("call to", "")
+            .replace("call", "")
+            .replace("dial", "")
+            .replace("phone", "")
+            .replace("make a call to", "")
+            .replace("make a call", "")
+            .replace("please call", "")
+            .trim()
+
+        // Gather contact list for Gemini (system contacts + private contacts)
+    val systemContacts = ContactResolver.getAllContacts(this)
+    val privateContacts = MyContactsContentProvider.getContacts(this, privateCursor)
+    val contactsPairs = mutableListOf<Pair<String, String>>()
+    // build explicit Pair<String, String> values to avoid type-inference issues
+    systemContacts.forEach { contactsPairs.add(Pair(it.name, it.number ?: "")) }
+        // MyContactsContentProvider may return objects from the commons module — handle unknown shapes safely.
+        privateContacts.forEach { item ->
+            try {
+                // attempt to read well-known properties via reflection to avoid compile-time dependency
+                val kClass = item::class
+                val nameProp = kClass.members.firstOrNull { it.name.equals("name", true) }
+                val numberProp = kClass.members.firstOrNull { it.name.equals("number", true) }
+
+                val nameVal = nameProp?.call(item)?.toString() ?: item.toString()
+                val numberVal = numberProp?.call(item)?.toString() ?: ""
+
+                contactsPairs.add(Pair(nameVal, numberVal))
+            } catch (e: Exception) {
+                // fallback: use toString() as name and empty number
+                contactsPairs.add(Pair(item.toString(), ""))
+            }
+        }
+
+        lifecycleScope.launch {
+            val parsed = try {
+                GeminiService.parseIntent(spoken, contactsPairs)
+            } catch (e: Exception) {
+                null
+            }
+
+            if (parsed == null) {
+                // Gemini failed (network/key or parse error). Fall back to local fuzzy contact matching.
+                android.util.Log.w("DialpadActivity", "Gemini parsing returned null; falling back to local matcher")
+                // Use cleaned query for fuzzy local matching (e.g., "call mummy" -> "mummy")
+                val fallbackMatches = ContactResolver.findMatches(this@DialpadActivity, cleaned)
+                when {
+                    fallbackMatches.isEmpty() -> {
+                        runOnUiThread {
+                            // keep user input for manual correction and inform user softly
+                            binding.dialpadInput.setText(spoken)
+                            binding.dialpadInput.setSelection(spoken.length)
+                            Toast.makeText(this@DialpadActivity, getString(R.string.no_contact_found), Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                    fallbackMatches.size == 1 -> {
+                        val chosen = fallbackMatches[0]
+                        runOnUiThread {
+                            startCallIntent(chosen.number)
+                            clearInputWithDelay()
+                        }
+                    }
+                    else -> {
+                        runOnUiThread {
+                            DialerService.promptUserToChoose(this@DialpadActivity, fallbackMatches) { chosen ->
+                                startCallIntent(chosen.number)
+                                clearInputWithDelay()
+                            }
+                        }
+                    }
+                }
+                return@launch
+            }
+
+            val intent = parsed.intent ?: if (spoken.contains("call", true)) "call" else null
+            val contactName = parsed.contact
+            val contactNumber = parsed.number
+
+            if (intent == "call" && contactNumber != null && contactNumber.isNotEmpty()) {
+                // Direct match: dial immediately
+                runOnUiThread {
+                    startCallIntent(contactNumber)
+                    clearInputWithDelay()
+                }
+            } else if (intent == "call" && contactName != null) {
+                // Try fuzzy match if Gemini only returns name
+                val matches = ContactResolver.findMatches(this@DialpadActivity, contactName)
+                when {
+                    matches.isEmpty() -> {
+                        runOnUiThread {
+                            binding.dialpadInput.setText(spoken)
+                            binding.dialpadInput.setSelection(spoken.length)
+                            Toast.makeText(this@DialpadActivity, getString(R.string.no_contact_found), Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                    matches.size == 1 -> {
+                        val chosen = matches[0]
+                        runOnUiThread {
+                            startCallIntent(chosen.number)
+                            clearInputWithDelay()
+                        }
+                    }
+                    else -> {
+                        runOnUiThread {
+                            DialerService.promptUserToChoose(this@DialpadActivity, matches) { chosen ->
+                                startCallIntent(chosen.number)
+                                clearInputWithDelay()
+                            }
+                        }
+                    }
+                }
+            } else {
+                runOnUiThread {
+                    binding.dialpadInput.setText(spoken)
+                    binding.dialpadInput.setSelection(spoken.length)
+                }
+            }
         }
     }
 
@@ -491,5 +729,29 @@ class DialpadActivity : SimpleActivity() {
             }
             false
         }
+    }
+    
+    /**
+     * Initiate a video call - shows options dialog to choose call method
+     */
+    private fun initVideoCall(number: String = binding.dialpadInput.value) {
+        if (number.isEmpty()) {
+            Toast.makeText(this, "Please enter a number", Toast.LENGTH_SHORT).show()
+            return
+        }
+        
+        // Check if this is a contact or just a number
+        val matchingContact = allContacts.firstOrNull { contact ->
+            contact.doesContainPhoneNumber(number)
+        }
+        
+        val contactName = matchingContact?.name ?: number
+        
+        // Show video call options dialog
+        VideoCallOptionsDialog(
+            activity = this,
+            contactName = contactName,
+            contactNumber = number
+        )
     }
 }

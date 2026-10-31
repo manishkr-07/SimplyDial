@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@drawable/rounded_background"
+        android:padding="@dimen/activity_margin">
+
+        <TextView
+            android:id="@+id/dialogTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/choose_video_call_method"
+            android:textSize="@dimen/bigger_text_size"
+            android:textStyle="bold"
+            android:textColor="?android:textColorPrimary"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="@dimen/medium_margin"
+            android:gravity="center" />
+
+        <!-- Option 1: Send SMS & Start Call -->
+        <LinearLayout
+            android:id="@+id/optionSendSmsAndCall"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="@dimen/medium_margin"
+            android:gravity="center_vertical"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true">
+
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_message_vector"
+                android:tint="?attr/colorPrimary"
+                android:contentDescription="@string/send_sms_and_start_call" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="@dimen/medium_margin"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/send_sms_and_start_call"
+                    android:textSize="@dimen/normal_text_size"
+                    android:textStyle="bold"
+                    android:textColor="?android:textColorPrimary" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/send_sms_and_start_call_desc"
+                    android:textSize="@dimen/smaller_text_size"
+                    android:textColor="?android:textColorSecondary"
+                    android:layout_marginTop="4dp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Divider -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="?android:attr/listDivider"
+            android:layout_marginVertical="8dp" />
+
+        <!-- Option 2: Generate & Share Link -->
+        <LinearLayout
+            android:id="@+id/optionGenerateAndShare"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="@dimen/medium_margin"
+            android:gravity="center_vertical"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true">
+
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_link_vector"
+                android:tint="?attr/colorPrimary"
+                android:contentDescription="@string/generate_and_share_link" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="@dimen/medium_margin"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/generate_and_share_link"
+                    android:textSize="@dimen/normal_text_size"
+                    android:textStyle="bold"
+                    android:textColor="?android:textColorPrimary" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/generate_and_share_link_desc"
+                    android:textSize="@dimen/smaller_text_size"
+                    android:textColor="?android:textColorSecondary"
+                    android:layout_marginTop="4dp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Divider -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="?android:attr/listDivider"
+            android:layout_marginVertical="8dp" />
+
+        <!-- Option 3: Direct App-to-App Call -->
+        <LinearLayout
+            android:id="@+id/optionDirectCall"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="@dimen/medium_margin"
+            android:gravity="center_vertical"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true">
+
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_video_call_vector"
+                android:tint="?attr/colorPrimary"
+                android:contentDescription="@string/direct_app_to_app_call" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="@dimen/medium_margin"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/direct_app_to_app_call"
+                    android:textSize="@dimen/normal_text_size"
+                    android:textStyle="bold"
+                    android:textColor="?android:textColorPrimary" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/direct_app_to_app_call_desc"
+                    android:textSize="@dimen/smaller_text_size"
+                    android:textColor="?android:textColorSecondary"
+                    android:layout_marginTop="4dp" />
+            </LinearLayout>
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- Close button (Red X) in top-right corner -->
+    <ImageView
+        android:id="@+id/closeDialogButton"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_gravity="top|end"
+        android:layout_margin="8dp"
+        android:padding="8dp"
+        android:src="@drawable/ic_close_red"
+        android:contentDescription="@string/cancel"
+        android:clickable="true"
+        android:focusable="true"
+        android:background="?attr/selectableItemBackgroundBorderless" />
+
+</FrameLayout>

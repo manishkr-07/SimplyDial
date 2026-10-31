@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <!-- Main content with background -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/call_confirmation_dialog_background"
+        android:orientation="horizontal"
+        android:padding="24dp"
+        android:paddingTop="40dp"
+        android:gravity="center_vertical">
+
+        <!-- Call icon container with water ripple effect (Clickable) -->
+        <FrameLayout
+            android:id="@+id/call_icon_container"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_marginEnd="24dp"
+            android:clickable="true"
+            android:focusable="true">
+
+            <!-- Water ripple effect behind the call icon -->
+            <org.fossify.phone.views.WaterRippleView
+                android:id="@+id/water_ripple_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+            <!-- Animated call icon (Sunrise Orange) -->
+            <ImageView
+                android:id="@+id/call_icon"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:layout_gravity="center"
+                android:contentDescription="@string/call"
+                android:src="@drawable/ic_phone_vector"
+                android:tint="?attr/colorPrimary" />
+        </FrameLayout>
+
+        <!-- Text content on the right -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center_vertical">
+
+            <!-- Dialog title -->
+            <TextView
+                android:id="@+id/confirmation_dialog_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:text="@string/tap_to_call"
+                android:textColor="?attr/android:textColorPrimary"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <!-- Contact name -->
+            <TextView
+                android:id="@+id/confirmation_dialog_message"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="?attr/android:textColorSecondary"
+                android:textSize="16sp"
+                tools:text="John Doe" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- Close button (Red X) in top-right corner -->
+    <ImageView
+        android:id="@+id/close_dialog_button"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_gravity="top|end"
+        android:layout_margin="8dp"
+        android:padding="8dp"
+        android:src="@drawable/ic_close_red"
+        android:contentDescription="@string/cancel"
+        android:clickable="true"
+        android:focusable="true"
+        android:background="?attr/selectableItemBackgroundBorderless" />
+
+</FrameLayout>

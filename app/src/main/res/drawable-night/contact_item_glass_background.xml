@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Beige to dark grey gradient border -->
+    <item>
+        <shape android:shape="rectangle">
+            <gradient
+                android:startColor="#d1c8b6"
+                android:endColor="#262626"
+                android:angle="0"
+                android:type="linear"/>
+            <corners android:radius="10dp"/>
+        </shape>
+    </item>
+    
+    <!-- Mocha to dark grey gradient background -->
+    <item
+        android:left="2dp"
+        android:right="2dp"
+        android:top="2dp"
+        android:bottom="2dp">
+        <shape android:shape="rectangle">
+            <gradient
+                android:startColor="#8B4513"
+                android:endColor="#262626"
+                android:angle="0"
+                android:type="linear"/>
+            <corners android:radius="8dp"/>
+        </shape>
+    </item>
+</layer-list>

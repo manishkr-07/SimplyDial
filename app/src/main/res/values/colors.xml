@@ -1,7 +1,95 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="ripple_foreground">#33FFFFFF</color>
-    <color name="color_missed_call">@color/md_red_500_dark</color>
-    <color name="color_outgoing_call">@color/md_green_600</color>
-    <color name="color_incoming_call">@color/md_blue_600</color>
+    <!-- Light Theme Colors - Default for all users -->
+    <!-- These colors are automatically overridden by values-night/colors.xml when system dark mode is enabled -->
+    
+    <!-- Primary Backgrounds - Light Mode -->
+    <color name="background_color">#FFFFFF</color>
+    <color name="surface_color">#F5F5F5</color>
+    <color name="elevated_surface_color">#FFFFFF</color>
+    
+    <!-- Card and Dialog Backgrounds -->
+    <color name="card_background">#FFFFFF</color>
+    <color name="dialog_background">#FAFAFA</color>
+    
+    <!-- Primary Accent - Material Blue -->
+    <color name="primary_color">#2196F3</color>
+    <color name="primary_variant_color">#1976D2</color>
+    <color name="primary_dark_color">#0D47A1</color>
+    
+    <!-- Secondary Accent - Material Teal -->
+    <color name="secondary_color">#009688</color>
+    <color name="secondary_variant_color">#00796B</color>
+    
+    <!-- Text Colors - Dark on Light -->
+    <color name="text_primary">#212121</color>
+    <color name="text_secondary">#757575</color>
+    <color name="text_tertiary">#9E9E9E</color>
+    <color name="text_disabled">#BDBDBD</color>
+    
+    <!-- Icon Colors -->
+    <color name="icon_primary">#212121</color>
+    <color name="icon_secondary">#757575</color>
+    <color name="icon_disabled">#BDBDBD</color>
+    
+    <!-- Divider and Border Colors -->
+    <color name="divider_color">#E0E0E0</color>
+    <color name="border_color">#BDBDBD</color>
+    
+    <!-- Status Colors - Universal -->
+    <color name="success_color">#4CAF50</color>
+    <color name="warning_color">#FF9800</color>
+    <color name="error_color">#F44336</color>
+    <color name="info_color">#2196F3</color>
+    
+    <!-- Call Status Colors -->
+    <color name="color_missed_call">#F44336</color>
+    <color name="color_outgoing_call">#4CAF50</color>
+    <color name="color_incoming_call">#2196F3</color>
+    
+    <!-- Bottom Navigation -->
+    <color name="bottom_nav_background">#FFFFFF</color>
+    <color name="bottom_nav_selected">#2196F3</color>
+    <color name="bottom_nav_unselected">#757575</color>
+    
+    <!-- Ripple and Selection Colors -->
+    <color name="ripple_foreground">#1F000000</color>
+    <color name="ripple_color">#1F000000</color>
+    <color name="selection_color">#1F2196F3</color>
+    <color name="highlight_color">#332196F3</color>
+    
+    <!-- FAB Colors -->
+    <color name="fab_background">#2196F3</color>
+    <color name="fab_icon">#FFFFFF</color>
+    
+    <!-- Statusbar and Navigation Bar -->
+    <color name="statusbar_color">#1976D2</color>
+    <color name="navigationbar_color">#FFFFFF</color>
+    
+    <!-- Dialpad Specific Colors -->
+    <color name="dialpad_background">#FFFFFF</color>
+    <color name="dialpad_button_background">#F5F5F5</color>
+    <color name="dialpad_button_pressed">#E0E0E0</color>
+    <color name="dialpad_text">#212121</color>
+    <color name="dialpad_text_secondary">#757575</color>
+    <color name="dialpad_call_button">#4CAF50</color>
+    <color name="dialpad_delete_button">#F44336</color>
+    
+    <!-- Shadow Effects -->
+    <color name="neon_glow">#00000000</color>
+    <color name="shadow_color">#40000000</color>
+    
+    <!-- Call Screen Colors -->
+    <color name="call_background">#FFFFFF</color>
+    <color name="call_control_background">#F5F5F5</color>
+    <color name="call_timer">#757575</color>
+    <color name="call_waveform">#2196F3</color>
+    
+    <!-- Call State Colors -->
+    <color name="call_accept">#4CAF50</color>
+    <color name="call_reject">#F44336</color>
+    <color name="call_ringing">#2196F3</color>
+    <color name="call_muted">#FF9800</color>
+    <color name="call_recording">#F44336</color>
+    <color name="call_dialing">#2196F3</color>
 </resources>

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- BLACK DIAMOND THEME - AMOLED Black + Electric Cyan -->
+    
+    <!-- Primary Backgrounds - AMOLED True Black -->
+    <color name="dark_background">#000000</color>
+    <color name="dark_surface">#0A0A0A</color>
+    <color name="dark_surface_elevated">#111111</color>
+    
+    <!-- Special Theme Colors for Dark Mode -->
+    <color name="dark_pale_yellow">#8B4513</color> <!-- Mocha instead of #FFFFDD -->
+    <color name="dark_white_replacement">#262626</color> <!-- Dark grey instead of white -->
+    <color name="dark_golden">#d1c8b6</color> <!-- Beige/tan instead of golden -->
+    <color name="dark_rose_gold">#003b70</color> <!-- Dark blue instead of rose gold -->
+    <color name="dark_sunrise_orange">#00b2b6</color> <!-- Teal instead of sunrise orange -->
+    <color name="dark_yellowish_tone">#2E8B57</color> <!-- Seagreen/blue dark shade -->
+    
+    <!-- Card and Dialog Backgrounds -->
+    <color name="dark_card_background">#0A0A0A</color>
+    <color name="dark_dialog_background">#0D0D0D</color>
+    
+    <!-- Primary Accent - Electric Cyan/Aqua Neon -->
+    <color name="dark_primary">#00E5FF</color>
+    <color name="dark_primary_variant">#00B8D4</color>
+    <color name="dark_primary_dark">#00ACC1</color>
+    
+    <!-- Secondary Accent - Soft Aqua Highlight -->
+    <color name="dark_secondary">#4DD0E1</color>
+    <color name="dark_secondary_variant">#26C6DA</color>
+    
+    <!-- Text Colors - High Contrast on Black -->
+    <color name="dark_text_primary">#E0E0E0</color>  <!-- Light grey for good readability -->
+    <color name="dark_text_secondary">#9E9E9E</color>
+    <color name="dark_text_tertiary">#757575</color>
+    <color name="dark_text_disabled">#424242</color>
+    <color name="dark_white_text">#E0E0E0</color>  <!-- For explicitly white text areas -->
+    
+    <!-- Icon Colors - Cyan Neon Tints -->
+    <color name="dark_icon_primary">#00E5FF</color>
+    <color name="dark_icon_secondary">#4DD0E1</color>
+    <color name="dark_icon_disabled">#616161</color>
+    
+    <!-- Divider and Border Colors - Minimal Dark Gray -->
+    <color name="dark_divider">#1F1F1F</color>
+    <color name="dark_border">#1F1F1F</color>
+    
+    <!-- Status Colors - Modern Futuristic Palette -->
+    <color name="dark_success">#2ECC71</color>
+    <color name="dark_warning">#FFD54F</color>
+    <color name="dark_error">#E74C3C</color>
+    <color name="dark_info">#00E5FF</color>
+    
+    <!-- Call Status Colors - Black Diamond -->
+    <color name="dark_missed_call">#E74C3C</color>
+    <color name="dark_outgoing_call">#2ECC71</color>
+    <color name="dark_incoming_call">#00E5FF</color>
+    
+    <!-- Bottom Navigation - AMOLED Black with Cyan -->
+    <color name="dark_bottom_nav_background">#000000</color>
+    <color name="dark_bottom_nav_selected">#00E5FF</color>
+    <color name="dark_bottom_nav_unselected">#4DD0E1</color>
+    
+    <!-- Ripple and Selection Colors - Aqua Glow -->
+    <color name="dark_ripple">#1A00E5FF</color>
+    <color name="dark_selection">#2600E5FF</color>
+    <color name="dark_highlight">#3300E5FF</color>
+    
+    <!-- FAB Colors - Neon Gradient -->
+    <color name="dark_fab_background">#00E5FF</color>
+    <color name="dark_fab_icon">#000000</color>
+    
+    <!-- Statusbar and Navigation Bar - Pure AMOLED -->
+    <color name="dark_statusbar">#000000</color>
+    <color name="dark_navigationbar">#000000</color>
+    
+    <!-- Dialpad Specific Colors - Black Diamond -->
+    <color name="dark_dialpad_background">#000000</color>
+    <color name="dark_dialpad_button">#111111</color>
+    <color name="dark_dialpad_button_pressed">#1A1A1A</color>
+    <color name="dark_dialpad_text">#E0E0E0</color>  <!-- Light grey for visibility -->
+    <color name="dark_dialpad_text_secondary">#4DD0E1</color>
+    <color name="dark_dialpad_call_button">#00E5FF</color>
+    <color name="dark_dialpad_delete_button">#4DD0E1</color>
+    
+    <!-- Neon Glow Effects -->
+    <color name="dark_neon_glow">#4000E5FF</color>
+    <color name="dark_shadow">#BF000000</color>
+    
+    <!-- Call Screen Colors -->
+    <color name="dark_call_background">#000000</color>
+    <color name="dark_call_control_bg">#0D0D0D</color>
+    <color name="dark_call_timer">#4DD0E1</color>
+    <color name="dark_call_waveform">#00E5FF</color>
+    
+    <!-- Call State Colors -->
+    <color name="dark_call_accept">#2ECC71</color>
+    <color name="dark_call_reject">#E74C3C</color>
+    <color name="dark_call_ringing">#00E5FF</color>
+    <color name="dark_call_muted">#4DD0E1</color>
+    <color name="dark_call_recording">#FF3B3B</color>
+    <color name="dark_call_dialing">#00B8D4</color>
+</resources>

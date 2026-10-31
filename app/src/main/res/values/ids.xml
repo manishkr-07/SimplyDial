@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="gradient_ring_animator" type="id"/>
+    <item name="call_button_animator" type="id"/>
+</resources>

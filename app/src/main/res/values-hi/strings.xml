@@ -74,4 +74,15 @@
     <string name="faq_3_title">इस ऐप में मेरे कॉन्टैक्ट्स क्यों नहीं दिख रहे?</string>
     <string name="call_is_being_connected">आपका कॉल कनेक्ट किया जा रहा है…</string>
     <string name="faq_3_text">Fossify Phone केवल उन संपर्कों को प्रदर्शित करता है जिनके साथ फ़ोन नंबर संबद्ध होता है। बिना फ़ोन नंबर वाले संपर्क ऐप में नहीं दिखाए जाते हैं।</string>
+    <string name="app_language_preference">ऐप भाषा</string>
+    <string name="change_app_language">ऐप भाषा बदलें</string>
+    <string name="select_language">भाषा चुनें</string>
+    <string name="choose_your_language">अपनी पसंदीदा भाषा चुनें</string>
+    <string name="language_english">English</string>
+    <string name="language_hindi">हिंदी (Hindi)</string>
+    <string name="language_changed_restart">भाषा बदल गई। परिवर्तन लागू करने के लिए ऐप को पुनः आरंभ करें।</string>
+    <string name="select_voice_language">वॉइस पहचान भाषा चुनें</string>
+    <string name="choose_voice_language">वॉइस कमांड के लिए भाषा चुनें</string>
+    <string name="voice_dial_language">वॉइस डायल भाषा</string>
+    <string name="change_voice_dial_language">वॉइस पहचान भाषा बदलें</string>
 </resources>

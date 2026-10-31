@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="@dimen/medium_margin"
+    android:layout_marginTop="@dimen/small_margin"
+    android:layout_marginEnd="@dimen/medium_margin"
+    android:layout_marginBottom="@dimen/small_margin"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="2dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/medium_margin">
+
+        <!-- Recording icon -->
+        <ImageView
+            android:id="@+id/recording_icon"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:contentDescription="@string/call_recording"
+            android:padding="8dp"
+            android:src="@drawable/ic_microphone_vector"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/color_primary" />
+
+        <!-- File name -->
+        <org.fossify.commons.views.MyTextView
+            android:id="@+id/recording_file_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/medium_margin"
+            android:layout_marginEnd="@dimen/medium_margin"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/recording_icon"
+            app:layout_constraintTop_toTopOf="@id/recording_icon"
+            tools:text="CALL_IN_1234567890_20240122_143022.m4a" />
+
+        <!-- Date -->
+        <org.fossify.commons.views.MyTextView
+            android:id="@+id/recording_date"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/medium_margin"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="@dimen/medium_margin"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/recording_icon"
+            app:layout_constraintTop_toBottomOf="@id/recording_file_name"
+            tools:text="Jan 22, 2024 • 2:30 PM" />
+
+        <!-- Details (size and duration) -->
+        <org.fossify.commons.views.MyTextView
+            android:id="@+id/recording_details"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/medium_margin"
+            android:layout_marginTop="2dp"
+            android:layout_marginEnd="@dimen/medium_margin"
+            android:alpha="0.7"
+            android:textSize="12sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/recording_icon"
+            app:layout_constraintTop_toBottomOf="@id/recording_date"
+            tools:text="2.4 MB • 3:45" />
+
+        <!-- Action buttons -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/medium_margin"
+            android:gravity="end"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/recording_icon">
+
+            <!-- Play/Pause button -->
+            <ImageView
+                android:id="@+id/recording_play_button"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/play_recording"
+                android:padding="8dp"
+                android:src="@drawable/ic_play_vector"
+                app:tint="@color/color_primary" />
+
+            <!-- Share button -->
+            <ImageView
+                android:id="@+id/recording_share_button"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="@dimen/small_margin"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/share_recording"
+                android:padding="8dp"
+                android:src="@drawable/ic_share_vector" />
+
+            <!-- Delete button -->
+            <ImageView
+                android:id="@+id/recording_delete_button"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="@dimen/small_margin"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/delete_recording"
+                android:padding="8dp"
+                android:src="@drawable/ic_delete"
+                app:tint="@color/md_red" />
+
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.cardview.widget.CardView>

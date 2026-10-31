@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Selected state: Black background, Red border, White icon -->
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="#40FFFFFF">
+    <item>
+        <shape android:shape="oval">
+            <solid android:color="#000000" />
+            <stroke
+                android:width="2dp"
+                android:color="#FF0000" />
+            <size
+                android:width="85dp"
+                android:height="85dp" />
+        </shape>
+    </item>
+</ripple>

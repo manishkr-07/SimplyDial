@@ -3,17 +3,22 @@ package org.fossify.phone.adapters
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.ShortcutInfo
+import android.graphics.Outline
 import android.graphics.drawable.Icon
 import android.net.Uri
 import android.text.TextUtils
 import android.util.TypedValue
 import android.view.*
+import android.view.Gravity
+import android.view.ViewOutlineProvider
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.DiffUtil
 import androidx.viewbinding.ViewBinding
 import com.bumptech.glide.Glide
 import org.fossify.commons.adapters.MyRecyclerViewAdapter
@@ -30,11 +35,19 @@ import org.fossify.commons.models.contacts.Contact
 import org.fossify.commons.views.MyRecyclerView
 import org.fossify.phone.R
 import org.fossify.phone.activities.SimpleActivity
+import org.fossify.phone.extensions.addAnimatedGradientRing
 import org.fossify.phone.extensions.areMultipleSIMsAvailable
 import org.fossify.phone.extensions.callContactWithSim
 import org.fossify.phone.extensions.config
 import org.fossify.phone.extensions.startContactDetailsIntent
+import org.fossify.phone.dialogs.VideoCallOptionsDialog
+import org.fossify.phone.helpers.JitsiMeetHelper
+import org.fossify.phone.helpers.RecentsHelper
+import org.fossify.commons.helpers.SimpleContactsHelper
 import org.fossify.phone.interfaces.RefreshItemsListener
+import org.fossify.phone.models.RecentCall
+import android.provider.CallLog
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import java.util.Collections
 
 class ContactsAdapter(
@@ -58,10 +71,14 @@ class ContactsAdapter(
     private var startReorderDragListener: StartReorderDragListener? = null
     var onDragEndListener: (() -> Unit)? = null
     var onSpanCountListener: (Int) -> Unit = {}
+    
+    // Expandable section tracking
+    private val expandedContacts = HashSet<Int>()
 
 
     init {
         setupDragListener(true)
+        recyclerView.itemAnimator?.changeDuration = 0
 
         if (recyclerView.layoutManager is GridLayoutManager) {
             setupZoomListener(this)
@@ -92,7 +109,7 @@ class ContactsAdapter(
             findItem(R.id.cab_remove_default_sim).isVisible = isOneItemSelected && (activity.config.getCustomSIM(selectedNumber) ?: "") != ""
 
             findItem(R.id.cab_delete).isVisible = showDeleteButton
-            findItem(R.id.cab_create_shortcut).title = activity.addLockedLabelIfNeeded(R.string.create_shortcut)
+            findItem(R.id.cab_create_shortcut).title = activity.getString(R.string.create_shortcut)
             findItem(R.id.cab_create_shortcut).isVisible = isOneItemSelected && isOreoPlus()
             findItem(R.id.cab_view_details).isVisible = isOneItemSelected
             findItem(R.id.cab_block_unblock_contact).isVisible = isOneItemSelected && isNougatPlus()
@@ -168,23 +185,24 @@ class ContactsAdapter(
                 R.string.block_contact
             }
 
-            callback(activity.addLockedLabelIfNeeded(cabItemTitleRes))
+            callback(activity.getString(cabItemTitleRes))
         }
     }
 
     private fun tryBlockingUnblocking() {
         val contact = getSelectedItems().firstOrNull() ?: return
 
-        if (activity.isOrWasThankYouInstalled()) {
-            activity.isContactBlocked(contact) { blocked ->
-                if (blocked) {
-                    tryUnblocking(contact)
-                } else {
-                    tryBlocking(contact)
+        activity.isContactBlocked(contact) { blocked ->
+            if (blocked) {
+                tryUnblocking(contact)
+            } else {
+                askConfirmBlock(contact) { contactBlocked ->
+                    if (contactBlocked) {
+                        finishActMode()
+                        refreshItemsListener?.refreshItems()
+                    }
                 }
             }
-        } else {
-            FeatureLockedDialog(activity) { }
         }
     }
 
@@ -223,17 +241,27 @@ class ContactsAdapter(
         }
     }
 
-    @SuppressLint("NotifyDataSetChanged")
     fun updateItems(newItems: List<Contact>, highlightText: String = "") {
-        if (newItems.hashCode() != contacts.hashCode()) {
-            contacts = ArrayList(newItems)
-            textToHighlight = highlightText
-            notifyDataSetChanged()
-            finishActMode()
-        } else if (textToHighlight != highlightText) {
-            textToHighlight = highlightText
-            notifyDataSetChanged()
-        }
+        val oldItems = contacts
+        val diff = DiffUtil.calculateDiff(object : DiffUtil.Callback() {
+            override fun getOldListSize() = oldItems.size
+            override fun getNewListSize() = newItems.size
+            override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+                return oldItems[oldItemPosition].rawId == newItems[newItemPosition].rawId
+            }
+            override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+                val o = oldItems[oldItemPosition]
+                val n = newItems[newItemPosition]
+                // Compare core fields used on UI for minimal invalidation
+                val oNum = o.getPrimaryNumber()
+                val nNum = n.getPrimaryNumber()
+                return o.getNameToDisplay() == n.getNameToDisplay() && o.photoUri == n.photoUri && oNum == nNum
+            }
+        })
+        contacts = ArrayList(newItems)
+        textToHighlight = highlightText
+        diff.dispatchUpdatesTo(this)
+        finishActMode()
     }
 
     @SuppressLint("MissingPermission")
@@ -317,11 +345,7 @@ class ContactsAdapter(
     }
 
     private fun tryCreateShortcut() {
-        if (activity.isOrWasThankYouInstalled()) {
-            createShortcut()
-        } else {
-            FeatureLockedDialog(activity) { }
-        }
+        createShortcut()
     }
 
     @SuppressLint("NewApi")
@@ -363,10 +387,34 @@ class ContactsAdapter(
     private fun setupView(binding: ItemViewBinding, contact: Contact, holder: ViewHolder) {
         binding.apply {
             root.setupViewBackground(activity)
-            itemContactFrame.isSelected = selectedKeys.contains(contact.rawId)
+            
+            // Apply gold border and pale yellow glass blur background
+            itemContactFrame.apply {
+                setBackgroundResource(R.drawable.contact_item_glass_background)
+                val marginInDp = 8
+                val marginInPx = (marginInDp * resources.displayMetrics.density).toInt()
+                
+                // Add extra top margin for first item to show below search bar
+                val topMargin = if (holder.bindingAdapterPosition == 0) {
+                    (marginInPx * 3) // Extra space below search/filter bar
+                } else {
+                    marginInPx / 2
+                }
+                
+                val params = layoutParams as? ViewGroup.MarginLayoutParams
+                params?.setMargins(marginInPx, topMargin, marginInPx, marginInPx / 2)
+                layoutParams = params
+                setPadding(marginInPx, marginInPx, marginInPx, marginInPx)
+                elevation = 4f
+                isSelected = selectedKeys.contains(contact.rawId)
+                
+                // Allow circular button to extend outside container
+                clipToPadding = false
+                clipChildren = false
+            }
 
             itemContactImage.apply {
-                if (profileIconClick != null && viewType != VIEW_TYPE_GRID) {
+                if (profileIconClick != null && viewType != VIEW_TYPE_GRID && activity.config.enableProfilePictureClick) {
                     setBackgroundResource(R.drawable.selector_clickable_circle)
 
                     setOnClickListener {
@@ -380,6 +428,11 @@ class ContactsAdapter(
                         holder.viewLongClicked()
                         true
                     }
+                } else {
+                    // Remove click listeners and background when disabled
+                    background = null
+                    setOnClickListener(null)
+                    setOnLongClickListener(null)
                 }
             }
 
@@ -432,8 +485,387 @@ class ContactsAdapter(
 
             if (!activity.isDestroyed) {
                 SimpleContactsHelper(root.context).loadContactImage(contact.photoUri, itemContactImage, contact.getNameToDisplay())
+                // Add animated gradient ring around profile photo
+                itemContactImage.addAnimatedGradientRing()
+            }
+            
+            // Add expandable section
+            setupExpandableSection(binding, contact, holder)
+        }
+    }
+    
+    private fun setupExpandableSection(binding: ItemViewBinding, contact: Contact, holder: ViewHolder) {
+        binding.apply {
+            val isExpanded = expandedContacts.contains(contact.rawId)
+            
+            // Hide original profile image and name when expanded to avoid duplicates
+            itemContactImage.visibility = if (isExpanded) View.GONE else View.VISIBLE
+            itemContactName.visibility = if (isExpanded) View.GONE else View.VISIBLE
+            
+            // Remove ALL old expandable views to prevent recycling issues
+            // This removes views from previously recycled items
+            val viewsToRemove = mutableListOf<View>()
+            for (i in 0 until itemContactFrame.childCount) {
+                val child = itemContactFrame.getChildAt(i)
+                val tag = child.tag as? String
+                if (tag != null && (tag.startsWith("expand_button_") || 
+                                    tag.startsWith("phone_number_") || 
+                                    tag.startsWith("expanded_section_") ||
+                                    tag.startsWith("expanded_content_"))) {
+                    viewsToRemove.add(child)
+                }
+            }
+            viewsToRemove.forEach { itemContactFrame.removeView(it) }
+            
+            // Create expand button - HALF IN/HALF OUT but FULLY VISIBLE
+            val expandButton = ImageView(activity).apply {
+                tag = "expand_button_${contact.rawId}"
+                setImageResource(R.drawable.ic_expand_arrow)
+                scaleType = ImageView.ScaleType.CENTER
+                setBackgroundResource(R.drawable.expand_circle_gradient)
+                elevation = 4f  // Subtle elevation, no dark shadow
+                outlineProvider = null  // Remove shadow
+                
+                val size = (48 * resources.displayMetrics.density).toInt()
+                layoutParams = ConstraintLayout.LayoutParams(size, size).apply {
+                    // Position at TOP-RIGHT corner
+                    topToTop = ConstraintLayout.LayoutParams.PARENT_ID
+                    endToEnd = ConstraintLayout.LayoutParams.PARENT_ID
+                    topMargin = (12 * resources.displayMetrics.density).toInt()
+                    marginEnd = (-size / 2)  // Half outside
+                }
+                
+                setOnClickListener {
+                    toggleExpanded(contact.rawId, holder)
+                }
+                
+                // Set rotation based on state
+                rotation = if (isExpanded) 180f else 0f
+            }
+            itemContactFrame.addView(expandButton)
+            
+            // Create expanded content section - only when expanded
+            if (isExpanded) {
+                // Create vertical layout for expanded content
+                val expandedContent = LinearLayout(activity).apply {
+                    tag = "expanded_content_${contact.rawId}"
+                    orientation = LinearLayout.VERTICAL
+                    gravity = Gravity.TOP or Gravity.CENTER_HORIZONTAL
+                    
+                    layoutParams = ConstraintLayout.LayoutParams(
+                        0,  // Match constraint width
+                        ConstraintLayout.LayoutParams.WRAP_CONTENT
+                    ).apply {
+                        topToTop = ConstraintLayout.LayoutParams.PARENT_ID
+                        bottomToBottom = ConstraintLayout.LayoutParams.PARENT_ID
+                        startToStart = ConstraintLayout.LayoutParams.PARENT_ID
+                        endToEnd = ConstraintLayout.LayoutParams.PARENT_ID
+                        topMargin = (8 * resources.displayMetrics.density).toInt()
+                        bottomMargin = (12 * resources.displayMetrics.density).toInt()
+                    }
+                    
+                    val contentPadding = (12 * resources.displayMetrics.density).toInt()
+                    setPadding(contentPadding, contentPadding, contentPadding, contentPadding)
+                }
+                
+                // Profile Header - Image + Name Horizontal Layout
+                val profileHeader = LinearLayout(activity).apply {
+                    orientation = LinearLayout.HORIZONTAL
+                    gravity = Gravity.START or Gravity.CENTER_VERTICAL
+                    
+                    layoutParams = LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT
+                    ).apply {
+                        bottomMargin = (8 * resources.displayMetrics.density).toInt()
+                    }
+                    
+                    // Profile Image
+                    val profileImage = ImageView(activity).apply {
+                        val imageSize = (48 * resources.displayMetrics.density).toInt()
+                        layoutParams = LinearLayout.LayoutParams(imageSize, imageSize).apply {
+                            marginEnd = (12 * resources.displayMetrics.density).toInt()
+                        }
+                        scaleType = ImageView.ScaleType.CENTER_CROP
+                        
+                        // Circular shape
+                        clipToOutline = true
+                        outlineProvider = object : ViewOutlineProvider() {
+                            override fun getOutline(view: View, outline: Outline) {
+                                outline.setOval(0, 0, view.width, view.height)
+                            }
+                        }
+                        
+                        // Load contact image
+                        if (!activity.isDestroyed) {
+                            SimpleContactsHelper(context).loadContactImage(
+                                contact.photoUri,
+                                this,
+                                contact.getNameToDisplay()
+                            )
+                            // Add animated gradient ring
+                            this.addAnimatedGradientRing()
+                        }
+                    }
+                    addView(profileImage)
+                    
+                    // Profile Name
+                    val profileName = TextView(activity).apply {
+                        text = contact.getNameToDisplay()
+                        textSize = 20f
+                        gravity = Gravity.START or Gravity.CENTER_VERTICAL
+                        setTextColor(activity.getProperTextColor())
+                        setTypeface(typeface, android.graphics.Typeface.BOLD)
+                        
+                        layoutParams = LinearLayout.LayoutParams(
+                            LinearLayout.LayoutParams.WRAP_CONTENT,
+                            LinearLayout.LayoutParams.WRAP_CONTENT
+                        )
+                    }
+                    addView(profileName)
+                }
+                expandedContent.addView(profileHeader)
+                
+                // Phone Number - Left-aligned, Below Name
+                val phoneNumberText = TextView(activity).apply {
+                    tag = "phone_number_${contact.rawId}"
+                    val primaryNumber = contact.phoneNumbers.firstOrNull()?.normalizedNumber ?: ""
+                    text = primaryNumber
+                    textSize = 14f
+                    gravity = Gravity.START
+                    setTextColor(textColor.adjustAlpha(0.75f))
+                    
+                    layoutParams = LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT
+                    ).apply {
+                        bottomMargin = (16 * resources.displayMetrics.density).toInt()
+                        marginStart = (60 * resources.displayMetrics.density).toInt()  // Align with name
+                    }
+                }
+                expandedContent.addView(phoneNumberText)
+            
+                // Buttons Container - Side by Side
+                val buttonsContainer = LinearLayout(activity).apply {
+                    tag = "expanded_section_${contact.rawId}"
+                    orientation = LinearLayout.HORIZONTAL
+                    gravity = Gravity.CENTER
+                    
+                    layoutParams = LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT
+                    ).apply {
+                        bottomMargin = (8 * resources.displayMetrics.density).toInt()
+                    }
+                    
+                    // SMS Button - Moderate Size
+                    val smsButton = TextView(activity).apply {
+                        text = "💬\nSMS"
+                        textSize = 14f
+                        gravity = Gravity.CENTER
+                        setTextColor(activity.getProperTextColor())
+                        setBackgroundResource(R.drawable.action_button_background)
+                        val btnPadding = (12 * resources.displayMetrics.density).toInt()
+                        setPadding(btnPadding, btnPadding, btnPadding, btnPadding)
+                        minHeight = (50 * resources.displayMetrics.density).toInt()
+                        elevation = 2f
+                        
+                        setOnClickListener {
+                            sendSMSToContact(contact)
+                        }
+                    }
+                    
+                    // Full History Button - Moderate Size
+                    val historyButton = TextView(activity).apply {
+                        text = "📜\nHistory"
+                        textSize = 14f
+                        gravity = Gravity.CENTER
+                        setTextColor(activity.getProperTextColor())
+                        setBackgroundResource(R.drawable.action_button_background)
+                        val btnPadding = (12 * resources.displayMetrics.density).toInt()
+                        setPadding(btnPadding, btnPadding, btnPadding, btnPadding)
+                        minHeight = (50 * resources.displayMetrics.density).toInt()
+                        elevation = 2f
+                        
+                        setOnClickListener {
+                            showFullHistory(contact)
+                        }
+                    }
+                    
+                    // Video Call Button - Moderate Size
+                    val videoCallButton = TextView(activity).apply {
+                        text = "📹\nVideo"
+                        textSize = 14f
+                        gravity = Gravity.CENTER
+                        setTextColor(activity.getProperTextColor())
+                        setBackgroundResource(R.drawable.action_button_background)
+                        val btnPadding = (12 * resources.displayMetrics.density).toInt()
+                        setPadding(btnPadding, btnPadding, btnPadding, btnPadding)
+                        minHeight = (50 * resources.displayMetrics.density).toInt()
+                        elevation = 2f
+                        
+                        setOnClickListener {
+                            sendVideoCallLinkToContact(contact)
+                        }
+                    }
+                    
+                    // Add buttons with equal weight
+                    addView(smsButton, LinearLayout.LayoutParams(
+                        0,
+                        LinearLayout.LayoutParams.WRAP_CONTENT,
+                        1f  // Equal width
+                    ))
+                    
+                    addView(historyButton, LinearLayout.LayoutParams(
+                        0,
+                        LinearLayout.LayoutParams.WRAP_CONTENT,
+                        1f  // Equal width
+                    ).apply {
+                        marginStart = (8 * resources.displayMetrics.density).toInt()
+                    })
+                    
+                    addView(videoCallButton, LinearLayout.LayoutParams(
+                        0,
+                        LinearLayout.LayoutParams.WRAP_CONTENT,
+                        1f  // Equal width
+                    ).apply {
+                        marginStart = (8 * resources.displayMetrics.density).toInt()
+                    })
+                }
+                expandedContent.addView(buttonsContainer)
+                
+                itemContactFrame.addView(expandedContent)
             }
         }
+    }
+    
+    private fun toggleExpanded(contactId: Int, holder: ViewHolder) {
+        if (expandedContacts.contains(contactId)) {
+            expandedContacts.remove(contactId)
+        } else {
+            expandedContacts.add(contactId)
+        }
+        notifyItemChanged(holder.bindingAdapterPosition)
+    }
+    
+    private fun sendSMSToContact(contact: Contact) {
+        val phoneNumber = contact.phoneNumbers.firstOrNull()?.normalizedNumber ?: return
+        activity.launchSendSMSIntent(phoneNumber)
+    }
+    
+    private fun showFullHistory(contact: Contact) {
+        val phoneNumbers = contact.phoneNumbers.map { it.normalizedNumber }
+        if (phoneNumbers.isEmpty()) {
+            activity.toast(R.string.no_phone_number_found)
+            return
+        }
+        
+        // Fetch call history for this contact
+        ensureBackgroundThread {
+            val recentsHelper = RecentsHelper(activity)
+            recentsHelper.getRecentCalls { allCalls ->
+                val contactCalls = allCalls.filter { call ->
+                    phoneNumbers.any { number -> number == call.phoneNumber }
+                }.sortedByDescending { it.startTS }
+                
+                activity.runOnUiThread {
+                    showCallHistoryDialog(contact, contactCalls)
+                }
+            }
+        }
+    }
+    
+    private fun sendVideoCallLinkToContact(contact: Contact) {
+        val phoneNumber = contact.phoneNumbers.firstOrNull()?.normalizedNumber
+        if (phoneNumber == null) {
+            activity.toast("No phone number available for this contact")
+            return
+        }
+        
+        val contactName = contact.getNameToDisplay()
+        
+        // Show video call options dialog (same as in CallActivity)
+        VideoCallOptionsDialog(
+            activity = activity as SimpleActivity,
+            contactName = contactName,
+            contactNumber = phoneNumber
+        )
+    }
+    
+    private fun showCallHistoryDialog(contact: Contact, calls: List<RecentCall>) {
+        val dialog = BottomSheetDialog(activity)
+        val view = activity.layoutInflater.inflate(android.R.layout.simple_list_item_2, null)
+        
+        val layout = LinearLayout(activity).apply {
+            orientation = LinearLayout.VERTICAL
+            val padding = (16 * resources.displayMetrics.density).toInt()
+            setPadding(padding, padding, padding, padding)
+        }
+        
+        // Title
+        TextView(activity).apply {
+            text = "${contact.getNameToDisplay()} - Call History"
+            textSize = 20f
+            setTypeface(null, android.graphics.Typeface.BOLD)
+            setTextColor(activity.getProperTextColor())
+            val marginBottom = (16 * resources.displayMetrics.density).toInt()
+            setPadding(0, 0, 0, marginBottom)
+            layout.addView(this)
+        }
+        
+        if (calls.isEmpty()) {
+            TextView(activity).apply {
+                text = "No call history found"
+                textSize = 16f
+                setTextColor(activity.getProperTextColor())
+                layout.addView(this)
+            }
+        } else {
+            calls.forEach { call ->
+                val callView = LinearLayout(activity).apply {
+                    orientation = LinearLayout.VERTICAL
+                    val padding = (12 * resources.displayMetrics.density).toInt()
+                    setPadding(padding, padding, padding, padding)
+                    setBackgroundResource(R.drawable.action_button_background)
+                    val marginBottom = (8 * resources.displayMetrics.density).toInt()
+                    (layoutParams as? ViewGroup.MarginLayoutParams)?.bottomMargin = marginBottom
+                }
+                
+                val callType = when (call.type) {
+                    CallLog.Calls.OUTGOING_TYPE -> "📞 Outgoing"
+                    CallLog.Calls.INCOMING_TYPE -> "📱 Incoming"
+                    CallLog.Calls.MISSED_TYPE -> "❌ Missed"
+                    else -> "📞 Call"
+                }
+                
+                TextView(activity).apply {
+                    text = "$callType - ${call.startTS.formatDateOrTime(activity, false, false, false)}"
+                    textSize = 16f
+                    setTextColor(activity.getProperTextColor())
+                    setTypeface(null, android.graphics.Typeface.BOLD)
+                    callView.addView(this)
+                }
+                
+                if (call.duration > 0) {
+                    TextView(activity).apply {
+                        text = "Duration: ${activity.formatSecondsToShortTimeString(call.duration)}"
+                        textSize = 14f
+                        setTextColor(activity.getProperTextColor())
+                        callView.addView(this)
+                    }
+                }
+                
+                layout.addView(callView, LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+                ).apply {
+                    bottomMargin = (8 * resources.displayMetrics.density).toInt()
+                })
+            }
+        }
+        
+        dialog.setContentView(layout)
+        dialog.show()
     }
 
     override fun onRowMoved(fromPosition: Int, toPosition: Int) {

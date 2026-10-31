@@ -1,7 +1,12 @@
 package org.fossify.phone.fragments
 
 import android.content.Context
+import android.provider.CallLog.Calls
 import android.util.AttributeSet
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.chip.Chip
+import com.google.android.material.chip.ChipGroup
 import org.fossify.commons.extensions.*
 import org.fossify.commons.helpers.*
 import org.fossify.commons.models.contacts.Contact
@@ -15,7 +20,9 @@ import org.fossify.phone.extensions.config
 import org.fossify.phone.extensions.startCallWithConfirmationCheck
 import org.fossify.phone.extensions.startContactDetailsIntent
 import org.fossify.phone.helpers.RecentsHelper
+import org.fossify.phone.helpers.VisibleContactsEnricher
 import org.fossify.phone.interfaces.RefreshItemsListener
+import org.fossify.phone.metrics.Perf
 import org.fossify.phone.models.CallLogItem
 import org.fossify.phone.models.RecentCall
 
@@ -29,11 +36,32 @@ class RecentsFragment(
 
     private var searchQuery: String? = null
     private var recentsHelper = RecentsHelper(context)
+    private var currentFilter = FILTER_ALL
+    private var hasLoadedData = false
+    private var isFragmentVisible = false
+
+    // Loading/backpressure guards
+    private var isLoading = false
+
+    // Visible contacts enrichment
+    private lateinit var contactsEnricher: VisibleContactsEnricher
+    private var enrichmentScheduled = false
+
+    companion object {
+        private const val FILTER_ALL = 0
+        private const val FILTER_MISSED = 1
+        private const val FILTER_INCOMING = 2
+        private const val FILTER_OUTGOING = 3
+        private const val INITIAL_LOAD_LIMIT = 20  // Load a bit more initially to reduce perceived loading
+        private const val INCREMENTAL_LOAD_SIZE = 50  // Fewer incremental refreshes to avoid UI churn
+    }
 
     override fun onFinishInflate() {
         super.onFinishInflate()
         binding = FragmentRecentsBinding.bind(this)
         innerBinding = RecentsInnerBinding(binding)
+        binding.recentsList.setHasFixedSize(true)
+        binding.recentsList.itemAnimator = null
     }
 
     override fun setupFragment() {
@@ -48,6 +76,17 @@ class RecentsFragment(
             underlineText()
             setOnClickListener {
                 requestCallLogPermission()
+            }
+        }
+
+        contactsEnricher = VisibleContactsEnricher(context)
+        setupFilterChips()
+        setupScrollEnrichment()
+        
+        // Trigger initial load if this is the default visible tab
+        post {
+            if (!hasLoadedData && context.hasPermission(PERMISSION_READ_CALL_LOG)) {
+                refreshItems(invalidate = false)
             }
         }
     }
@@ -65,11 +104,30 @@ class RecentsFragment(
     override fun refreshItems(invalidate: Boolean, callback: (() -> Unit)?) {
         if (invalidate) {
             allRecentCalls = emptyList()
+            hasLoadedData = false
+            recentsHelper.clearCache()
         }
 
-        refreshCallLog(loadAll = false) {
-            refreshCallLog(loadAll = true)
+        // Load data when requested (called when tab becomes visible)
+        if (!hasLoadedData) {
+            hasLoadedData = true
+            isFragmentVisible = true
+            
+            // Initial load with very small batch (10 items) for instant display
+            refreshCallLog(loadAll = false, isInitialLoad = true, preferFast = true) {
+                // One follow-up load shortly after first paint
+                postDelayed({
+                    if (isFragmentVisible && allRecentCalls.filterIsInstance<RecentCall>().size < RecentsHelper.QUERY_LIMIT) {
+                        refreshCallLog(loadAll = false, isInitialLoad = false, preferFast = true)
+                    }
+                }, 250)
+            }
+        } else if (invalidate) {
+            // Force refresh (fast path)
+            refreshCallLog(loadAll = false, isInitialLoad = false, preferFast = true)
         }
+        
+        callback?.invoke()
     }
 
     override fun onSearchClosed() {
@@ -112,7 +170,7 @@ class RecentsFragment(
             if (it) {
                 binding.recentsPlaceholder.text = context.getString(R.string.no_previous_calls)
                 binding.recentsPlaceholder2.beGone()
-                refreshCallLog()
+                refreshCallLog(preferFast = true)
             }
         }
     }
@@ -126,8 +184,13 @@ class RecentsFragment(
     }
 
     private fun gotRecents(recents: List<CallLogItem>) {
-        binding.progressIndicator.hide()
+        // Hide progress indicator immediately when we have items to show
+        if (recents.isNotEmpty()) {
+            binding.progressIndicator.hide()
+        }
+        
         if (recents.isEmpty()) {
+            binding.progressIndicator.hide()
             binding.apply {
                 showOrHidePlaceholder(true)
                 recentsPlaceholder2.beGoneIf(context.hasPermission(PERMISSION_READ_CALL_LOG))
@@ -154,9 +217,11 @@ class RecentsFragment(
                         activity?.startCallWithConfirmationCheck(recentCall.phoneNumber, recentCall.name)
                     },
                     profileIconClick = {
-                        val contact = findContactByCall(it as RecentCall)
-                        if (contact != null) {
-                            activity?.startContactDetailsIntent(contact)
+                        if (context.config.enableProfilePictureClick) {
+                            val contact = findContactByCall(it as RecentCall)
+                            if (contact != null) {
+                                activity?.startContactDetailsIntent(contact)
+                            }
                         }
                     }
                 )
@@ -164,36 +229,83 @@ class RecentsFragment(
                 binding.recentsList.adapter = recentsAdapter
                 recentsAdapter?.updateItems(recents)
 
-                if (context.areSystemAnimationsEnabled) {
-                    binding.recentsList.scheduleLayoutAnimation()
-                }
+                // Correct any cached/wrong names quickly on first paint
+                scheduleVisibleEnrichment(delayMs = 0)
+
+                binding.recentsList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                    override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                        super.onScrollStateChanged(recyclerView, newState)
+                        // Defer heavy binds while scrolling; resume on idle
+                        recentsAdapter?.updateFastBindMode(newState != RecyclerView.SCROLL_STATE_IDLE)
+                    }
+                })
 
                 binding.recentsList.endlessScrollListener = object : MyRecyclerView.EndlessScrollListener {
                     override fun updateTop() = Unit
-                    override fun updateBottom() = refreshCallLog()
+                    override fun updateBottom() {
+                        if (!isLoading) refreshCallLog(preferFast = true)
+                    }
                 }
             } else {
                 recentsAdapter?.updateItems(recents)
+
+                // Keep current visible window accurate when list updates
+                scheduleVisibleEnrichment(delayMs = 0)
             }
+
+            // After first data, turn off fast bind after a short delay to populate details
+            postDelayed({ recentsAdapter?.updateFastBindMode(false) }, 250)
+
+            // Schedule contact enrichment for visible window
+            scheduleVisibleEnrichment()
         }
     }
 
-    private fun refreshCallLog(loadAll: Boolean = false, callback: (() -> Unit)? = null) {
-        getRecentCalls(loadAll) {
+    private fun refreshCallLog(loadAll: Boolean = false, isInitialLoad: Boolean = false, preferFast: Boolean = true, callback: (() -> Unit)? = null) {
+        if (isLoading) return
+        isLoading = true
+        // For very first load, show skeletons in the list and mark perf start
+        if (allRecentCalls.isEmpty() && isInitialLoad) {
+            Perf.markStart()
+            showInitialSkeletons()
+        }
+        
+        getRecentCalls(loadAll, isInitialLoad, preferFast) {
             allRecentCalls = it
             if (searchQuery.isNullOrEmpty()) {
-                activity?.runOnUiThread { gotRecents(it) }
+                activity?.runOnUiThread { 
+                    refreshFilteredCalls()
+                    binding.progressIndicator.hide()
+                }
             } else {
                 updateSearchResult()
             }
 
+            isLoading = false
             callback?.invoke()
+            // After data refresh, enrich visible items
+            scheduleVisibleEnrichment()
         }
     }
 
-    private fun getRecentCalls(loadAll: Boolean, callback: (List<CallLogItem>) -> Unit) {
-        val queryCount = if (loadAll) Int.MAX_VALUE else RecentsHelper.QUERY_LIMIT
+    private fun getRecentCalls(loadAll: Boolean, isInitialLoad: Boolean = false, preferFast: Boolean = true, callback: (List<CallLogItem>) -> Unit) {
+        // Use smaller initial load limit for faster startup
+        val existingCount = allRecentCalls.filterIsInstance<RecentCall>().size
+        val queryCount = when {
+            loadAll -> Int.MAX_VALUE
+            isInitialLoad -> INITIAL_LOAD_LIMIT  // First load: only 10 items
+            existingCount < 30 -> INCREMENTAL_LOAD_SIZE  // Second load: 20 items
+            else -> 50  // Final load: remaining items
+        }
         val existingRecentCalls = allRecentCalls.filterIsInstance<RecentCall>()
+
+        if (!loadAll && preferFast) {
+            recentsHelper.getRecentCallsFast(queryCount) { calls ->
+                // Fast path: show immediately using cached call log fields; enrichment runs right after.
+                callback(groupCallsByDate(calls))
+            }
+            return
+        }
 
         with(recentsHelper) {
             if (context.config.groupSubsequentCalls) {
@@ -214,20 +326,53 @@ class RecentsFragment(
             return
         }
 
-        ContactsHelper(context).getContacts(showOnlyContactsWithNumbers = true) { contacts ->
-            ensureBackgroundThread {
-                val privateContacts = getPrivateContacts()
+        // Use cached contacts from MainActivity if available
+        val mainActivity = activity as? MainActivity
+        val cachedContacts = mainActivity?.cachedContacts
+        
+        ensureBackgroundThread {
+            if (cachedContacts != null && cachedContacts.isNotEmpty()) {
+                // Fast path: Use cached contacts
+                val privateContacts = getPrivateContactsCached()
                 val updatedCalls = updateNamesIfEmpty(
                     calls = maybeFilterPrivateCalls(calls, privateContacts),
-                    contacts = contacts,
+                    contacts = cachedContacts,
                     privateContacts = privateContacts
                 )
 
-                callback(
-                    groupCallsByDate(updatedCalls)
-                )
+                callback(groupCallsByDate(updatedCalls))
+            } else {
+                // Slow path: Load contacts (but load only what we need)
+                ContactsHelper(context).getContacts(showOnlyContactsWithNumbers = true) { contacts ->
+                    ensureBackgroundThread {
+                        val privateContacts = getPrivateContactsCached()
+                        val updatedCalls = updateNamesIfEmpty(
+                            calls = maybeFilterPrivateCalls(calls, privateContacts),
+                            contacts = contacts,
+                            privateContacts = privateContacts
+                        )
+
+                        callback(groupCallsByDate(updatedCalls))
+                    }
+                }
             }
         }
+    }
+    
+    // Cached version of getPrivateContacts
+    private var cachedPrivateContacts: ArrayList<Contact>? = null
+    private var privateContactsCacheTime = 0L
+    
+    private fun getPrivateContactsCached(): ArrayList<Contact> {
+        val currentTime = System.currentTimeMillis()
+        if (cachedPrivateContacts != null && (currentTime - privateContactsCacheTime) < 60000L) {
+            return cachedPrivateContacts!!
+        }
+        
+        val privateCursor = context.getMyContactsCursor(favoritesOnly = false, withPhoneNumbersOnly = true)
+        cachedPrivateContacts = MyContactsContentProvider.getContacts(context, privateCursor)
+        privateContactsCacheTime = currentTime
+        return cachedPrivateContacts!!
     }
 
     private fun getPrivateContacts(): ArrayList<Contact> {
@@ -248,15 +393,30 @@ class RecentsFragment(
     private fun updateNamesIfEmpty(calls: List<RecentCall>, contacts: List<Contact>, privateContacts: List<Contact>): List<RecentCall> {
         if (calls.isEmpty()) return mutableListOf()
 
-        val contactsWithNumbers = contacts.filter { it.phoneNumbers.isNotEmpty() }
+        // Pre-build lookup maps for faster access
+        val privateNumbersMap = HashMap<String, String>()
+        privateContacts.forEach { contact ->
+            contact.phoneNumbers.forEach { phoneNumber ->
+                privateNumbersMap[phoneNumber.value] = contact.getNameToDisplay()
+                privateNumbersMap[phoneNumber.normalizedNumber] = contact.getNameToDisplay()
+            }
+        }
+        
+        val contactNumbersMap = HashMap<String, String>()
+        contacts.filter { it.phoneNumbers.isNotEmpty() }.forEach { contact ->
+            contact.phoneNumbers.forEach { phoneNumber ->
+                contactNumbersMap[phoneNumber.normalizedNumber] = contact.getNameToDisplay()
+            }
+        }
+
         return calls.map { call ->
             if (call.phoneNumber == call.name) {
-                val privateContact = privateContacts.firstOrNull { it.doesContainPhoneNumber(call.phoneNumber) }
-                val contact = contactsWithNumbers.firstOrNull { it.phoneNumbers.first().normalizedNumber == call.phoneNumber }
+                val privateName = privateNumbersMap[call.phoneNumber]
+                val contactName = contactNumbersMap[call.phoneNumber]
 
                 when {
-                    privateContact != null -> withUpdatedName(call = call, name = privateContact.getNameToDisplay())
-                    contact != null -> withUpdatedName(call = call, name = contact.getNameToDisplay())
+                    privateName != null -> withUpdatedName(call = call, name = privateName)
+                    contactName != null -> withUpdatedName(call = call, name = contactName)
                     else -> call
                 }
             } else {
@@ -291,7 +451,154 @@ class RecentsFragment(
         return callLog
     }
 
+    private fun setupScrollEnrichment() {
+        binding.recentsList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                    scheduleVisibleEnrichment()
+                }
+            }
+        })
+    }
+
+    private fun showInitialSkeletons() {
+        binding.apply {
+            showOrHidePlaceholder(false)
+            recentsPlaceholder2.beGone()
+            recentsList.beVisible()
+        }
+        if (binding.recentsList.adapter == null) {
+            recentsAdapter = RecentCallsAdapter(
+                activity = activity as SimpleActivity,
+                recyclerView = binding.recentsList,
+                refreshItemsListener = this,
+                showOverflowMenu = true,
+                itemDelete = { deleted ->
+                    allRecentCalls = allRecentCalls.filter { it !in deleted }
+                },
+                itemClick = {
+                    val recentCall = it as RecentCall
+                    activity?.startCallWithConfirmationCheck(recentCall.phoneNumber, recentCall.name)
+                },
+                profileIconClick = {
+                    if (context.config.enableProfilePictureClick) {
+                        val contact = findContactByCall(it as RecentCall)
+                        if (contact != null) {
+                            activity?.startContactDetailsIntent(contact)
+                        }
+                    }
+                }
+            )
+            binding.recentsList.adapter = recentsAdapter
+        }
+        val placeholders = List(8) { idx -> CallLogItem.Placeholder(idx) }
+        recentsAdapter?.updateItems(placeholders)
+    }
+
+    private fun scheduleVisibleEnrichment(delayMs: Long = 200) {
+        if (enrichmentScheduled) return
+        enrichmentScheduled = true
+        // Debounce slightly to avoid firing during fast scroll
+        postDelayed({
+            enrichmentScheduled = false
+            val lm = binding.recentsList.layoutManager as? LinearLayoutManager ?: return@postDelayed
+            val first = lm.findFirstVisibleItemPosition().coerceAtLeast(0)
+            val last = lm.findLastVisibleItemPosition().coerceAtLeast(first)
+            val window = (first..last)
+                .mapNotNull { idx -> allRecentCalls.getOrNull(idx) as? RecentCall }
+            val numbers = window.map { it.phoneNumber }
+            if (numbers.isEmpty()) return@postDelayed
+            contactsEnricher.enrich(numbers) { map ->
+                // Apply on UI thread
+                activity?.runOnUiThread { applyEnrichment(map) }
+            }
+        }, delayMs)
+    }
+
+    private fun applyEnrichment(map: Map<String, VisibleContactsEnricher.Enriched>) {
+        if (map.isEmpty()) return
+        var changed = false
+        val updated = allRecentCalls.map { item ->
+            if (item is RecentCall) {
+                val key = item.phoneNumber.filter { it.isDigit() }.takeLast(15)
+                val en = map[key]
+                if (en != null) {
+                    val newName = en.name ?: item.name
+                    val newPhoto = en.photoUri ?: item.photoUri
+                    if (newName != item.name || newPhoto != item.photoUri) {
+                        changed = true
+                        item.copy(
+                            name = newName,
+                            photoUri = newPhoto,
+                            groupedCalls = item.groupedCalls?.map { gc ->
+                                gc.copy(name = newName, photoUri = newPhoto)
+                            }?.toMutableList()
+                        )
+                    } else item
+                } else item
+            } else item
+        }
+        if (changed) Perf.markFirstName()
+        allRecentCalls = updated
+        recentsAdapter?.updateItems(updated)
+    }
+
     private fun findContactByCall(recentCall: RecentCall): Contact? {
         return (activity as MainActivity).cachedContacts.find { it.name == recentCall.name && it.doesHavePhoneNumber(recentCall.phoneNumber) }
+    }
+
+    private fun setupFilterChips() {
+        binding.filterAll.setOnClickListener { applyFilter(FILTER_ALL) }
+        binding.filterMissed.setOnClickListener { applyFilter(FILTER_MISSED) }
+        binding.filterIncoming.setOnClickListener { applyFilter(FILTER_INCOMING) }
+        binding.filterOutgoing.setOnClickListener { applyFilter(FILTER_OUTGOING) }
+
+        // Set initial state
+        updateFilterChips()
+    }
+
+    private fun applyFilter(filterType: Int) {
+        currentFilter = filterType
+        updateFilterChips()
+        refreshFilteredCalls()
+    }
+
+    private fun updateFilterChips() {
+        binding.filterAll.isChecked = currentFilter == FILTER_ALL
+        binding.filterMissed.isChecked = currentFilter == FILTER_MISSED
+        binding.filterIncoming.isChecked = currentFilter == FILTER_INCOMING
+        binding.filterOutgoing.isChecked = currentFilter == FILTER_OUTGOING
+    }
+
+    private fun refreshFilteredCalls() {
+        val filteredCalls = filterCalls(allRecentCalls)
+        gotRecents(filteredCalls)
+    }
+
+    private fun filterCalls(callLogItems: List<CallLogItem>): List<CallLogItem> {
+        if (currentFilter == FILTER_ALL) {
+            return callLogItems
+        }
+
+        val filteredRecentCalls = callLogItems
+            .filterIsInstance<RecentCall>()
+            .filter { call ->
+                when (currentFilter) {
+                    FILTER_MISSED -> call.type == Calls.MISSED_TYPE
+                    FILTER_INCOMING -> call.type == Calls.INCOMING_TYPE
+                    FILTER_OUTGOING -> call.type == Calls.OUTGOING_TYPE
+                    else -> true
+                }
+            }
+
+        return groupCallsByDate(filteredRecentCalls)
+    }
+
+    override fun onDetachedFromWindow() {
+        super.onDetachedFromWindow()
+        isFragmentVisible = false
+        try { binding.recentsList.adapter = null } catch (_: Exception) {}
+        recentsAdapter = null
     }
 }

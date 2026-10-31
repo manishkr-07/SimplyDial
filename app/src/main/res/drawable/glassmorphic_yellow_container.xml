@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    
+    <!-- Semi-transparent yellowish background with blur effect -->
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="#40FFFACD"/> <!-- Lemon chiffon with 25% opacity -->
+            <corners android:radius="36dp"/>
+        </shape>
+    </item>
+    
+    <!-- Gradient overlay for depth -->
+    <item>
+        <shape android:shape="rectangle">
+            <gradient
+                android:angle="135"
+                android:startColor="#20FFFFFF"
+                android:centerColor="#10FFD700"
+                android:endColor="#05FFA500"
+                android:type="linear"/>
+            <corners android:radius="36dp"/>
+        </shape>
+    </item>
+    
+    <!-- Border with soft gradient -->
+    <item>
+        <shape android:shape="rectangle">
+            <stroke
+                android:width="2dp"
+                android:color="#60FFFFFF"/> <!-- Semi-transparent white border -->
+            <corners android:radius="36dp"/>
+        </shape>
+    </item>
+    
+</layer-list>

@@ -5,7 +5,9 @@
     <RelativeLayout
         android:id="@+id/fragment_wrapper"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:clipChildren="false"
+        android:clipToPadding="false">
 
         <org.fossify.commons.views.MyTextView
             android:id="@+id/fragment_placeholder"
@@ -39,28 +41,20 @@
             android:id="@+id/fragment_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_toStartOf="@+id/horizontal_alphabet_slider"
+            android:clipChildren="false"
             android:clipToPadding="false"
-            android:layoutAnimation="@anim/layout_animation"
             android:paddingBottom="@dimen/recyclerview_fab_padding"
             android:scrollbars="none"
             app:layoutManager="org.fossify.commons.views.MyLinearLayoutManager" />
 
-        <com.reddit.indicatorfastscroll.FastScrollerView
-            android:id="@+id/letter_fastscroller"
-            android:layout_width="32dp"
-            android:layout_height="wrap_content"
+        <org.fossify.phone.views.HorizontalAlphabetSlider
+            android:id="@+id/horizontal_alphabet_slider"
+            android:layout_width="80dp"
+            android:layout_height="match_parent"
             android:layout_alignParentEnd="true"
             android:paddingTop="@dimen/big_margin"
-            android:paddingBottom="@dimen/big_margin" />
-
-        <com.reddit.indicatorfastscroll.FastScrollerThumbView
-            android:id="@+id/letter_fastscroller_thumb"
-            android:layout_width="@dimen/fab_size"
-            android:layout_height="match_parent"
-            android:layout_alignTop="@+id/letter_fastscroller"
-            android:layout_alignBottom="@+id/letter_fastscroller"
-            android:layout_marginEnd="@dimen/activity_margin"
-            android:layout_toStartOf="@+id/letter_fastscroller" />
+            android:paddingBottom="@dimen/recyclerview_fab_padding" />
 
     </RelativeLayout>
 </merge>

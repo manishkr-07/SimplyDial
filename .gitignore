@@ -1,13 +1,59 @@
-*.iml
+# Built application files
+*.apk
+*.ap_
 *.aab
-.gradle
+*.dex
+*.class
+
+# Build directories & intermediate caches
+/build/
+**/build/
+.gradle/
+captures/
+**/captures/
+output.json
+.cxx/
+
+# Android Studio & JetBrains IDE
+*.iml
+.idea/
+.navigation/
+
+# VS Code & other editors
+.vscode/
+
+# Environment, secrets & keystores
 /local.properties
-/.idea/
-.DS_Store
-/build
-/captures
-keystore.jks
+gemini.properties
 keystore.properties
+*.jks
+*.keystore
+*.key
+*.pem
+*.p8
+*.p12
+.env
+.env.*
+google-services.json
+
+# Fastlane
 fastlane/fastlane.json
 fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots/
+fastlane/test_output/
+
+# Kotlin & JVM
 .kotlin/
+.kotlin-tooling/
+*.hprof
+hs_err_pid*
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+ehthumbs.db
+desktop.ini
+
+# Logs
+*.log

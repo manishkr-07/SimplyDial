@@ -4,6 +4,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.reddit.indicatorfastscroll.FastScrollItemIndicator
 import com.reddit.indicatorfastscroll.FastScrollerView
 import org.fossify.commons.models.contacts.Contact
+import org.fossify.phone.views.HorizontalAlphabetSlider
 
 fun FastScrollerView.setupWithContacts(
     recyclerView: RecyclerView,
@@ -17,3 +18,10 @@ fun FastScrollerView.setupWithContacts(
 
     FastScrollItemIndicator.Text(initialLetter)
 })
+
+fun HorizontalAlphabetSlider.setupWithContacts(
+    recyclerView: RecyclerView,
+    contacts: List<Contact>
+) {
+    this.setupWithContacts(recyclerView, contacts)
+}

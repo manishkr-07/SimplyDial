@@ -1,23 +1,32 @@
-Empower your calls, safeguard your data. Fossify Phone redefines the mobile app experience with unmatched privacy and efficiency. Free from ads and intrusive permissions, it's designed for seamless and secure everyday communication.
+SimplyDial redefines your mobile calling experience with unmatched privacy, accessibility, and modern power. Free from advertisements and intrusive trackers, SimplyDial is designed for seamless, crystal-clear, and effortless everyday communication.
 
-📱 YOUR PRIVACY, OUR PRIORITY:  
-Welcome to the Fossify Phone App, where your digital privacy is paramount. Switch to a mobile experience that respects your data, ensuring your personal information remains secure and private.
+🌟 ACCESSIBILITY & SENIOR-FRIENDLY "EASEUI"
+Communication should be effortless for all ages. SimplyDial features thoughtful accessibility enhancements:
+• Accidental Call Shield: Built-in Call Confirmation prompt with a large, unmistakable button before placing any call.
+• Messages Joystick: One-touch radial gesture control for sending quick, pre-configured SMS replies without typing.
+• Tactile Swipe Answering: Ergonomic swipe gestures to answer or decline incoming calls smoothly.
+• Multilingual & Regional Support: Full Hindi localization and regional voice dial language selection.
 
-🚀 SEAMLESS PERFORMANCE:
-The Fossify Phone App offers a fluid and responsive mobile interface, enhancing your phone's performance while safeguarding your privacy. Experience a lag-free, smooth user experience, optimized for efficiency and speed.
+💎 BLACK DIAMOND AMOLED THEME
+Experience a stunning, true AMOLED #000000 dark theme paired with electric cyan neon accents and dynamic glassmorphic overlays. Completely optimizes battery conservation on OLED screens while providing comfortable night-time viewing.
 
-🌐 OPEN-SOURCE ASSURANCE:  
-With the Fossify Phone App, transparency is at your fingertips. Built on an open-source foundation, our app allows you to review our code on GitHub, fostering trust and a community committed to privacy.
+🎙️ COMPLIANT HD CALL RECORDING
+Capture important conversations in 256 kbps studio-quality AAC stereo:
+• Hybrid Audio Engine: Multi-tier fallback (Mic, Voice Communication, Voice Call) ensures reliable audio capture across diverse Android hardware.
+• Legal Compliance: Mandatory first-use consent modal and audible two-party start/stop beep tones satisfy regulatory requirements.
+• Built-in Manager: In-call live indicator and timer, post-call review dialog, and complete recording history player with secure file sharing.
 
-🖼️ TAILOR-MADE CUSTOMIZATION:  
-Customize your mobile experience with the Fossify Phone App. Adjust your app settings for a personalized interface, from thematic designs to functional preferences. Enjoy a user interface that's intuitive and uniquely yours.
+📹 BUILT-IN VIDEO CALLING (JITSI MEET)
+Launch secure, open-source video conferences directly from the dialer or contacts list:
+• In-Call Safety: Ongoing cellular phone calls automatically mute to prevent audio echo and hardware conflict.
+• Rejoin Interception: Accidental app exits prompt a quick rejoin dialog so you never drop mid-meeting.
+• Instant SMS Invites: Generate and send direct meeting links via SMS with one tap.
 
-🔋 EFFICIENT RESOURCE MANAGEMENT:  
-The Fossify Phone App is designed for optimal resource usage, contributing to extended battery life. It's light on your phone's resources, ensuring your device runs efficiently with minimized battery drain.
+🧠 AI VOICE DIALING (GEMINI 1.5 FLASH)
+Speak naturally (e.g., "Call Dad on mobile") to automatically parse recipient intent and number using Google Gemini AI, backed by an instant offline fuzzy matching fallback when unconfigured.
 
-Download the Fossify Phone App now and step into a mobile world where privacy seamlessly blends with functionality. Your journey towards a safer, personalized mobile experience starts here.
+🔒 100% PRIVATE & ON-DEVICE
+Your contacts, call logs, audio recordings, and preferences never leave your smartphone. Zero analytics, zero advertising SDKs, and zero telemetry.
 
-Explore more Fossify apps: https://www.fossify.org
-Open-Source Code: https://www.github.com/FossifyOrg
-Join the community on Reddit: https://www.reddit.com/r/Fossify
-Connect on Telegram: https://t.me/Fossify
+⚖️ OPEN SOURCE & ATTRIBUTION
+SimplyDial is an open-source project created and owned by Piyush Kumar and Manish Kumar, modified from and built upon the trusted Fossify Phone foundation under the GNU General Public License v3.0.

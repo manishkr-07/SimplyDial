@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Rose gold border -->
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="#B76E79"/>  <!-- Rose gold color -->
+            <corners android:radius="24dp"/>
+        </shape>
+    </item>
+    
+    <!-- White center with radial gradient to #FFFFDD at edges -->
+    <item
+        android:left="4dp"
+        android:right="4dp"
+        android:top="4dp"
+        android:bottom="4dp">
+        <shape android:shape="rectangle">
+            <gradient
+                android:type="radial"
+                android:gradientRadius="300dp"
+                android:centerX="0.5"
+                android:centerY="0.5"
+                android:startColor="#FFFFFF"
+                android:endColor="#FFFFDD" />
+            <corners android:radius="22dp"/>
+        </shape>
+    </item>
+</layer-list>

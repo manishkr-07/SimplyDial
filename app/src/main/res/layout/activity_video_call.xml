@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/black">
+
+    <!-- WebView Container (like iframe) -->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/webViewContainer">
+        
+        <!-- WebView for Jitsi Meet (embedded iframe-like) -->
+        <WebView
+            android:id="@+id/videoCallWebView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scrollbars="none"
+            android:overScrollMode="never"
+            android:focusable="true"
+            android:focusableInTouchMode="true" />
+    </FrameLayout>
+
+    <!-- Loading overlay -->
+    <FrameLayout
+        android:id="@+id/loadingOverlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#80000000"
+        android:clickable="true"
+        android:focusable="true">
+        
+        <ProgressBar
+            android:id="@+id/loadingIndicator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:indeterminateTint="?android:textColorPrimary" />
+            
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Loading video call..."
+            android:textColor="?android:textColorPrimary"
+            android:layout_gravity="center"
+            android:layout_marginTop="60dp" />
+    </FrameLayout>
+
+</FrameLayout>

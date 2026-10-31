@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?attr/colorSurface"
+    android:padding="24dp">
+
+    <!-- Header Icon -->
+    <ImageView
+        android:id="@+id/icon_recording"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_marginTop="8dp"
+        android:src="@drawable/ic_microphone_vector"
+        android:tint="@color/success_color"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- Title -->
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:gravity="center"
+        android:text="Recording Complete"
+        android:textColor="?attr/android:textColorPrimary"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/icon_recording" />
+
+    <!-- Recording Details Card -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/details_card"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        app:cardBackgroundColor="?attr/colorSurface"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="0dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/title">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- Phone Number -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_phone_vector"
+                    android:tint="?attr/android:textColorSecondary" />
+
+                <TextView
+                    android:id="@+id/phone_number"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:layout_weight="1"
+                    android:textColor="?attr/android:textColorPrimary"
+                    android:textSize="14sp"
+                    tools:text="+1 234-567-8900" />
+            </LinearLayout>
+
+            <!-- Duration -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:gravity="center"
+                    android:text="⏱"
+                    android:textColor="?attr/android:textColorSecondary"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/duration"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:layout_weight="1"
+                    android:textColor="?attr/android:textColorPrimary"
+                    android:textSize="14sp"
+                    tools:text="Duration: 02:35" />
+            </LinearLayout>
+
+            <!-- File Size -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_save_vector"
+                    android:tint="?attr/android:textColorSecondary" />
+
+                <TextView
+                    android:id="@+id/file_size"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:layout_weight="1"
+                    android:textColor="?attr/android:textColorPrimary"
+                    android:textSize="14sp"
+                    tools:text="Size: 2.5 MB" />
+            </LinearLayout>
+
+            <!-- File Name -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:gravity="center"
+                    android:text="🎵"
+                    android:textColor="?attr/android:textColorSecondary"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/file_name"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:layout_weight="1"
+                    android:ellipsize="middle"
+                    android:maxLines="1"
+                    android:textColor="?attr/android:textColorPrimary"
+                    android:textSize="12sp"
+                    tools:text="CALL_IN_1234567890_20250121.m4a" />
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+    <!-- Playback Controls -->
+    <LinearLayout
+        android:id="@+id/playback_controls"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/details_card">
+
+        <!-- Play/Pause Button -->
+        <ImageView
+            android:id="@+id/btn_play_pause"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Play recording"
+            android:padding="12dp"
+            android:src="@drawable/ic_play_vector"
+            android:tint="@color/success_color" />
+
+        <!-- Playback Progress -->
+        <TextView
+            android:id="@+id/playback_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:text="00:00"
+            android:textColor="?attr/android:textColorSecondary"
+            android:textSize="14sp" />
+    </LinearLayout>
+
+    <!-- SeekBar for playback -->
+    <SeekBar
+        android:id="@+id/playback_seekbar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:max="100"
+        android:progress="0"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/playback_controls" />
+
+    <!-- Action Buttons -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/playback_seekbar">
+
+        <!-- Discard Button -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_discard"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="56dp"
+            android:layout_marginEnd="8dp"
+            android:layout_weight="1"
+            android:text="Discard"
+            android:textColor="@color/error_color"
+            app:cornerRadius="12dp"
+            app:icon="@drawable/ic_delete_vector"
+            app:iconGravity="textStart"
+            app:iconTint="@color/error_color"
+            app:strokeColor="@color/error_color"
+            app:strokeWidth="1dp" />
+
+        <!-- Save Button -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_save"
+            style="@style/Widget.MaterialComponents.Button"
+            android:layout_width="0dp"
+            android:layout_height="56dp"
+            android:layout_marginStart="8dp"
+            android:layout_weight="1"
+            android:backgroundTint="@color/success_color"
+            android:text="Save"
+            android:textColor="?attr/colorOnPrimary"
+            app:cornerRadius="12dp"
+            app:icon="@drawable/ic_check_vector"
+            app:iconGravity="textStart"
+            app:iconTint="?attr/colorOnPrimary" />
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

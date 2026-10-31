@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Unselected state: Transparent background with gradient border -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+    <solid android:color="@android:color/transparent"/>
+    <size
+        android:width="85dp"
+        android:height="85dp"/>
+</shape>

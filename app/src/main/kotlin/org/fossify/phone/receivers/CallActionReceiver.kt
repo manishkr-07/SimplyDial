@@ -13,10 +13,10 @@ class CallActionReceiver : BroadcastReceiver() {
         when (intent.action) {
             ACCEPT_CALL -> {
                 context.startActivity(CallActivity.getStartIntent(context))
-                CallManager.accept()
+                CallManager.acceptRingingOrPrimary()
             }
 
-            DECLINE_CALL -> CallManager.reject()
+            DECLINE_CALL -> CallManager.rejectRingingOrPrimary()
         }
     }
 }

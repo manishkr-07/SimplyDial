@@ -1,7 +1,8 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.konan.properties.Properties
-import java.io.FileInputStream
+import java.io.FileInputStream as JavaFileInputStream
+import java.util.Properties as JavaUtilProperties
 
 plugins {
     alias(libs.plugins.android)
@@ -13,7 +14,7 @@ plugins {
 val keystorePropertiesFile: File = rootProject.file("keystore.properties")
 val keystoreProperties = Properties()
 if (keystorePropertiesFile.exists()) {
-    keystoreProperties.load(FileInputStream(keystorePropertiesFile))
+    keystoreProperties.load(JavaFileInputStream(keystorePropertiesFile))
 }
 
 fun hasSigningVars(): Boolean {
@@ -33,6 +34,16 @@ android {
         versionName = project.property("VERSION_NAME").toString()
         versionCode = project.property("VERSION_CODE").toString().toInt()
         setProperty("archivesBaseName", "phone-$versionCode")
+        // Load Gemini API key from gemini.properties at project root or environment variable (not committed)
+        val geminiPropsFile: File = rootProject.file("gemini.properties")
+        val geminiKey = if (geminiPropsFile.exists()) {
+            val geminiProps = JavaUtilProperties()
+            geminiProps.load(JavaFileInputStream(geminiPropsFile))
+            geminiProps.getProperty("GEMINI_API_KEY") ?: ""
+        } else {
+            providers.environmentVariable("GEMINI_API_KEY").orNull ?: ""
+        }
+        buildConfigField("String", "GEMINI_API_KEY", "\"$geminiKey\"")
     }
 
     signingConfigs {
@@ -142,5 +153,11 @@ dependencies {
     implementation(libs.eventbus)
     implementation(libs.libphonenumber)
     implementation(libs.geocoder)
+    // OkHttp for network calls to Gemini API
+    implementation("com.squareup.okhttp3:okhttp:4.11.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.11.0")
+    // Shimmer for skeleton placeholders
+    implementation("com.facebook.shimmer:shimmer:0.5.0")
+
     detektPlugins(libs.compose.detekt)
 }

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Outer gradient ring: Beige to Teal for dark mode -->
+    <item>
+        <shape android:shape="oval">
+            <gradient
+                android:startColor="#d1c8b6"
+                android:centerColor="#00b2b6"
+                android:endColor="#2E8B57"
+                android:angle="45"
+                android:type="sweep"/>
+            <size
+                android:width="120dp"
+                android:height="120dp"/>
+        </shape>
+    </item>
+    
+    <!-- Inner transparent circle to create ring effect -->
+    <item
+        android:left="4dp"
+        android:right="4dp"
+        android:top="4dp"
+        android:bottom="4dp">
+        <shape android:shape="oval">
+            <solid android:color="@android:color/transparent"/>
+        </shape>
+    </item>
+</layer-list>

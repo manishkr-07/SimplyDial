@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Black Diamond Theme - Dialpad Button with Aqua Neon Ripple -->
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="@color/dark_ripple">
+    <item android:id="@android:id/mask">
+        <shape android:shape="rectangle">
+            <solid android:color="#FFFFFF" />
+            <corners android:radius="22dp" />
+        </shape>
+    </item>
+    <item>
+        <selector>
+            <item android:state_pressed="true">
+                <shape android:shape="rectangle">
+                    <solid android:color="@color/dark_dialpad_button_pressed" />
+                    <corners android:radius="22dp" />
+                    <stroke
+                        android:width="2dp"
+                        android:color="#3300E5FF" />
+                </shape>
+            </item>
+            <item>
+                <shape android:shape="rectangle">
+                    <solid android:color="@color/dark_dialpad_button" />
+                    <corners android:radius="22dp" />
+                </shape>
+            </item>
+        </selector>
+    </item>
+</ripple>

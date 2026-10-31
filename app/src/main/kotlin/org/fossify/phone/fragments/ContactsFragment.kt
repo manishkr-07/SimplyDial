@@ -1,19 +1,11 @@
 package org.fossify.phone.fragments
 
 import android.content.Context
+import android.net.Uri
+import android.provider.ContactsContract
 import android.util.AttributeSet
 import org.fossify.commons.adapters.MyRecyclerViewAdapter
-import org.fossify.commons.extensions.areSystemAnimationsEnabled
-import org.fossify.commons.extensions.baseConfig
-import org.fossify.commons.extensions.beGone
-import org.fossify.commons.extensions.beVisible
-import org.fossify.commons.extensions.beVisibleIf
-import org.fossify.commons.extensions.getColorStateList
-import org.fossify.commons.extensions.getContrastColor
-import org.fossify.commons.extensions.getMyContactsCursor
-import org.fossify.commons.extensions.hasPermission
-import org.fossify.commons.extensions.normalizeString
-import org.fossify.commons.extensions.underlineText
+import org.fossify.commons.extensions.*
 import org.fossify.commons.helpers.ContactsHelper
 import org.fossify.commons.helpers.MyContactsContentProvider
 import org.fossify.commons.helpers.PERMISSION_READ_CONTACTS
@@ -24,26 +16,38 @@ import org.fossify.phone.R
 import org.fossify.phone.activities.MainActivity
 import org.fossify.phone.activities.SimpleActivity
 import org.fossify.phone.adapters.ContactsAdapter
+import org.fossify.phone.adapters.LightContactItem
+import org.fossify.phone.adapters.LightContactsAdapter
 import org.fossify.phone.databinding.FragmentContactsBinding
 import org.fossify.phone.databinding.FragmentLettersLayoutBinding
+import org.fossify.phone.extensions.config
 import org.fossify.phone.extensions.launchCreateNewContactIntent
 import org.fossify.phone.extensions.setupWithContacts
 import org.fossify.phone.extensions.startCallWithConfirmationCheck
 import org.fossify.phone.extensions.startContactDetailsIntent
 import org.fossify.phone.interfaces.RefreshItemsListener
+import org.fossify.phone.models.LightContact
+import kotlin.concurrent.thread
 
 class ContactsFragment(context: Context, attributeSet: AttributeSet) : MyViewPagerFragment<MyViewPagerFragment.LettersInnerBinding>(context, attributeSet),
     RefreshItemsListener {
     private lateinit var binding: FragmentLettersLayoutBinding
     private var allContacts = ArrayList<Contact>()
 
+    // Lightweight, fast-loading contacts for instant display
+    private val lightContacts = ArrayList<LightContact>()
+    private var lightAdapter: LightContactsAdapter? = null
+
     override fun onFinishInflate() {
         super.onFinishInflate()
         binding = FragmentLettersLayoutBinding.bind(FragmentContactsBinding.bind(this).contactsFragment)
         innerBinding = LettersInnerBinding(binding)
+        // RecyclerView perf tweaks
+        binding.fragmentList.setHasFixedSize(true)
+        binding.fragmentList.itemAnimator = null
     }
 
-    override fun setupFragment() {
+override fun setupFragment() {
         val placeholderResId = if (context.hasPermission(PERMISSION_READ_CONTACTS)) {
             R.string.no_contacts_found
         } else {
@@ -69,6 +73,11 @@ class ContactsFragment(context: Context, attributeSet: AttributeSet) : MyViewPag
                 }
             }
         }
+
+        binding.horizontalAlphabetSlider.beGone()
+
+        // Show fast skeletons immediately to avoid blank screen
+        showLightSkeletons()
     }
 
     override fun setupColors(textColor: Int, primaryColor: Int, properPrimaryColor: Int) {
@@ -77,15 +86,14 @@ class ContactsFragment(context: Context, attributeSet: AttributeSet) : MyViewPag
             fragmentPlaceholder.setTextColor(textColor)
             fragmentPlaceholder2.setTextColor(properPrimaryColor)
 
-            letterFastscroller.textColor = textColor.getColorStateList()
-            letterFastscroller.pressedTextColor = properPrimaryColor
-            letterFastscrollerThumb.setupWithFastScroller(letterFastscroller)
-            letterFastscrollerThumb.textColor = properPrimaryColor.getContrastColor()
-            letterFastscrollerThumb.thumbColor = properPrimaryColor.getColorStateList()
+            horizontalAlphabetSlider.updateColors()
         }
     }
 
-    override fun refreshItems(invalidate: Boolean, callback: (() -> Unit)?) {
+override fun refreshItems(invalidate: Boolean, callback: (() -> Unit)?) {
+        // Start ultra-fast lightweight load for instant UI
+        loadLightContactsAsync()
+
         val privateCursor = context?.getMyContactsCursor(favoritesOnly = false, withPhoneNumbersOnly = true)
         ContactsHelper(context).getContacts(showOnlyContactsWithNumbers = true) { contacts ->
             allContacts = contacts
@@ -106,7 +114,7 @@ class ContactsFragment(context: Context, attributeSet: AttributeSet) : MyViewPag
         }
     }
 
-    private fun gotContacts(contacts: ArrayList<Contact>) {
+private fun gotContacts(contacts: ArrayList<Contact>) {
         setupLetterFastScroller(contacts)
         if (contacts.isEmpty()) {
             binding.apply {
@@ -121,65 +129,76 @@ class ContactsFragment(context: Context, attributeSet: AttributeSet) : MyViewPag
                 fragmentList.beVisible()
             }
 
-            if (binding.fragmentList.adapter == null) {
-                ContactsAdapter(
-                    activity = activity as SimpleActivity,
-                    contacts = contacts,
-                    recyclerView = binding.fragmentList,
-                    refreshItemsListener = this,
-                    itemClick = {
-                        activity?.startCallWithConfirmationCheck(it as Contact)
-                    },
-                    profileIconClick = {
+            // Switch to full adapter with DiffUtil once heavy load completes
+            val newAdapter = ContactsAdapter(
+                activity = activity as SimpleActivity,
+                contacts = contacts,
+                recyclerView = binding.fragmentList,
+                refreshItemsListener = this,
+                itemClick = {
+                    activity?.startCallWithConfirmationCheck(it as Contact)
+                },
+                profileIconClick = {
+                    if (context.config.enableProfilePictureClick) {
                         activity?.startContactDetailsIntent(it as Contact)
                     }
-                ).apply {
-                    binding.fragmentList.adapter = this
                 }
-
-                if (context.areSystemAnimationsEnabled) {
-                    binding.fragmentList.scheduleLayoutAnimation()
-                }
-            } else {
-                (binding.fragmentList.adapter as ContactsAdapter).updateItems(contacts)
-            }
+            )
+            binding.fragmentList.adapter = newAdapter
+            lightAdapter = null
         }
     }
 
     private fun setupLetterFastScroller(contacts: ArrayList<Contact>) {
-        binding.letterFastscroller.setupWithContacts(binding.fragmentList, contacts)
+        binding.horizontalAlphabetSlider.beVisible()
+        binding.horizontalAlphabetSlider.setupWithContacts(binding.fragmentList, contacts)
     }
 
-    override fun onSearchClosed() {
+override fun onSearchClosed() {
         binding.fragmentPlaceholder.beVisibleIf(allContacts.isEmpty())
-        (binding.fragmentList.adapter as? ContactsAdapter)?.updateItems(allContacts)
+        when (val adapter = binding.fragmentList.adapter) {
+            is ContactsAdapter -> adapter.updateItems(allContacts)
+            is LightContactsAdapter -> adapter.submitList(lightContacts.map { LightContactItem.Data(it) })
+        }
         setupLetterFastScroller(allContacts)
     }
 
     override fun onSearchQueryChanged(text: String) {
         val fixedText = text.trim().replace("\\s+".toRegex(), " ")
         val shouldNormalize = fixedText.normalizeString() == fixedText
-        val filtered = allContacts.filter { contact ->
-            getProperText(contact.getNameToDisplay(), shouldNormalize).contains(fixedText, true) ||
-                getProperText(contact.nickname, shouldNormalize).contains(fixedText, true) ||
-                (fixedText.toLongOrNull() != null && contact.doesContainPhoneNumber(fixedText, true)) ||
-                contact.emails.any { it.value.contains(fixedText, true) } ||
-                contact.addresses.any { getProperText(it.value, shouldNormalize).contains(fixedText, true) } ||
-                contact.IMs.any { it.value.contains(fixedText, true) } ||
-                getProperText(contact.notes, shouldNormalize).contains(fixedText, true) ||
-                getProperText(contact.organization.company, shouldNormalize).contains(fixedText, true) ||
-                getProperText(contact.organization.jobPosition, shouldNormalize).contains(fixedText, true) ||
-                contact.websites.any { it.contains(fixedText, true) }
-        } as ArrayList
 
-        filtered.sortBy {
-            val nameToDisplay = it.getNameToDisplay()
-            !getProperText(nameToDisplay, shouldNormalize).startsWith(fixedText, true) && !nameToDisplay.contains(fixedText, true)
+        when (val adapter = binding.fragmentList.adapter) {
+            is ContactsAdapter -> {
+                val filtered = allContacts.filter { contact ->
+                    getProperText(contact.getNameToDisplay(), shouldNormalize).contains(fixedText, true) ||
+                        getProperText(contact.nickname, shouldNormalize).contains(fixedText, true) ||
+                        (fixedText.toLongOrNull() != null && contact.doesContainPhoneNumber(fixedText, true)) ||
+                        contact.emails.any { it.value.contains(fixedText, true) } ||
+                        contact.addresses.any { getProperText(it.value, shouldNormalize).contains(fixedText, true) } ||
+                        contact.IMs.any { it.value.contains(fixedText, true) } ||
+                        getProperText(contact.notes, shouldNormalize).contains(fixedText, true) ||
+                        getProperText(contact.organization.company, shouldNormalize).contains(fixedText, true) ||
+                        getProperText(contact.organization.jobPosition, shouldNormalize).contains(fixedText, true) ||
+                        contact.websites.any { it.contains(fixedText, true) }
+                } as ArrayList
+
+                filtered.sortBy {
+                    val nameToDisplay = it.getNameToDisplay()
+                    !getProperText(nameToDisplay, shouldNormalize).startsWith(fixedText, true) && !nameToDisplay.contains(fixedText, true)
+                }
+
+                binding.fragmentPlaceholder.beVisibleIf(filtered.isEmpty())
+                adapter.updateItems(filtered, fixedText)
+                setupLetterFastScroller(filtered)
+            }
+            is LightContactsAdapter -> {
+                val filtered = if (fixedText.isEmpty()) lightContacts else lightContacts.filter {
+                    it.name.contains(fixedText, true) || it.number.contains(fixedText)
+                }
+                binding.fragmentPlaceholder.beVisibleIf(filtered.isEmpty())
+                adapter.submitList(filtered.map { LightContactItem.Data(it) })
+            }
         }
-
-        binding.fragmentPlaceholder.beVisibleIf(filtered.isEmpty())
-        (binding.fragmentList.adapter as? ContactsAdapter)?.updateItems(filtered, fixedText)
-        setupLetterFastScroller(filtered)
     }
 
     private fun requestReadContactsPermission() {
@@ -194,5 +213,76 @@ class ContactsFragment(context: Context, attributeSet: AttributeSet) : MyViewPag
                 }
             }
         }
+    }
+    private fun showLightSkeletons() {
+        if (binding.fragmentList.adapter !is LightContactsAdapter) {
+            lightAdapter = LightContactsAdapter(
+                activity = activity as SimpleActivity,
+                recyclerView = binding.fragmentList,
+                itemClick = { item -> activity?.startCallWithConfirmationCheck(item.number, item.name) },
+                profileIconClick = null
+            )
+            binding.fragmentList.adapter = lightAdapter
+        }
+        val placeholders = List(8) { idx -> LightContactItem.Placeholder(idx) }
+        lightAdapter?.submitList(placeholders)
+    }
+
+    private fun loadLightContactsAsync() {
+        if (!context.hasPermission(PERMISSION_READ_CONTACTS)) return
+        thread(name = "LightContactsLoader") {
+            try {
+                val uri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI
+                val projection = arrayOf(
+                    ContactsContract.CommonDataKinds.Phone.CONTACT_ID,
+                    ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
+                    ContactsContract.CommonDataKinds.Phone.NUMBER,
+                    ContactsContract.CommonDataKinds.Phone.PHOTO_URI
+                )
+                val sortOrder = "LOWER(${ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME}) ASC"
+                val cursor = try {
+                    context.contentResolver.query(uri, projection, null, null, sortOrder)
+                } catch (_: SecurityException) {
+                    null
+                }
+                var loaded = 0
+                cursor?.use {
+                    while (it.moveToNext()) {
+                        val id = it.getLong(0)
+                        val name = it.getString(1) ?: continue
+                        val number = it.getString(2) ?: continue
+                        val photo = it.getString(3)
+                        lightContacts.add(LightContact(id, name, number, photo))
+                        loaded++
+                        // Publish in small batches for smoothness
+                        if (loaded <= 10 || loaded % 25 == 0) {
+                            val snapshot = lightContacts.toList()
+                            activity?.runOnUiThread {
+                                if (binding.fragmentList.adapter !is LightContactsAdapter) {
+                                    showLightSkeletons()
+                                }
+                                lightAdapter?.submitList(snapshot.map { LightContactItem.Data(it) })
+                            }
+                        }
+                        if (loaded >= 5000) {
+                            // Cap to avoid huge in-memory lists on low-end devices
+                            break
+                        }
+                    }
+                }
+                // Final publish
+                val snapshot = lightContacts.toList()
+                activity?.runOnUiThread {
+                    lightAdapter?.submitList(snapshot.map { LightContactItem.Data(it) })
+                }
+            } catch (_: Exception) { }
+        }
+    }
+
+    override fun onDetachedFromWindow() {
+        super.onDetachedFromWindow()
+        try { binding.fragmentList.adapter = null } catch (_: Exception) {}
+        lightAdapter = null
+        lightContacts.clear()
     }
 }

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Dark blue border (instead of rose gold) -->
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="#003b70"/>  <!-- Dark blue instead of rose gold -->
+            <corners android:radius="24dp"/>
+        </shape>
+    </item>
+    
+    <!-- Dark grey center with radial gradient to mocha at edges -->
+    <item
+        android:left="4dp"
+        android:right="4dp"
+        android:top="4dp"
+        android:bottom="4dp">
+        <shape android:shape="rectangle">
+            <gradient
+                android:type="radial"
+                android:gradientRadius="300dp"
+                android:centerX="0.5"
+                android:centerY="0.5"
+                android:startColor="#262626"
+                android:endColor="#8B4513" />  <!-- Dark grey to Mocha -->
+            <corners android:radius="22dp"/>
+        </shape>
+    </item>
+</layer-list>

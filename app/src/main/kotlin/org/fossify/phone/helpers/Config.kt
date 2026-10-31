@@ -135,4 +135,47 @@ class Config(context: Context) : BaseConfig(context) {
     var alwaysShowFullscreen: Boolean
         get() = prefs.getBoolean(ALWAYS_SHOW_FULLSCREEN, false)
         set(alwaysShowFullscreen) = prefs.edit().putBoolean(ALWAYS_SHOW_FULLSCREEN, alwaysShowFullscreen).apply()
+
+    var appLanguage: String
+        get() = prefs.getString(APP_LANGUAGE, LANGUAGE_ENGLISH) ?: LANGUAGE_ENGLISH
+        set(appLanguage) = prefs.edit().putString(APP_LANGUAGE, appLanguage).apply()
+
+    var isLanguageSelected: Boolean
+        get() = prefs.getBoolean(LANGUAGE_SELECTED, false)
+        set(isLanguageSelected) = prefs.edit().putBoolean(LANGUAGE_SELECTED, isLanguageSelected).apply()
+
+    var voiceDialLanguage: String
+        get() = prefs.getString(VOICE_DIAL_LANGUAGE, LANGUAGE_ENGLISH) ?: LANGUAGE_ENGLISH
+        set(voiceDialLanguage) = prefs.edit().putString(VOICE_DIAL_LANGUAGE, voiceDialLanguage).apply()
+
+    var isVoiceDialLanguageSelected: Boolean
+        get() = prefs.getBoolean(VOICE_DIAL_LANGUAGE_SELECTED, false)
+        set(isVoiceDialLanguageSelected) = prefs.edit().putBoolean(VOICE_DIAL_LANGUAGE_SELECTED, isVoiceDialLanguageSelected).apply()
+
+    var autoRecordCalls: Boolean
+        get() = prefs.getBoolean(AUTO_RECORD_CALLS, false)
+        set(autoRecordCalls) = prefs.edit().putBoolean(AUTO_RECORD_CALLS, autoRecordCalls).apply()
+    
+    // MANDATORY: Call recording consent for Google Play compliance
+    // User must explicitly consent to recording laws and beep notification
+    var callRecordingConsentGiven: Boolean
+        get() = prefs.getBoolean(CALL_RECORDING_CONSENT_GIVEN, false)
+        set(callRecordingConsentGiven) = prefs.edit().putBoolean(CALL_RECORDING_CONSENT_GIVEN, callRecordingConsentGiven).apply()
+    
+    // App Theme Settings (Independent of System Dark Mode)
+    var isDarkThemeEnabled: Boolean
+        get() = prefs.getBoolean(IS_DARK_THEME_ENABLED, false)
+        set(isDarkThemeEnabled) = prefs.edit().putBoolean(IS_DARK_THEME_ENABLED, isDarkThemeEnabled).apply()
+    
+    var themeMode: String
+        get() = prefs.getString(THEME_MODE, THEME_MODE_LIGHT) ?: THEME_MODE_LIGHT
+        set(themeMode) = prefs.edit().putString(THEME_MODE, themeMode).apply()
+    
+    var enableProfilePictureClick: Boolean
+        get() = prefs.getBoolean(ENABLE_PROFILE_PICTURE_CLICK, false)
+        set(enableProfilePictureClick) = prefs.edit().putBoolean(ENABLE_PROFILE_PICTURE_CLICK, enableProfilePictureClick).apply()
+
+    var enableMessagesJoystick: Boolean
+        get() = prefs.getBoolean(ENABLE_MESSAGES_JOYSTICK, true)
+        set(enableMessagesJoystick) = prefs.edit().putBoolean(ENABLE_MESSAGES_JOYSTICK, enableMessagesJoystick).apply()
 }

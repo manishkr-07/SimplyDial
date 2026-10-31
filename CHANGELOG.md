@@ -1,218 +1,78 @@
 # Changelog
-All notable changes to this project will be documented in this file.
+
+All notable changes to **SimplyDial** will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
-### Fixed
-- Fixed wrong contact photo in call history for some contacts ([#585])
-- Fixed search not matching full phone numbers
+---
 
-## [1.7.1] - 2025-09-12
+## [1.7.0] - 2026-11-01 - Call Waiting & Caller ID Architecture Fixes
+
+### 📞 Fixed & Added — Call Waiting & Caller ID Engine
+- **1. Call Waiting Tone & Vibration Alert (`CallWaitingAlertHelper`)**: Plays telecom-standard call waiting tones (`ToneGenerator.TONE_SUP_CALL_WAITING`) through `STREAM_VOICE_CALL` directly into the earpiece/headset with repeating double-pulse vibrations every 5 seconds.
+- **2. High-Priority Heads-Up Banner (`CallNotificationManager`)**: Dedicated notification channel (`simple_dialer_call_waiting_active_v3`) with full-screen intent displaying caller Name, Number, Avatar, and instant Accept/Decline action buttons.
+- **3. In-Call Caller ID Display (`CallActivity`)**: Automatically binds and displays waiting caller details (Name, Number, and Photo) on the active call screen instead of stale primary call info.
+- **4. Dedicated Accept & Decline Controls**: Added intuitive controls and swipe buttons specifically for handling the incoming waiting call.
+- **5. Decline Fix (`declineCall()`)**: Rejecting a second call now dismisses only the waiting call, allowing the user to seamlessly continue their ongoing conversation without hanging up.
+- **6. Active Call Display**: Displays current ongoing caller information separately in the top status bar (`"Active: [Name]"`).
+- **7. Carrier/OEM Call Waiting Interception (`CarrierCallWaitingNotificationManager`)**: Captures and alerts carrier-level second-call attempts via `PhoneStateListener` even if not routed through `InCallService`.
+- **8. Missed Call Waiting Tracker (`CallWaitingAttemptTracker`, `CallWaitingMissedTracker`)**: Logs and notifies users of missed second-call attempts.
+
+### 🔒 Security, Privacy & Repository Polish
+- **Header-Based Authentication**: Switched Gemini API calls to secure `x-goog-api-key` HTTP headers to prevent URL query string exposure.
+- **Shielded Logcat**: Removed HTTP body logging interceptors to ensure private contact lists and numbers are never printed to system logs.
+- **Modernized OkHttp API**: Updated `RequestBody.create()` to modern `toRequestBody()` extension.
+- **Standalone CI Pipeline**: Added automated GitHub Actions build workflow (`.github/workflows/ci.yml`).
+- **Community Hubs**: Added Discord (`discord.gg/hQebWS8qZ`), Reddit (`r/SimplyDial07`), Telegram (`t.me/SimplyDial`), and email links into in-app About Dialog and docs.
+
+---
+
+## [1.0.0] - 2025-10-31 - Complete Feature Suite & Inception Build (July – October 2025)
+
+### 🚀 Highlights
+- Project initiated, conceptualized, and primarily built by **Piyush Kumar** between **July 2025 and October 2025**, with engineering co-management by his brother, **Manish Kumar**.
+- All core features of SimplyDial were designed, tested, and implemented during this intensive development cycle.
+
+### 👵 EaseUI Accessibility Suite
+- **Accidental Call Shield**: Intelligent confirmation popup modal presenting contact photo, full name, number, and an explicit "Tap to Call" confirmation action before dialing.
+- **Messages Joystick (`JoystickMessageButton`)**: Ergonomic radial swipe control enabling fast, pre-configured emergency and daily SMS messaging without typing.
+- **Tactile Swipe Answering (`SwipeCallButtonsView`)**: Ergonomic vertical swipe-up to accept and swipe-down to decline incoming phone calls.
+- **Haptic Ripple Feedback**: Visual water-ripple animations and tactile response across dialer keypad presses.
+- **Gradient Ring Contact Inspect**: Tapping contact avatar rings with glowing animated gradient rings allows quick inspection of detailed contact profiles.
+- **Full Hindi Localization**: Comprehensive in-app Hindi language translation (`values-hi`) alongside English.
+
+### 💎 Black Diamond AMOLED Theming & UI
+- **AMOLED Pure Black (`#000000`)**: Zero-pixel-bleed true black canvas tailored for OLED and AMOLED screens to maximize battery life.
+- **Electric Cyan Glow (`#00E5FF`)**: High-contrast modern accent colors across keypad buttons, floating action buttons, and active call indicators.
+- **Glassmorphic Overlays (`BlurBackgroundView`)**: Dynamic frosted glass backdrop rendering with real-time blur and light/dark theme adaptation.
+- **Independent Theme Selector**: Dedicated toggle in Settings for Light Mode, Black Diamond Dark Mode, or System Default.
+
+### 🎙️ High-Definition Compliant Call Recording
+- **Studio-Grade Audio Encoding**: Stereo AAC capture at 256 kbps bitrate and 48 kHz sampling frequency saved in standard `.m4a` format.
+- **Multi-Source Fallback Engine**: Multi-tier recording pipeline (`MIC` → `VOICE_COMMUNICATION` → `VOICE_CALL` → `VOICE_RECOGNITION` → `DEFAULT`) to ensure reliable recording across diverse Android chipsets.
+- **Two-Party Compliance Beeps**: Mandatory 300ms notification beeps (~900 Hz tone) on recording start and stop to ensure strict legal compliance.
+- **First-Time Legal Consent Flow**: Explicit consent modal dialog shown on first recording activation.
+- **Live In-Call HUD**: Floating recording timer pill displayed on the active call screen.
+- **Post-Call Review Dialog**: Prompt upon call termination to listen, save, rename, or discard recordings immediately.
+- **Recording History Browser (`RecordingHistoryActivity`)**: Complete audio manager to play recordings, search by contact/date, share via secure Android `FileProvider`, or batch delete.
+
+### 📹 Jitsi Meet Video Calling
+- **Instant Video Conferences**: Launch private Jitsi Meet conference rooms directly from dialpad entries or contact details.
+- **Cellular Audio Conflict Protection**: Automatically mutes the cellular microphone when video starts to eliminate acoustic feedback.
+- **Accidental Navigation Rejoin**: Interactive dialog allowing users to rejoin active video calls seamlessly if navigated away.
+- **SMS Room Invitation Dispatch**: Automated SMS formatting with one-click web links so remote parties can join without installing third-party apps.
+
+### 🧠 Gemini AI Voice Dialing & Search
+- **Natural Language Voice Dialing**: Speak natural phrases (e.g., *"Call Mom on mobile"*, *"Dial John"*) parsed by Google Gemini 1.5 Flash via REST API.
+- **Local Offline Fuzzy Resolver (`ContactResolver`)**: High-performance local search fallback if network is unreachable or API key is not supplied.
+
+---
+
+## [Upstream Heritage] - Fossify Phone 1.7.1 (2025-09-12)
 ### Changed
-- Updated translations
+- Upstream translations across supported locales
 
 ### Fixed
-- Fixed USSD code handling in speed dial ([#565])
+- Fixed USSD code handling in speed dial
 - Fixed contact number selection on the dial pad screen
-
-## [1.7.0] - 2025-09-01
-### Added
-- Option to launch system Calling accounts screen ([#67])
-
-### Changed
-- Tapping a contact now starts a call; tap the photo for details ([#80])
-- Improved speed dial management UX for contacts with multiple numbers
-- Updated translations
-
-### Fixed
-- Fixed speed dial not showing contact name ([#543])
-
-## [1.6.2] - 2025-08-23
-### Changed
-- Renamed notification channels to be more user-friendly ([#196])
-- Updated translations
-
-### Fixed
-- Fixed missing phone number in call history details ([#526])
-- Fixed incorrect sorting in call history search results ([#535])
-- Fixed frequent crashes in call history ([#378])
-
-## [1.6.1] - 2025-07-31
-### Changed
-- Updated translations
-
-### Fixed
-- It's now possible to unset custom SIM preferences ([#293])
-
-## [1.6.0] - 2025-07-11
-### Changed
-- Dialpad screen now respects the default SIM preference ([#50])
-- Updated translations
-
-## [1.5.1] - 2025-06-17
-### Changed
-- Updated translations
-
-### Fixed
-- Fixed crash when searching in call history ([#378])
-
-## [1.5.0] - 2025-06-06
-### Added
-- Backspace button on call screen dialpad
-
-### Changed
-- SIM indicators now use system-defined colors
-- Search query is now preserved when switching tabs ([#94])
-- Updated translations
-
-### Fixed
-- Calling from the favorites grid view now works as expected ([#357])
-- Fixed phone number text direction in RTL layout ([#307])
-- Fixed incorrect colors on conference call screen ([#359])
-
-## [1.4.0] - 2025-04-01
-### Added
-- Added support for caller location (state/country) in call history ([#39])
-- Added option to open contact details when contact photo is tapped ([#35])
-
-### Changed
-- Other minor bug fixes and improvements
-- Added more translations
-
-### Removed
-- Removed storage permission requirement
-
-## [1.3.1] - 2025-01-14
-### Changed
-- Other minor bug fixes and improvements
-- Added more translations
-
-### Fixed
-- Fixed an issue where call history wasn't refreshing ([#183])
-- Fixed index letter sorting in the contacts list ([#186])
-- Fixed dialpad search for some characters ([#139])
-- Fixed an issue where call hangs up immediately after back press ([#237])
-
-## [1.3.0] - 2024-10-30
-### Changed
-- Replaced checkboxes with switches
-- Other minor bug fixes and improvements
-- Added more translations
-
-### Removed
-- Removed support for Android 7 and older versions
-
-### Fixed
-- Fixed issue with contacts not displaying on Android 14 and above
-
-## [1.2.0] - 2024-05-08
-### Added
-- Grouped call history entries by date ([#96])
-- Added an option to format phone numbers in the call log
-
-### Changed
-- Missed call notifications are now automatically dismissed when you view your call history ([#88])
-- Moved some actions back into the popup menu to reduce visual clutter
-- Updated menu design for better UI/UX
-- Disabled call action buttons after a call ends for better UI/UX ([#181])
-- Always show the date in the call details dialog ([#133])
-- Updated call direction icons and colors in the call history for better clarity ([#81])
-- Restructured the in-call UI to be more responsive to different screen sizes ([#147])
-- Added some translations
-
-### Fixed
-- Fixed an issue where call history wasn't refreshing ([#146])
-- Fixed a problem where search items would disappear ([#98])
-- Fixed UI freeze that happened when loading call history
-- Fixed a bug that caused search not to find older call logs ([#97])
-- Fixed a crash that occurred when using the dialpad quick callback feature
-
-## [1.1.1] - 2024-03-21
-### Added
-- Added quick dial-back feature ([#60])
-- Added placeholder avatar for unknown numbers and contacts without photo
-- Added a progress indicator to indicate call history retrieval
-- Added bottom padding in lists to allow scrolling above the floating action button
-
-### Changed
-- The hang-up button is now always visible in the call UI ([#9])
-- Enhanced the size of caller avatar and buttons in the call UI ([#118])
-- Reorganized dialpad preferences into their own dedicated section ([#116])
-- Added some translations
-
-### Removed
-- Removed call history limit ([#125])
-
-## [1.1.0] - 2024-03-21
-### Added
-- Added quick dial-back feature ([#60])
-- Added placeholder avatar for unknown numbers and contacts without photo
-- Added a progress indicator to indicate call history retrieval
-- Added bottom padding in lists to allow scrolling above the floating action button
-
-### Changed
-- The hang-up button is now always visible in the call UI ([#9])
-- Enhanced the size of caller avatar and buttons in the call UI ([#118])
-- Reorganized dialpad preferences into their own dedicated section ([#116])
-- Added some translations
-
-### Removed
-- Removed call history limit ([#125])
-
-## [1.0.0] - 2024-01-15
-### Added
-- Initial release
-
-[#9]: https://github.com/FossifyOrg/Phone/issues/9
-[#35]: https://github.com/FossifyOrg/Phone/issues/35
-[#39]: https://github.com/FossifyOrg/Phone/issues/39
-[#50]: https://github.com/FossifyOrg/Phone/issues/50
-[#60]: https://github.com/FossifyOrg/Phone/issues/60
-[#67]: https://github.com/FossifyOrg/Phone/issues/67
-[#80]: https://github.com/FossifyOrg/Phone/issues/80
-[#81]: https://github.com/FossifyOrg/Phone/issues/81
-[#88]: https://github.com/FossifyOrg/Phone/issues/88
-[#94]: https://github.com/FossifyOrg/Phone/issues/94
-[#96]: https://github.com/FossifyOrg/Phone/issues/96
-[#97]: https://github.com/FossifyOrg/Phone/issues/97
-[#98]: https://github.com/FossifyOrg/Phone/issues/98
-[#116]: https://github.com/FossifyOrg/Phone/issues/116
-[#118]: https://github.com/FossifyOrg/Phone/issues/118
-[#125]: https://github.com/FossifyOrg/Phone/issues/125
-[#133]: https://github.com/FossifyOrg/Phone/issues/133
-[#139]: https://github.com/FossifyOrg/Phone/issues/139
-[#146]: https://github.com/FossifyOrg/Phone/issues/146
-[#147]: https://github.com/FossifyOrg/Phone/issues/147
-[#181]: https://github.com/FossifyOrg/Phone/issues/181
-[#183]: https://github.com/FossifyOrg/Phone/issues/183
-[#186]: https://github.com/FossifyOrg/Phone/issues/186
-[#196]: https://github.com/FossifyOrg/Phone/issues/196
-[#237]: https://github.com/FossifyOrg/Phone/issues/237
-[#293]: https://github.com/FossifyOrg/Phone/issues/293
-[#307]: https://github.com/FossifyOrg/Phone/issues/307
-[#357]: https://github.com/FossifyOrg/Phone/issues/357
-[#359]: https://github.com/FossifyOrg/Phone/issues/359
-[#378]: https://github.com/FossifyOrg/Phone/issues/378
-[#526]: https://github.com/FossifyOrg/Phone/issues/526
-[#535]: https://github.com/FossifyOrg/Phone/issues/535
-[#543]: https://github.com/FossifyOrg/Phone/issues/543
-[#565]: https://github.com/FossifyOrg/Phone/issues/565
-[#585]: https://github.com/FossifyOrg/Phone/issues/585
-
-[Unreleased]: https://github.com/FossifyOrg/Phone/compare/1.7.1...HEAD
-[1.7.1]: https://github.com/FossifyOrg/Phone/compare/1.7.0...1.7.1
-[1.7.0]: https://github.com/FossifyOrg/Phone/compare/1.6.2...1.7.0
-[1.6.2]: https://github.com/FossifyOrg/Phone/compare/1.6.1...1.6.2
-[1.6.1]: https://github.com/FossifyOrg/Phone/compare/1.6.0...1.6.1
-[1.6.0]: https://github.com/FossifyOrg/Phone/compare/1.5.1...1.6.0
-[1.5.1]: https://github.com/FossifyOrg/Phone/compare/1.5.0...1.5.1
-[1.5.0]: https://github.com/FossifyOrg/Phone/compare/1.4.0...1.5.0
-[1.4.0]: https://github.com/FossifyOrg/Phone/compare/1.3.1...1.4.0
-[1.3.1]: https://github.com/FossifyOrg/Phone/compare/1.3.0...1.3.1
-[1.3.0]: https://github.com/FossifyOrg/Phone/compare/1.2.0...1.3.0
-[1.2.0]: https://github.com/FossifyOrg/Phone/compare/1.1.1...1.2.0
-[1.1.1]: https://github.com/FossifyOrg/Phone/compare/1.1.0...1.1.1
-[1.1.0]: https://github.com/FossifyOrg/Phone/compare/1.0.0...1.1.0
-[1.0.0]: https://github.com/FossifyOrg/Phone/releases/tag/1.0.0

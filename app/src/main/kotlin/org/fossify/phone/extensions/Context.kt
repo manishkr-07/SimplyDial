@@ -3,6 +3,7 @@ package org.fossify.phone.extensions
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.content.res.Configuration
 import android.media.AudioManager
 import android.net.Uri
 import android.os.PowerManager
@@ -11,6 +12,7 @@ import org.fossify.commons.extensions.telecomManager
 import org.fossify.commons.helpers.ensureBackgroundThread
 import org.fossify.phone.helpers.Config
 import org.fossify.phone.models.SIMAccount
+import java.util.Locale
 
 val Context.config: Config get() = Config.newInstance(applicationContext)
 
@@ -75,4 +77,15 @@ fun Context.canLaunchAccountsConfiguration(): Boolean {
 
 fun Context.launchAccountsConfiguration() {
     startActivity(Intent(TelecomManager.ACTION_CHANGE_PHONE_ACCOUNTS))
+}
+
+fun Context.applyLanguageConfiguration() {
+    val languageCode = config.appLanguage
+    val locale = Locale(languageCode)
+    Locale.setDefault(locale)
+    
+    val configuration = Configuration(resources.configuration)
+    configuration.setLocale(locale)
+    
+    resources.updateConfiguration(configuration, resources.displayMetrics)
 }

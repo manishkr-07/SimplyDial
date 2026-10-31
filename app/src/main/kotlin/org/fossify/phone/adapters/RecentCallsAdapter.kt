@@ -27,10 +27,13 @@ import org.fossify.phone.activities.MainActivity
 import org.fossify.phone.activities.SimpleActivity
 import org.fossify.phone.databinding.ItemRecentCallBinding
 import org.fossify.phone.databinding.ItemRecentsDateBinding
+import org.fossify.phone.databinding.ItemRecentCallSkeletonBinding
 import org.fossify.phone.dialogs.ShowGroupedCallsDialog
 import org.fossify.phone.extensions.*
+import org.fossify.phone.extensions.addAnimatedGradientRing
 import org.fossify.phone.helpers.RecentsHelper
 import org.fossify.phone.interfaces.RefreshItemsListener
+import org.fossify.phone.metrics.Perf
 import org.fossify.phone.models.CallLogItem
 import org.fossify.phone.models.RecentCall
 import org.joda.time.DateTime
@@ -50,6 +53,8 @@ class RecentCallsAdapter(
     private lateinit var incomingCallIcon: Drawable
     private lateinit var incomingMissedCallIcon: Drawable
     var fontSize: Float = activity.getTextSize()
+    // Skip heavy per-row work (geocoding etc.) during first paint/fast scroll
+    var fastBindMode: Boolean = true
     private val areMultipleSIMsAvailable = activity.areMultipleSIMsAvailable()
     private var missedCallColor = resources.getColor(R.color.color_missed_call)
     private var secondaryTextColor = textColor.adjustAlpha(0.6f)
@@ -58,6 +63,7 @@ class RecentCallsAdapter(
     private var phoneNumberUtilInstance: PhoneNumberUtil = PhoneNumberUtil.getInstance()
     private var phoneNumberOfflineGeocoderInstance: PhoneNumberOfflineGeocoder = PhoneNumberOfflineGeocoder.getInstance()
     private val cachedSimColors = HashMap<Pair<Int,Int>, Int>()
+    private val locationCache = HashMap<String, String?>()
 
     init {
         initDrawables()
@@ -79,7 +85,7 @@ class RecentCallsAdapter(
             findItem(R.id.cab_call_sim_2).isVisible = hasMultipleSIMs && isOneItemSelected
             findItem(R.id.cab_remove_default_sim).isVisible = isOneItemSelected && (activity.config.getCustomSIM(selectedNumber) ?: "") != ""
 
-            findItem(R.id.cab_block_number).title = activity.addLockedLabelIfNeeded(R.string.block_number)
+            findItem(R.id.cab_block_number).title = activity.getString(R.string.block_number)
             findItem(R.id.cab_block_number).isVisible = isNougatPlus()
             findItem(R.id.cab_add_number).isVisible = isOneItemSelected
             findItem(R.id.cab_copy_number).isVisible = isOneItemSelected
@@ -126,6 +132,7 @@ class RecentCallsAdapter(
         return when (currentList[position]) {
             is CallLogItem.Date -> VIEW_TYPE_DATE
             is RecentCall -> VIEW_TYPE_CALL
+            is CallLogItem.Placeholder -> VIEW_TYPE_SKELETON
         }
     }
 
@@ -139,6 +146,10 @@ class RecentCallsAdapter(
                 ItemRecentCallBinding.inflate(layoutInflater, parent, false)
             )
 
+            VIEW_TYPE_SKELETON -> SkeletonViewHolder(
+                ItemRecentCallSkeletonBinding.inflate(layoutInflater, parent, false)
+            )
+
             else -> throw IllegalArgumentException("Unknown view type: $viewType")
         }
 
@@ -149,7 +160,11 @@ class RecentCallsAdapter(
         val callRecord = currentList[position]
         when (holder) {
             is RecentCallDateViewHolder -> holder.bind(callRecord as CallLogItem.Date)
-            is RecentCallViewHolder -> holder.bind(callRecord as RecentCall)
+            is RecentCallViewHolder -> {
+                Perf.markFirstRow()
+                holder.bind(callRecord as RecentCall)
+            }
+            is SkeletonViewHolder -> holder.bind()
         }
 
         bindViewHolder(holder)
@@ -158,8 +173,9 @@ class RecentCallsAdapter(
     override fun onViewRecycled(holder: ViewHolder) {
         super.onViewRecycled(holder)
         if (!activity.isDestroyed && !activity.isFinishing) {
-            if (holder is RecentCallViewHolder) {
-                Glide.with(activity).clear(holder.binding.itemRecentsImage)
+            when (holder) {
+                is RecentCallViewHolder -> Glide.with(activity).clear(holder.binding.itemRecentsImage)
+                is SkeletonViewHolder -> holder.stopShimmer()
             }
         }
     }
@@ -205,11 +221,7 @@ class RecentCallsAdapter(
     }
 
     private fun tryBlocking() {
-        if (activity.isOrWasThankYouInstalled()) {
-            askConfirmBlock()
-        } else {
-            FeatureLockedDialog(activity) { }
-        }
+        askConfirmBlock()
     }
 
     private fun askConfirmBlock() {
@@ -351,7 +363,7 @@ class RecentCallsAdapter(
                 findItem(R.id.cab_add_number).isVisible = !call.isUnknownNumber
                 findItem(R.id.cab_copy_number).isVisible = !call.isUnknownNumber
                 findItem(R.id.cab_show_call_details).isVisible = !call.isUnknownNumber
-                findItem(R.id.cab_block_number).title = activity.addLockedLabelIfNeeded(R.string.block_number)
+                findItem(R.id.cab_block_number).title = activity.getString(R.string.block_number)
                 findItem(R.id.cab_block_number).isVisible = isNougatPlus() && !call.isUnknownNumber
                 findItem(R.id.cab_remove_default_sim).isVisible = (activity.config.getCustomSIM(selectedNumber) ?: "") != "" && !call.isUnknownNumber
             }
@@ -436,25 +448,46 @@ class RecentCallsAdapter(
     }
 
     private inner class RecentCallViewHolder(val binding: ItemRecentCallBinding) : ViewHolder(binding.root) {
-        fun bind(call: RecentCall) = bindView(
-            item = call,
-            allowSingleClick = refreshItemsListener != null && !call.isUnknownNumber,
-            allowLongClick = refreshItemsListener != null && !call.isUnknownNumber
-        ) { _, _ ->
-            binding.apply {
-                root.setupViewBackground(activity)
+    fun bind(call: RecentCall) = bindView(
+        item = call,
+        allowSingleClick = refreshItemsListener != null && !call.isUnknownNumber,
+        allowLongClick = refreshItemsListener != null && !call.isUnknownNumber
+    ) { _, _ ->
+        binding.apply {
+            root.setupViewBackground(activity)
 
-                val currentFontSize = fontSize
-                itemRecentsHolder.isSelected = selectedKeys.contains(call.id)
-                val matchingContact = findContactByCall(call)
-                val name = matchingContact?.getNameToDisplay() ?: call.name
-                val formatPhoneNumbers = activity.config.formatPhoneNumbers
-                var nameToShow = if (name == call.phoneNumber && formatPhoneNumbers) {
-                    SpannableString(name.formatPhoneNumber())
+            // Apply gold-to-white gradient border and FFFFDD-to-white gradient background
+            itemRecentsHolder.apply {
+                setBackgroundResource(R.drawable.contact_item_glass_background)
+                val marginInDp = 8
+                val marginInPx = (marginInDp * resources.displayMetrics.density).toInt()
+                
+                // Add extra top margin for first item to show below filter bar
+                val position = absoluteAdapterPosition
+                val topMargin = if (position == 0 || (position == 1 && currentList.getOrNull(0) is CallLogItem.Date)) {
+                    (marginInPx * 3) // Extra space below filter bar
                 } else {
-                    SpannableString(name)
+                    marginInPx / 2
                 }
-                val shouldShowDuration = call.type != Calls.MISSED_TYPE && call.type != Calls.REJECTED_TYPE && call.duration > 0
+                
+                val params = layoutParams as? ViewGroup.MarginLayoutParams
+                params?.setMargins(marginInPx, topMargin, marginInPx, marginInPx / 2)
+                layoutParams = params
+                setPadding(marginInPx, marginInPx, marginInPx, marginInPx)
+                elevation = 4f
+                isSelected = selectedKeys.contains(call.id)
+            }
+
+            val currentFontSize = fontSize
+            val matchingContact = findContactByCall(call)
+            val name = matchingContact?.getNameToDisplay() ?: call.name
+            val formatPhoneNumbers = activity.config.formatPhoneNumbers
+            var nameToShow = if (name == call.phoneNumber && formatPhoneNumbers) {
+                SpannableString(name.formatPhoneNumber())
+            } else {
+                SpannableString(name)
+            }
+            val shouldShowDuration = call.type != Calls.MISSED_TYPE && call.type != Calls.REJECTED_TYPE && call.duration > 0
 
                 if (refreshItemsListener == null) {
                     // show specific number at "Show call details" dialog too
@@ -517,27 +550,29 @@ class RecentCallsAdapter(
                 itemRecentsLocation.apply {
                     val locale = Locale.getDefault()
                     val defaultCountryCode = locale.country
-                    val phoneNumber = try {
-                        phoneNumberUtilInstance
-                            .parse(call.phoneNumber, defaultCountryCode)
-                    } catch (_: NumberParseException) {
-                        null
-                    }
 
-                    val location = if (phoneNumber != null) {
-                        phoneNumberOfflineGeocoderInstance
-                            .getDescriptionForNumber(phoneNumber, locale, defaultCountryCode)
-                    } else {
-                        null
-                    }
+                    val cached = locationCache[call.phoneNumber]
+                    val location = if (cached != null) {
+                        cached
+                    } else if (!fastBindMode) {
+                        val phoneNumber = try {
+                            phoneNumberUtilInstance.parse(call.phoneNumber, defaultCountryCode)
+                        } catch (_: NumberParseException) {
+                            null
+                        }
+                        val loc = if (phoneNumber != null) {
+                            phoneNumberOfflineGeocoderInstance.getDescriptionForNumber(phoneNumber, locale, defaultCountryCode)
+                        } else null
+                        locationCache[call.phoneNumber] = loc
+                        loc
+                    } else null
 
                     text = location
                     setTextColor(textColor)
                     setTextSize(TypedValue.COMPLEX_UNIT_PX, currentFontSize * 0.8f)
                     beVisibleIf(
-                        phoneNumber != null
-                                && phoneNumber.countryCodeSource != Phonenumber.PhoneNumber.CountryCodeSource.FROM_DEFAULT_COUNTRY
-                                && (location != locale.displayCountry || matchingContact == null)
+                        location != null && location.isNotBlank() &&
+                            (location != locale.displayCountry || matchingContact == null)
                     )
                 }
 
@@ -551,9 +586,11 @@ class RecentCallsAdapter(
                 }
 
                 SimpleContactsHelper(root.context).loadContactImage(call.photoUri, itemRecentsImage, call.name)
+                // Add animated gradient ring around profile photo
+                itemRecentsImage.addAnimatedGradientRing()
 
                 itemRecentsImage.apply {
-                    if (profileIconClick != null) {
+                    if (profileIconClick != null && activity.config.enableProfilePictureClick) {
                         setBackgroundResource(R.drawable.selector_clickable_circle)
 
                         setOnClickListener {
@@ -567,6 +604,11 @@ class RecentCallsAdapter(
                             viewLongClicked()
                             true
                         }
+                    } else {
+                        // Remove click listeners and background when disabled
+                        background = null
+                        setOnClickListener(null)
+                        setOnLongClickListener(null)
                     }
                 }
 
@@ -597,6 +639,16 @@ class RecentCallsAdapter(
         }
     }
 
+    fun updateFastBindMode(enabled: Boolean) {
+        if (fastBindMode == enabled) return
+        fastBindMode = enabled
+        // Refresh only visible items
+        val lm = recyclerView.layoutManager as? androidx.recyclerview.widget.LinearLayoutManager ?: return
+        val first = lm.findFirstVisibleItemPosition().coerceAtLeast(0)
+        val last = lm.findLastVisibleItemPosition().coerceAtLeast(first)
+        if (first <= last) notifyItemRangeChanged(first, last - first + 1)
+    }
+
     private inner class RecentCallDateViewHolder(val binding: ItemRecentsDateBinding) : ViewHolder(binding.root) {
         fun bind(date: CallLogItem.Date) {
             binding.dateTextView.apply {
@@ -617,9 +669,19 @@ class RecentCallsAdapter(
         }
     }
 
+    private inner class SkeletonViewHolder(val binding: ItemRecentCallSkeletonBinding) : ViewHolder(binding.root) {
+        fun bind() {
+            // Shimmer auto-starts via XML; nothing to bind.
+        }
+        fun stopShimmer() {
+            (binding.root as? com.facebook.shimmer.ShimmerFrameLayout)?.stopShimmer()
+        }
+    }
+
     companion object {
         private const val VIEW_TYPE_DATE = 0
         private const val VIEW_TYPE_CALL = 1
+        private const val VIEW_TYPE_SKELETON = 2
     }
 }
 
