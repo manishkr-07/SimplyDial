@@ -154,8 +154,8 @@ dependencies {
     implementation(libs.libphonenumber)
     implementation(libs.geocoder)
     // OkHttp for network calls to Gemini API
-    implementation("com.squareup.okhttp3:okhttp:4.11.0")
-    implementation("com.squareup.okhttp3:logging-interceptor:4.11.0")
+    implementation("com.squareup.okhttp3:okhttp:5.5.1")
+    implementation("com.squareup.okhttp3:logging-interceptor:5.5.1")
     // Shimmer for skeleton placeholders
     implementation("com.facebook.shimmer:shimmer:0.5.0")
 
