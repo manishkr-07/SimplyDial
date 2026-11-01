@@ -22,8 +22,8 @@ Launch secure, open-source video conferences directly from the dialer or contact
 • Rejoin Interception: Accidental app exits prompt a quick rejoin dialog so you never drop mid-meeting.
 • Instant SMS Invites: Generate and send direct meeting links via SMS with one tap.
 
-🧠 AI VOICE DIALING (GEMINI 1.5 FLASH)
-Speak naturally (e.g., "Call Dad on mobile") to automatically parse recipient intent and number using Google Gemini AI, backed by an instant offline fuzzy matching fallback when unconfigured.
+🎙️ INSTANT OFFLINE VOICE DIALING
+Speak naturally (e.g., "Call Dad", "Dial 9876543210") to instantly connect with contacts using smart on-device fuzzy matching. Completely offline and private—no cloud AI, zero external network requests.
 
 🔒 100% PRIVATE & ON-DEVICE
 Your contacts, call logs, audio recordings, and preferences never leave your smartphone. Zero analytics, zero advertising SDKs, and zero telemetry.

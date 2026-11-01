@@ -94,7 +94,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
                     android:lineSpacingExtra="2dp"
-                    android:text="Smart, private, and accessible telephony with EaseUI, Black Diamond AMOLED, HD Recording &amp; Gemini 3.8 Flash."
+                    android:text="Smart, private, and accessible telephony with EaseUI, Black Diamond AMOLED, HD Recording &amp; Video Calling."
                     android:textColor="@color/text_secondary"
                     android:textSize="13sp" />
 
@@ -1100,7 +1100,7 @@
                 android:elevation="2dp"
                 android:orientation="vertical">
 
-                <!-- Voice Dial Language (Gemini 3.8 Flash) -->
+                <!-- Voice Dial Language -->
                 <RelativeLayout
                     android:id="@+id/settings_voice_dial_language_holder"
                     style="@style/SettingsHolderTextViewStyle"

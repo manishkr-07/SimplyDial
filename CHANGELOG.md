@@ -20,7 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **8. Missed Call Waiting Tracker (`CallWaitingAttemptTracker`, `CallWaitingMissedTracker`)**: Logs and notifies users of missed second-call attempts.
 
 ### 🔒 Security, Privacy & Repository Polish
-- **Header-Based Authentication**: Switched Gemini API calls to secure `x-goog-api-key` HTTP headers to prevent URL query string exposure.
+- **Header-Based Security & Privacy**: Removed cloud AI dependencies; zero telemetry or external API credentials needed.
 - **Shielded Logcat**: Removed HTTP body logging interceptors to ensure private contact lists and numbers are never printed to system logs.
 - **Modernized OkHttp API**: Updated `RequestBody.create()` to modern `toRequestBody()` extension.
 - **Standalone CI Pipeline**: Added automated GitHub Actions build workflow (`.github/workflows/ci.yml`).
@@ -63,9 +63,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Accidental Navigation Rejoin**: Interactive dialog allowing users to rejoin active video calls seamlessly if navigated away.
 - **SMS Room Invitation Dispatch**: Automated SMS formatting with one-click web links so remote parties can join without installing third-party apps.
 
-### 🧠 Gemini AI Voice Dialing & Search
-- **Natural Language Voice Dialing**: Speak natural phrases (e.g., *"Call Mom on mobile"*, *"Dial John"*) parsed by Google Gemini 1.5 Flash via REST API.
-- **Local Offline Fuzzy Resolver (`ContactResolver`)**: High-performance local search fallback if network is unreachable or API key is not supplied.
+### 🎙️ Smart Offline Voice Dialing & Search
+- **Instant Speech Dialing**: Speak natural contact names or numbers parsed on-device.
+- **Local Offline Fuzzy Resolver (`ContactResolver`)**: High-performance 100% private local contact search with Levenshtein fuzzy matching—zero cloud AI or data leaks.
 
 ---
 

@@ -19,7 +19,9 @@ import androidx.core.net.toUri
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.fossify.commons.extensions.applyColorFilter
 import org.fossify.commons.extensions.beVisibleIf
 import org.fossify.commons.extensions.checkAppSideloading
@@ -66,7 +68,6 @@ import org.fossify.phone.helpers.DIALPAD_TONE_LENGTH_MS
 import org.fossify.phone.helpers.RecentsHelper
 import org.fossify.phone.helpers.ToneGeneratorHelper
 import org.fossify.phone.models.SpeedDial
-import org.fossify.phone.services.GeminiService
 import org.fossify.phone.services.ContactResolver
 import org.fossify.phone.services.DialerService
 import android.widget.Toast
@@ -504,111 +505,28 @@ class DialpadActivity : SimpleActivity() {
             .replace("please call", "")
             .trim()
 
-        // Gather contact list for Gemini (system contacts + private contacts)
-    val systemContacts = ContactResolver.getAllContacts(this)
-    val privateContacts = MyContactsContentProvider.getContacts(this, privateCursor)
-    val contactsPairs = mutableListOf<Pair<String, String>>()
-    // build explicit Pair<String, String> values to avoid type-inference issues
-    systemContacts.forEach { contactsPairs.add(Pair(it.name, it.number ?: "")) }
-        // MyContactsContentProvider may return objects from the commons module — handle unknown shapes safely.
-        privateContacts.forEach { item ->
-            try {
-                // attempt to read well-known properties via reflection to avoid compile-time dependency
-                val kClass = item::class
-                val nameProp = kClass.members.firstOrNull { it.name.equals("name", true) }
-                val numberProp = kClass.members.firstOrNull { it.name.equals("number", true) }
+        val searchQuery = if (cleaned.isNotEmpty()) cleaned else spoken.trim()
 
-                val nameVal = nameProp?.call(item)?.toString() ?: item.toString()
-                val numberVal = numberProp?.call(item)?.toString() ?: ""
-
-                contactsPairs.add(Pair(nameVal, numberVal))
-            } catch (e: Exception) {
-                // fallback: use toString() as name and empty number
-                contactsPairs.add(Pair(item.toString(), ""))
-            }
-        }
-
-        lifecycleScope.launch {
-            val parsed = try {
-                GeminiService.parseIntent(spoken, contactsPairs, this@DialpadActivity)
-            } catch (e: Exception) {
-                null
-            }
-
-            if (parsed == null) {
-                // Gemini failed (network/key or parse error). Fall back to local fuzzy contact matching.
-                android.util.Log.w("DialpadActivity", "Gemini parsing returned null; falling back to local matcher")
-                // Use cleaned query for fuzzy local matching (e.g., "call mummy" -> "mummy")
-                val fallbackMatches = ContactResolver.findMatches(this@DialpadActivity, cleaned)
-                when {
-                    fallbackMatches.isEmpty() -> {
-                        runOnUiThread {
-                            // keep user input for manual correction and inform user softly
-                            binding.dialpadInput.setText(spoken)
-                            binding.dialpadInput.setSelection(spoken.length)
-                            Toast.makeText(this@DialpadActivity, getString(R.string.no_contact_found), Toast.LENGTH_SHORT).show()
-                        }
-                    }
-                    fallbackMatches.size == 1 -> {
-                        val chosen = fallbackMatches[0]
-                        runOnUiThread {
-                            startCallIntent(chosen.number)
-                            clearInputWithDelay()
-                        }
-                    }
-                    else -> {
-                        runOnUiThread {
-                            DialerService.promptUserToChoose(this@DialpadActivity, fallbackMatches) { chosen ->
-                                startCallIntent(chosen.number)
-                                clearInputWithDelay()
-                            }
-                        }
-                    }
-                }
-                return@launch
-            }
-
-            val intent = parsed.intent ?: if (spoken.contains("call", true)) "call" else null
-            val contactName = parsed.contact
-            val contactNumber = parsed.number
-
-            if (intent == "call" && contactNumber != null && contactNumber.isNotEmpty()) {
-                // Direct match: dial immediately
-                runOnUiThread {
-                    startCallIntent(contactNumber)
-                    clearInputWithDelay()
-                }
-            } else if (intent == "call" && contactName != null) {
-                // Try fuzzy match if Gemini only returns name
-                val matches = ContactResolver.findMatches(this@DialpadActivity, contactName)
+        lifecycleScope.launch(Dispatchers.IO) {
+            val matches = ContactResolver.findMatches(this@DialpadActivity, searchQuery)
+            withContext(Dispatchers.Main) {
                 when {
                     matches.isEmpty() -> {
-                        runOnUiThread {
-                            binding.dialpadInput.setText(spoken)
-                            binding.dialpadInput.setSelection(spoken.length)
-                            Toast.makeText(this@DialpadActivity, getString(R.string.no_contact_found), Toast.LENGTH_SHORT).show()
-                        }
+                        binding.dialpadInput.setText(spoken)
+                        binding.dialpadInput.setSelection(spoken.length)
+                        Toast.makeText(this@DialpadActivity, getString(R.string.no_contact_found), Toast.LENGTH_SHORT).show()
                     }
                     matches.size == 1 -> {
                         val chosen = matches[0]
-                        runOnUiThread {
+                        startCallIntent(chosen.number)
+                        clearInputWithDelay()
+                    }
+                    else -> {
+                        DialerService.promptUserToChoose(this@DialpadActivity, matches) { chosen ->
                             startCallIntent(chosen.number)
                             clearInputWithDelay()
                         }
                     }
-                    else -> {
-                        runOnUiThread {
-                            DialerService.promptUserToChoose(this@DialpadActivity, matches) { chosen ->
-                                startCallIntent(chosen.number)
-                                clearInputWithDelay()
-                            }
-                        }
-                    }
-                }
-            } else {
-                runOnUiThread {
-                    binding.dialpadInput.setText(spoken)
-                    binding.dialpadInput.setSelection(spoken.length)
                 }
             }
         }

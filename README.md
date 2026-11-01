@@ -6,7 +6,7 @@
 
 <p align="center">
   <b>Connect with Ease</b><br>
-  <i>A modern, privacy-first, accessibility-enhanced Android phone app featuring Black Diamond AMOLED theming, intuitive senior-friendly UI controls, HD call recording, Jitsi Meet video calling, and Gemini AI voice dialing.</i>
+  <i>A modern, privacy-first, accessibility-enhanced Android phone app featuring Black Diamond AMOLED theming, intuitive senior-friendly UI controls, HD call recording, Jitsi Meet video calling, and instant offline voice dialing.</i>
 </p>
 
 <p align="center">
@@ -16,7 +16,7 @@
   <img src="https://img.shields.io/badge/TargetSDK-36-blue?logo=android&logoColor=white" alt="Target SDK 36">
   <img src="https://img.shields.io/badge/License-GPLv3-blue.svg" alt="License: GPLv3">
   <img src="https://img.shields.io/badge/Video%20Call-Jitsi%20Meet-17A0DB?logo=jitsi&logoColor=white" alt="Jitsi Meet">
-  <img src="https://img.shields.io/badge/AI%20Voice-Google%20Gemini%203.8%20Flash-4285F4?logo=google&logoColor=white" alt="Gemini AI">
+  <img src="https://img.shields.io/badge/Voice%20Dial-100%25%20Offline-4285F4?logo=android&logoColor=white" alt="Offline Voice Dial">
   <img src="https://img.shields.io/badge/Privacy-100%25%20On--Device-green" alt="100% On-Device Privacy">
   <a href="https://discord.gg/hQebWS8qZ"><img src="https://img.shields.io/badge/Discord-Join%20Chat-5865F2?logo=discord&logoColor=white" alt="Discord"></a>
   <a href="https://www.reddit.com/r/SimplyDial07/"><img src="https://img.shields.io/badge/Reddit-r%2FSimplyDial07-FF4500?logo=reddit&logoColor=white" alt="Reddit"></a>
@@ -29,7 +29,7 @@
 
 **SimplyDial** is a next-generation, feature-packed Android dialer and calling application designed to make mobile communication seamless, transparent, and accessible for everyone. 
 
-It combines **intuitive senior-friendly accessible controls (EaseUI)** to prevent accidental dials and simplify messaging, an ultra-crisp **Black Diamond AMOLED Dark Theme** for maximum battery life, **studio-grade compliant call recording**, **integrated Jitsi Meet video conferences**, and **conversational AI voice dialing powered by Google Gemini 3.8 Flash**.
+It combines **intuitive senior-friendly accessible controls (EaseUI)** to prevent accidental dials and simplify messaging, an ultra-crisp **Black Diamond AMOLED Dark Theme** for maximum battery life, **studio-grade compliant call recording**, **integrated Jitsi Meet video conferences**, and **instant 100% offline private voice dialing**.
 
 ---
 
@@ -63,10 +63,10 @@ Designed from the ground up to eliminate dialing anxiety, accidental calls, and 
 - **Rejoin Interception**: If the user accidentally navigates away from the video conference screen, an interactive prompt lets them rejoin instantly without dropping the session.
 - **SMS Room Invitation**: Automatically formats and sends an SMS invite link so the remote party can join from any smartphone or browser.
 
-### 🧠 5. AI Voice Dialing (Gemini 3.8 Flash + Offline Fallback)
-- **Conversational Speech Recognition**: Speak commands naturally (e.g., *"Call Mom"*, *"Dial Dad on mobile"*).
-- **Google Gemini 3.8 Flash Engine**: High-performance model with structured JSON output enforcement (`response_schema`), exponential backoff retries, and jitter handling.
-- **Offline Fuzzy Matcher**: If no network is available or if an API key is not configured, the app seamlessly falls back to a fast local contact resolver (`ContactResolver`) using Levenshtein distance matching.
+### 🎙️ 5. Instant Offline Voice Dialing (100% Private)
+- **Speech-to-Dial**: Speak naturally (e.g., *"Call Mom"*, *"Dial 9876543210"*).
+- **Zero Cloud AI / 100% Private**: No network dependencies, no external API keys, zero risk of contact exposure.
+- **Fast Fuzzy Matcher**: High-performance local contact resolver (`ContactResolver`) using Levenshtein distance matching.
 
 ### 📞 6. Advanced Call Waiting & Alert Interception
 - **Busy-Call Interception**: Visual notifications and alerts when another caller attempts to reach you during an active conversation.
@@ -97,8 +97,7 @@ Designed from the ground up to eliminate dialing anxiety, accidental calls, and 
 - **SDK Target**: Android 16 (API 36 compileSdk & targetSdk)
 - **UI & Layouts**: Android XML Layouts, Custom Views, Glassmorphic Overlays, Shimmer Skeletons
 - **Video Conferencing**: [Jitsi Meet](https://jitsi.org/)
-- **AI / LLM Integration**: [Google Gemini 3.8 Flash](https://ai.google.dev/) via official REST API with structured JSON schema
-- **Networking**: OkHttp with connection timeouts & exponential backoff
+- **Voice Recognition**: Android Native Speech Recognition + On-Device Fuzzy Matcher (`ContactResolver`)
 - **Audio Capture**: Android `MediaRecorder` with prioritized audio sources and `ToneGenerator`
 - **Architecture Pattern**: MVVM with Helper/Manager abstraction layers
 
@@ -119,18 +118,7 @@ Designed from the ground up to eliminate dialing anxiety, accidental calls, and 
    cd SimplyDial
    ```
 
-2. **Configure Gemini API Key (Optional):**
-   To enable AI voice intent parsing with Google Gemini:
-   ```bash
-   cp gemini.properties.sample gemini.properties
-   ```
-   Open `gemini.properties` and add your API key from [Google AI Studio](https://aistudio.google.com/):
-   ```properties
-   GEMINI_API_KEY=AIzaSy...your_key_here
-   ```
-   > **Note**: `gemini.properties` is strictly ignored by Git and will never be committed. If left unconfigured, the dialer automatically uses the built-in local fuzzy contact matcher.
-
-3. **Build the Debug APK:**
+2. **Build the Debug APK:**
    * On Linux / macOS:
      ```bash
      ./gradlew assembleCoreDebug
@@ -171,7 +159,7 @@ For detailed technical specifications, architectural diagrams, and flowcharts, r
 
 **SimplyDial** was conceptualized, initiated, and is primarily owned by **Piyush Kumar**, who started the project in **July 2025** and led core development through **October 2025** in close collaboration and engineering co-management with his brother, **Manish Kumar**. 
 
-During the intensive **July 2025 – October 2025** phase, all core features of SimplyDial were designed and implemented—including the senior-friendly **EaseUI** accessibility suite, Black Diamond AMOLED dark theming, studio-grade HD call recording, Jitsi Meet video conferencing, and Gemini 1.5 Flash AI voice intent dialing.
+During the intensive **July 2025 – October 2025** phase, all core features of SimplyDial were designed and implemented—including the senior-friendly **EaseUI** accessibility suite, Black Diamond AMOLED dark theming, studio-grade HD call recording, Jitsi Meet video conferencing, and instant offline voice dialing.
 
 In **Late 2026 (v1.7.0)**, the project underwent a dedicated engineering re-update to solve critical telephony call waiting and caller ID challenges, alongside repository sanitization and open-source release polish.
 
@@ -179,7 +167,7 @@ In **Late 2026 (v1.7.0)**, the project underwent a dedicated engineering re-upda
 
 | Timeline | Milestone & Core Focus | Led By |
 | :--- | :--- | :--- |
-| **July 2025 – October 2025** | **Core Build & Complete Feature Suite**<br>• Conceptualized, initiated, and built from the ground up<br>• **EaseUI Accessibility Suite**: Accidental call shield dialog, messages joystick (`JoystickMessageButton`), tactile swipe answer, ripple feedback, Hindi localization<br>• **Black Diamond AMOLED Theme**: Pure black `#000000`, electric cyan glow, glassmorphism (`BlurBackgroundView`)<br>• **HD Call Recording**: 256 kbps stereo AAC `.m4a`, compliance tones, legal consent flow, recording history explorer<br>• **Jitsi Meet Video Calls**: One-tap conference rooms, cellular mic conflict auto-mute, rejoin dialog<br>• **Gemini 1.5 Flash AI Voice**: Conversational speech intent parsing with offline fuzzy fallback | **Piyush Kumar** (Creator & Primary Owner)<br>with **Manish Kumar** (Collaborator & Co-Manager) |
+| **July 2025 – October 2025** | **Core Build & Complete Feature Suite**<br>• Conceptualized, initiated, and built from the ground up<br>• **EaseUI Accessibility Suite**: Accidental call shield dialog, messages joystick (`JoystickMessageButton`), tactile swipe answer, ripple feedback, Hindi localization<br>• **Black Diamond AMOLED Theme**: Pure black `#000000`, electric cyan glow, glassmorphism (`BlurBackgroundView`)<br>• **HD Call Recording**: 256 kbps stereo AAC `.m4a`, compliance tones, legal consent flow, recording history explorer<br>• **Jitsi Meet Video Calls**: One-tap conference rooms, cellular mic conflict auto-mute, rejoin dialog<br>• **Smart Offline Voice**: Instant speech-to-dial with local fuzzy fallback | **Piyush Kumar** (Creator & Primary Owner)<br>with **Manish Kumar** (Collaborator & Co-Manager) |
 | **Late 2026 (v1.7.0)** | **Call Waiting & Caller ID Architecture Fixes + Public Release**<br>• **Call Waiting Alert**: Telecom-standard incoming call tone and double-pulse vibration repeating every 5 seconds in earpiece/call stream<br>• **Heads-Up Notification**: High-priority alert banner with incoming caller's details and direct Accept/Decline action buttons<br>• **Caller ID**: Displays waiting caller's name, number, and photo on the in-call screen<br>• **Dedicated Controls**: Added intuitive controls for handling incoming call-waiting requests<br>• **Decline Fix**: Rejecting a second call (`declineCall()`) no longer disconnects or interrupts the ongoing conversation<br>• **Active Call Display**: Shows ongoing call information separately in the top status bar (`"Active: [Name]"`<br>• **Carrier/OEM Interception**: Fallback notification manager (`CarrierCallWaitingNotificationManager`) and attempt tracking for non-InCallService calls<br>• **Release & Security Hardening**: Sanitized repo, removed Logcat payload leaks, established standalone GitHub Actions CI | **Piyush Kumar** & **Manish Kumar** |
 
 ### 🌐 Official Links & Community
@@ -202,7 +190,7 @@ Contributions, feedback, and issue reports are welcome! Please review [CONTRIBUT
 
 **SimplyDial** is an independently developed and owned project modified from the open-source [Fossify Phone](https://github.com/FossifyOrg/Phone) codebase under the **GNU General Public License v3.0 (GPLv3)**.
 
-We gratefully acknowledge and credit the **Fossify Organization** and the upstream open-source community for providing the rock-solid, privacy-first telephony foundation upon which **SimplyDial**'s specialized accessibility enhancements (EaseUI), Black Diamond AMOLED design, HD call recording, Jitsi Meet video conferencing, and Gemini AI voice dialing are built.
+We gratefully acknowledge and credit the **Fossify Organization** and the upstream open-source community for providing the rock-solid, privacy-first telephony foundation upon which **SimplyDial**'s specialized accessibility enhancements (EaseUI), Black Diamond AMOLED design, HD call recording, Jitsi Meet video conferencing, and smart offline voice dialing are built.
 
 In full accordance with GPLv3:
 - All original open-source licenses and copyright headers are preserved.

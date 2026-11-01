@@ -35,7 +35,7 @@ We welcome ideas that align with SimplyDial's core mission:
 - Senior-friendly accessibility (**EaseUI**).
 - Audio clarity and high-definition call recording compliance.
 - Visual comfort (Black Diamond AMOLED dark theming).
-- Open communication (Jitsi Meet video calling & Gemini AI voice integration).
+- Open communication (Jitsi Meet video calling & smart offline voice dialing).
 
 Please open a [Feature Request Issue](https://github.com/manishkr-07/SimplyDial/issues/new) describing your concept and why it benefits users.
 
@@ -51,7 +51,7 @@ Please open a [Feature Request Issue](https://github.com/manishkr-07/SimplyDial/
    - Write clean, idiomatic **Kotlin**.
    - Adhere to Android MVVM architecture patterns.
    - Ensure layouts support both Light mode and the Black Diamond AMOLED theme.
-   - Do not commit sensitive keys, keystores, or machine-specific paths (use `gemini.properties` for optional AI keys, which is ignored by Git).
+   - Do not commit sensitive keys, keystores, or machine-specific paths (all keystore credentials belong in `keystore.properties`, which is ignored by Git).
 
 3. **Building & Testing**:
    ```bash

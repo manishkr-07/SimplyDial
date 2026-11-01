@@ -48,12 +48,11 @@ Use this checklist to verify application integrity prior to release or distribut
 ---
 
 ## 4. Voice Dialing & Smart Search
-- [ ] **Local Matching**:
+- [ ] **100% Offline Local Matching**:
   - [ ] Dialpad voice button captures spoken speech input.
-  - [ ] Local fuzzy matcher resolves spoken contact names (e.g., "Call Mom") accurately.
-- [ ] **AI-Assisted Matching (Gemini)**:
-  - [ ] When `gemini.properties` key is provided, extracts intent and contacts accurately.
-  - [ ] If network is disconnected or API key is absent, gracefully falls back to local contact matching.
+  - [ ] Local fuzzy matcher (`ContactResolver`) resolves spoken contact names (e.g., "Call Mom") accurately.
+  - [ ] Direct number dialing from spoken digits (e.g., "9876543210").
+  - [ ] 100% private, zero network data transmission.
 
 ---
 

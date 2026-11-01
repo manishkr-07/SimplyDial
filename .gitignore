@@ -24,7 +24,6 @@ output.json
 
 # Environment, secrets & keystores
 /local.properties
-gemini.properties
 keystore.properties
 *.jks
 *.keystore
