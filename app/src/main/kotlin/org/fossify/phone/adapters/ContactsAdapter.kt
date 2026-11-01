@@ -254,7 +254,9 @@ class ContactsAdapter(
             override fun getOldListSize() = oldItems.size
             override fun getNewListSize() = newItems.size
             override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-                return oldItems[oldItemPosition].rawId == newItems[newItemPosition].rawId
+                val old = oldItems[oldItemPosition]
+                val new = newItems[newItemPosition]
+                return (old.contactId > 0 && old.contactId == new.contactId) || old.rawId == new.rawId
             }
             override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
                 val o = oldItems[oldItemPosition]

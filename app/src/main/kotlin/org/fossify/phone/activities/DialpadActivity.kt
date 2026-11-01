@@ -65,6 +65,7 @@ import org.fossify.phone.extensions.addCharacter
 import org.fossify.phone.extensions.areMultipleSIMsAvailable
 import org.fossify.phone.extensions.boundingBox
 import org.fossify.phone.extensions.config
+import org.fossify.phone.extensions.deduplicate
 import org.fossify.phone.extensions.disableKeyboard
 import org.fossify.phone.dialogs.VoiceDialLanguageDialog
 import org.fossify.phone.dialogs.VideoCallOptionsDialog
@@ -348,6 +349,7 @@ class DialpadActivity : SimpleActivity() {
             allContacts.addAll(privateContacts)
             allContacts.sort()
         }
+        allContacts = allContacts.deduplicate()
 
         runOnUiThread {
             if (!checkDialIntent() && binding.dialpadInput.value.isEmpty()) {

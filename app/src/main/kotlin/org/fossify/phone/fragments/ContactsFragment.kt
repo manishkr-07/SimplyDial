@@ -21,6 +21,7 @@ import org.fossify.phone.adapters.LightContactsAdapter
 import org.fossify.phone.databinding.FragmentContactsBinding
 import org.fossify.phone.databinding.FragmentLettersLayoutBinding
 import org.fossify.phone.extensions.config
+import org.fossify.phone.extensions.deduplicate
 import org.fossify.phone.extensions.launchCreateNewContactIntent
 import org.fossify.phone.extensions.setupWithContacts
 import org.fossify.phone.extensions.startCallWithConfirmationCheck
@@ -114,16 +115,19 @@ override fun setupFragment() {
                 }
             }
 
+            val deduplicated = allContacts.deduplicate()
+            allContacts = deduplicated
+
             // Sync with MainActivity cache directly without triggering a redundant query
             (activity as? MainActivity)?.let { main ->
                 main.runOnUiThread {
                     main.cachedContacts.clear()
-                    main.cachedContacts.addAll(allContacts)
+                    main.cachedContacts.addAll(deduplicated)
                 }
             }
 
             activity?.runOnUiThread {
-                gotContacts(contacts)
+                gotContacts(deduplicated)
                 callback?.invoke()
             }
         }
@@ -232,8 +236,10 @@ override fun onSearchClosed() {
                 binding.fragmentPlaceholder.text = context.getString(R.string.no_contacts_found)
                 binding.fragmentPlaceholder2.text = context.getString(R.string.create_new_contact)
                 ContactsHelper(context).getContacts(showOnlyContactsWithNumbers = true) { contacts ->
+                    val deduplicated = contacts.deduplicate()
+                    allContacts = deduplicated
                     activity?.runOnUiThread {
-                        gotContacts(contacts)
+                        gotContacts(deduplicated)
                     }
                 }
             }
@@ -257,6 +263,7 @@ override fun onSearchClosed() {
         if (!context.hasPermission(PERMISSION_READ_CONTACTS)) return
         thread(name = "LightContactsLoader") {
             try {
+                lightContacts.clear()
                 val uri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI
                 val projection = arrayOf(
                     ContactsContract.CommonDataKinds.Phone.CONTACT_ID,
@@ -271,12 +278,23 @@ override fun onSearchClosed() {
                     null
                 }
                 var loaded = 0
+                val seenContactIds = HashSet<Long>()
+                val seenNameAndNumbers = HashSet<String>()
                 cursor?.use {
                     while (it.moveToNext()) {
                         val id = it.getLong(0)
                         val name = it.getString(1) ?: continue
                         val number = it.getString(2) ?: continue
                         val photo = it.getString(3)
+
+                        // Avoid duplicate rows for the same contact ID
+                        if (!seenContactIds.add(id)) continue
+
+                        // Avoid duplicate rows across different accounts sharing name and phone digits
+                        val digits = number.filter { ch -> ch.isDigit() }.let { d -> if (d.length > 9) d.takeLast(9) else d }
+                        val key = "${name.trim().lowercase()}|$digits"
+                        if (digits.isNotEmpty() && !seenNameAndNumbers.add(key)) continue
+
                         lightContacts.add(LightContact(id, name, number, photo))
                         loaded++
                         // Publish in small batches for smoothness

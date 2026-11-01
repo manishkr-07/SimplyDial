@@ -28,6 +28,7 @@ import org.fossify.phone.adapters.ContactsAdapter
 import org.fossify.phone.databinding.FragmentFavoritesBinding
 import org.fossify.phone.databinding.FragmentLettersLayoutBinding
 import org.fossify.phone.extensions.config
+import org.fossify.phone.extensions.deduplicate
 import org.fossify.phone.extensions.setupWithContacts
 import org.fossify.phone.extensions.startCallWithConfirmationCheck
 import org.fossify.phone.extensions.startContactDetailsIntent
@@ -89,17 +90,18 @@ class FavoritesFragment(context: Context, attributeSet: AttributeSet) : MyViewPa
                     allContacts.sort()
                 }
             }
-            filterAndDisplayFavorites(allContacts, callback)
+            filterAndDisplayFavorites(allContacts.deduplicate(), callback)
         }
     }
 
     fun refreshFromCached(contacts: ArrayList<Contact>) {
         if (activity == null || activity!!.isDestroyed || activity!!.isFinishing) return
-        filterAndDisplayFavorites(ArrayList(contacts), null)
+        filterAndDisplayFavorites(contacts.deduplicate(), null)
     }
 
     private fun filterAndDisplayFavorites(contacts: ArrayList<Contact>, callback: (() -> Unit)?) {
-        val favorites = contacts.filter { it.starred == 1 } as ArrayList<Contact>
+        val deduplicated = contacts.deduplicate()
+        val favorites = deduplicated.filter { it.starred == 1 } as ArrayList<Contact>
 
         allContacts = if (activity != null && activity!!.config.isCustomOrderSelected) {
             sortByCustomOrder(favorites)

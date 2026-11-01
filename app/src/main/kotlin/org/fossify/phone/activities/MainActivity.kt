@@ -41,6 +41,7 @@ import org.fossify.phone.dialogs.LanguageBottomSheetDialog
 import org.fossify.phone.extensions.applyLanguageConfiguration
 import org.fossify.phone.extensions.clearMissedCalls
 import org.fossify.phone.extensions.config
+import org.fossify.phone.extensions.deduplicate
 import org.fossify.phone.extensions.launchCreateNewContactIntent
 import org.fossify.phone.fragments.ContactsFragment
 import org.fossify.phone.fragments.FavoritesFragment
@@ -690,10 +691,11 @@ onSearchTextChangedListener = { text ->
                         }
                     }
 
+                    val deduplicated = contacts.deduplicate()
                     try {
                         runOnUiThread {
                             cachedContacts.clear()
-                            cachedContacts.addAll(contacts)
+                            cachedContacts.addAll(deduplicated)
                         }
                     } catch (ignored: Exception) {
                     }
