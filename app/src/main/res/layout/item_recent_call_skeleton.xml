@@ -4,8 +4,8 @@
     android:id="@+id/shimmer_container"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingTop="@dimen/medium_margin"
-    android:paddingBottom="@dimen/medium_margin"
+    android:paddingHorizontal="14dp"
+    android:paddingVertical="10dp"
     app:shimmer_auto_start="false"
     app:shimmer_base_alpha="0.55"
     app:shimmer_highlight_alpha="0.8"
@@ -15,29 +15,29 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
+        <!-- Skeleton Avatar (48dp) -->
         <View
             android:id="@+id/skeleton_avatar"
-            android:layout_width="@dimen/normal_icon_size"
-            android:layout_height="@dimen/normal_icon_size"
-            android:layout_marginStart="@dimen/normal_margin"
-            android:layout_marginEnd="@dimen/small_margin"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:background="@drawable/skeleton_circle_bg"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"/>
 
+        <!-- Skeleton Name -->
         <View
             android:id="@+id/skeleton_name"
             android:layout_width="0dp"
             android:layout_height="16dp"
-            android:layout_marginStart="@dimen/small_margin"
-            android:layout_marginEnd="@dimen/small_margin"
+            android:layout_marginStart="14dp"
+            android:layout_marginEnd="16dp"
             android:background="@drawable/skeleton_bg"
             app:layout_constraintStart_toEndOf="@id/skeleton_avatar"
             app:layout_constraintTop_toTopOf="@id/skeleton_avatar"
-            app:layout_constraintEnd_toStartOf="@+id/skeleton_overflow"
-            />
+            app:layout_constraintEnd_toStartOf="@+id/skeleton_overflow" />
 
+        <!-- Skeleton Subtitle Line -->
         <View
             android:id="@+id/skeleton_line_small"
             android:layout_width="140dp"
@@ -47,11 +47,12 @@
             app:layout_constraintStart_toStartOf="@id/skeleton_name"
             app:layout_constraintTop_toBottomOf="@id/skeleton_name"/>
 
+        <!-- Skeleton Action Button -->
         <View
             android:id="@+id/skeleton_overflow"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_marginEnd="@dimen/normal_margin"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_marginEnd="8dp"
             android:background="@drawable/skeleton_circle_bg"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"

@@ -3,12 +3,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/main_coordinator"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/background_color">
 
     <org.fossify.commons.views.MySearchMenu
         android:id="@+id/main_menu"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:elevation="4dp" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/main_holder"
@@ -30,13 +32,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
-            android:layout_marginEnd="@dimen/bigger_margin"
-            android:layout_marginBottom="@dimen/activity_margin"
+            android:layout_marginEnd="20dp"
+            android:layout_marginBottom="16dp"
             android:contentDescription="@string/dialpad"
-            android:elevation="@dimen/medium_margin"
-            android:padding="@dimen/activity_margin"
+            android:elevation="6dp"
             android:src="@drawable/ic_dialpad_vector"
             app:backgroundTint="?attr/colorPrimary"
+            app:fabCustomSize="58dp"
+            app:maxImageSize="28dp"
             app:layout_constraintBottom_toTopOf="@+id/main_tabs_holder"
             app:layout_constraintEnd_toEndOf="parent"
             app:rippleColor="@color/ripple_color" />
@@ -45,6 +48,7 @@
             android:id="@+id/main_tabs_holder"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:elevation="8dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:tabIndicator="@null"
             app:tabMinWidth="0dp"
