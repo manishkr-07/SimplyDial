@@ -36,6 +36,7 @@ import org.fossify.phone.adapters.ViewPagerAdapter
 import org.fossify.phone.databinding.ActivityMainBinding
 import org.fossify.phone.dialogs.ChangeSortingDialog
 import org.fossify.phone.dialogs.FilterContactSourcesDialog
+import org.fossify.phone.dialogs.InterfaceModeBottomSheetDialog
 import org.fossify.phone.dialogs.LanguageBottomSheetDialog
 import org.fossify.phone.extensions.applyLanguageConfiguration
 import org.fossify.phone.extensions.clearMissedCalls
@@ -288,6 +289,7 @@ onSearchTextChangedListener = { text ->
                     R.id.create_new_contact -> launchCreateNewContactIntent()
                     R.id.sort -> showSortingDialog(showCustomSorting = getCurrentFragment() is FavoritesFragment)
                     R.id.filter -> showFilterDialog()
+                    R.id.interface_mode -> showInterfaceModeDialog()
                     R.id.settings -> launchSettings()
                     R.id.change_view_type -> changeViewType()
                     R.id.column_count -> changeColumnCount()
@@ -615,6 +617,12 @@ onSearchTextChangedListener = { text ->
                     0
                 }
             }
+        }
+    }
+
+    private fun showInterfaceModeDialog() {
+        InterfaceModeBottomSheetDialog.show(supportFragmentManager) {
+            recreate()
         }
     }
 

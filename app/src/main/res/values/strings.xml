@@ -258,6 +258,7 @@
     <string name="restart_app_to_apply_mode_title">Restart SimplyDial</string>
     <string name="restart_app_to_apply_mode_msg">Switching to %s requires restarting SimplyDial to reconfigure layouts, font sizing, and interaction behavior. Would you like to restart now?</string>
     <string name="restart_now">Restart Now</string>
+    <string name="apply">Apply</string>
     <!-- Customize Interface Mode -->
     <string name="customize_interface_features">Customize Interface Features</string>
     <string name="customize_interface_features_desc">Fine-tune 1-tap calling, haptics, answer buttons &amp; action sheets</string>

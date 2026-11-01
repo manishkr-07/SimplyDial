@@ -99,6 +99,7 @@
     <string name="restart_app_to_apply_mode_title">सिम्पलीडायल पुनरारंभ करें</string>
     <string name="restart_app_to_apply_mode_msg">%s पर स्विच करने के लिए सभी लेआउट और सुविधाओं को लागू करने हेतु सिम्पलीडायल को पुनः आरंभ करना होगा। क्या आप अभी पुनः आरंभ करना चाहते हैं?</string>
     <string name="restart_now">अभी रीस्टार्ट करें</string>
+    <string name="apply">लागू करें</string>
     <!-- Customize Interface Mode -->
     <string name="customize_interface_features">इंटरफ़ेस सुविधाएँ कस्टमाइज़ करें</string>
     <string name="customize_interface_features_desc">1-टैप कॉलिंग, हैप्टिक्स, उत्तर बटन और एक्शन शीट कस्टमाइज़ करें</string>
