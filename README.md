@@ -53,6 +53,8 @@ Switch effortlessly between two deeply customized UI experiences in Settings:
   * **Top Frequent Contacts Carousel**: Horizontal circular avatar carousel with glowing gradient rings for 1-tap speed dialing.
   * **Fast Post-Call Notes & Reminders**: Attach memo reminders to any contact or number (`📝 Follow up Monday`) displayed directly on call log cards.
   * **Instant vCard (.vcf) Contact Sharing**: Generate and share standard vCard contact files directly from the Quick Actions Sheet to any smartphone.
+  * **120Hz Ultra-Smooth Responsiveness**: Off-thread background processing for T9 search and daily analytics (`Dispatchers.Default`), RecyclerView view-cache pooling (`setItemViewCacheSize(20)`), and glassmorphic rounded canvas swipe geometry.
+  * **Tactile Spring Micro-Interactions**: Gentle touch down-scale (`0.98f` / `0.92f`) and bounce-back on call cards, contact rows, and dialpad buttons for a deeply satisfying tactile feel.
   * **Fine-Grained Customization**: Toggle individual controls (1-tap calling, haptic feedback, large answer buttons, fullscreen calls) under *Customize Interface Features*.
 
 ---

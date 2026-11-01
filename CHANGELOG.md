@@ -11,10 +11,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### 🎛️ Added — Dynamic Interface Mode System & Modern UI/UX
 - **Dual Interface Modes**: Added Simple Mode (senior-friendly, 64dp touch targets, Accidental Call Shield, clutter-free) and Modern & Advanced Mode (power-user, Material 3, WhatsApp, Jitsi Video, multi-SIM badges).
+- **120Hz Smooth Scrolling & View Caching**: Set `setHasFixedSize(true)` and `setItemViewCacheSize(20)` on Recents, Contacts, Favorites, and Dialpad RecyclerViews to eliminate dropped frames and view re-binding during quick fling gestures.
+- **Off-Thread Heavy Processing**: Moved call analytics calculations (`sumOf`, `groupBy`, sorting) in `RecentsFragment` and T9 contact matching in `DialpadActivity` to background coroutines (`Dispatchers.Default`) with job cancellation.
+- **Glassmorphic Rounded Swipe Actions**: Upgraded swipe-to-call and swipe-to-SMS drawing with anti-aliased 16dp rounded corners (`drawRoundRect`) matching card geometry, plus dynamic alpha fade-ins for icons.
+- **Tactile Touch Micro-Interactions**: Added smooth scale feedback (`0.98f` / `0.92f` on down, spring back to `1.0f` on release) to contact cards, call cards, frequent carousel items, and dialpad buttons in Modern & Advanced Mode.
 - **Interactive Call History Filter Chips**: Real-time filtering by All, Missed (with live count badges), Incoming, and Outgoing calls with tactile haptics.
 - **Universal Quick Actions Bottom Sheet (`QuickActionsHelper`)**: Modern slide-up sheet on contacts and recents with 1-tap WhatsApp chat, Jitsi Meet video, SMS, number copying, contact sharing, and call history.
 - **Smart Clipboard Detection**: Live phone number detection in clipboard with a 1-tap paste chip on the dialpad.
-- **Interactive Swipe Actions**: Samsung One UI-style Swipe-to-Call (Right) and Swipe-to-SMS (Left) on call log rows with custom canvas backgrounds and haptic feedback.
 - **Daily Call Analytics**: Glassmorphic summary pill on recents showing today's call count, cumulative talk duration, and missed call count.
 - **Top Frequent Contacts Carousel**: Dynamic circular avatar carousel for quick 1-tap access to frequent callers.
 - **Post-Call Notes & Reminders**: Quick memo system (`Config.getContactNote` / `setContactNote`) with visual sticky badges on call history items.
