@@ -1,9 +1,11 @@
 package org.fossify.phone.services
 
+import android.content.Context
 import android.util.Log
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.delay
@@ -12,138 +14,264 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.IOException
+import java.time.Duration
 import org.fossify.phone.BuildConfig
 
+/**
+ * Modernized Gemini Service powered by Google Gemini 3.8 Flash.
+ *
+ * Key features:
+ * - Direct REST call to `gemini-3.8-flash` with secure `x-goog-api-key` header authentication.
+ * - Native Structured JSON output enforcement (`response_mime_type: "application/json"` & `response_schema`).
+ * - Strict schema validation and fallback parsing.
+ * - Exponential backoff retry loop for transient 429 and 5xx network errors.
+ * - Graceful offline ContactResolver fallback for zero-connectivity environments.
+ */
 object GeminiService {
     private const val TAG = "GeminiService"
-    private const val GEMINI_ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent"
+    private const val GEMINI_ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent"
     private const val MAX_CONTACT_CANDIDATES = 150
+    private const val MAX_RETRIES = 3
 
     private val client: OkHttpClient by lazy {
         OkHttpClient.Builder()
-            .callTimeout(java.time.Duration.ofSeconds(15))
-            .connectTimeout(java.time.Duration.ofSeconds(10))
-            .readTimeout(java.time.Duration.ofSeconds(15))
+            .callTimeout(Duration.ofSeconds(15))
+            .connectTimeout(Duration.ofSeconds(10))
+            .readTimeout(Duration.ofSeconds(12))
+            .writeTimeout(Duration.ofSeconds(10))
             .build()
+    }
+
+    private val jsonParser = Json {
+        ignoreUnknownKeys = true
+        isLenient = true
     }
 
     @Serializable
     data class GeminiIntent(val intent: String?, val contact: String?, val number: String? = null)
 
     /**
-     * Calls Google Gemini 1.5 Flash via REST API with secure header-based authentication.
-     * The API key is sent via the 'x-goog-api-key' HTTP header to prevent query parameter exposure.
-     * Full request bodies and contact data are strictly shielded from system Logcat to preserve privacy.
+     * Parses spoken user commands into an actionable intent using Gemini 3.8 Flash.
+     * Falls back seamlessly to offline local fuzzy contact matching if network/key is unavailable.
      */
-    suspend fun parseIntent(transcribedText: String, contacts: List<Pair<String, String>>): GeminiIntent? = withContext(Dispatchers.IO) {
-        val apiKey: String? = try { BuildConfig.GEMINI_API_KEY.takeIf { it.isNotBlank() } } catch (e: Throwable) { null }
-        if (apiKey == null) {
-            if (BuildConfig.DEBUG) {
-                Log.d(TAG, "Gemini API key is unconfigured. Using local matcher fallback.")
-            }
-            return@withContext null
+    suspend fun parseIntent(
+        transcribedText: String,
+        contacts: List<Pair<String, String>>,
+        context: Context? = null
+    ): GeminiIntent? = withContext(Dispatchers.IO) {
+        val apiKey: String? = try {
+            BuildConfig.GEMINI_API_KEY.takeIf { it.isNotBlank() }
+        } catch (e: Throwable) {
+            null
         }
 
-        // Limit candidates to prevent large network payloads and protect user bandwidth
+        // If no API key configured, seamlessly use offline ContactResolver fallback
+        if (apiKey == null) {
+            if (BuildConfig.DEBUG) {
+                Log.d(TAG, "Gemini API key not configured. Using offline ContactResolver fallback.")
+            }
+            return@withContext fallbackOfflineMatch(transcribedText, contacts, context)
+        }
+
         val candidateContacts = contacts.take(MAX_CONTACT_CANDIDATES)
 
-        // Build a strict JSON-only prompt asking the model to extract intent and match contact
+        // Build prompt with candidates list
         val contactsJson = candidateContacts.joinToString(",") {
-            val safeName = it.first.replace("\"", "\\\"").replace("\n", " ")
-            val safeNum = it.second.replace("\"", "\\\"")
+            val safeName = it.first.replace("\"", "\\\"").replace("\n", " ").trim()
+            val safeNum = it.second.replace("\"", "\\\"").trim()
             "{\"name\":\"$safeName\",\"number\":\"$safeNum\"}"
         }
 
         val prompt = buildString {
-            append("You are an extractor.\n")
+            append("You are an intelligent telephony voice dialer command parser.\n")
             append("User command: \"").append(transcribedText.replace("\"", "\\\"")).append("\"\n")
             append("Available contacts: [").append(contactsJson).append("]\n")
-            append("Respond with EXACTLY one JSON object and nothing else, with the keys: `intent`, `contact`, `number`.\n")
-            append("If you cannot find a contact, set contact to null and number to null.\n")
-            append("Example output: {\"intent\":\"call\",\"contact\":\"Mom\",\"number\":\"+12345\"}\n")
-            append("Do not include any surrounding explanation or additional text.\n")
+            append("Task: Determine the user intent ('call' or 'sms'), match the most relevant contact from the list, ")
+            append("and return the matched name and phone number. If no suitable contact is found, set contact to null and number to null.")
         }
 
         val safePrompt = prompt.replace("\"", "\\\"").replace("\n", "\\n")
-        val jsonPayload = "{\"contents\":[{\"parts\":[{\"text\":\"$safePrompt\"}]}]}"
+
+        // Structured JSON Output schema definition for Gemini 3.8 Flash
+        val jsonPayload = buildString {
+            append("{")
+            append("\"contents\":[{\"parts\":[{\"text\":\"$safePrompt\"}]}],")
+            append("\"generationConfig\":{")
+            append("\"response_mime_type\":\"application/json\",")
+            append("\"response_schema\":{")
+            append("\"type\":\"OBJECT\",")
+            append("\"properties\":{")
+            append("\"intent\":{\"type\":\"STRING\",\"description\":\"User intent: 'call' or 'sms'\"},")
+            append("\"contact\":{\"type\":\"STRING\",\"description\":\"Matched contact name from the list or null\"},")
+            append("\"number\":{\"type\":\"STRING\",\"description\":\"Matched phone number or null\"}")
+            append("},")
+            append("\"required\":[\"intent\"]")
+            append("}")
+            append("}")
+            append("}")
+        }
 
         val mediaType = "application/json; charset=utf-8".toMediaType()
         val body = jsonPayload.toRequestBody(mediaType)
 
-        val maxAttempts = 2
         var attempt = 0
-        while (attempt < maxAttempts) {
+        while (attempt < MAX_RETRIES) {
             attempt++
             try {
                 val request = Request.Builder()
                     .url(GEMINI_ENDPOINT)
                     .addHeader("Content-Type", "application/json")
-                    .addHeader("x-goog-api-key", apiKey) // Secure header authentication
+                    .addHeader("x-goog-api-key", apiKey)
                     .post(body)
                     .build()
 
                 client.newCall(request).execute().use { resp ->
                     val respStr = resp.body?.string().orEmpty()
+
                     if (!resp.isSuccessful) {
                         if (BuildConfig.DEBUG) {
-                            Log.w(TAG, "Gemini API returned error code ${resp.code}")
+                            Log.w(TAG, "Gemini API HTTP ${resp.code}: $respStr")
                         }
-                        if (resp.code in 400..499) return@withContext null
-                        if (attempt < maxAttempts) {
-                            delay(250L * attempt)
-                            continue
+                        // Non-retryable client errors (Bad request, unauthorized, etc.)
+                        if (resp.code in 400..499 && resp.code != 429) {
+                            return@withContext fallbackOfflineMatch(transcribedText, candidateContacts, context)
                         }
-                        return@withContext null
+
+                        // Retryable error (429 rate limit or 5xx server error)
+                        if (attempt < MAX_RETRIES) {
+                            val backoffMs = (250L * (1 shl (attempt - 1))) + (0..100).random()
+                            delay(backoffMs)
+                            return@use // continue retry loop
+                        }
+                        return@withContext fallbackOfflineMatch(transcribedText, candidateContacts, context)
                     }
 
-                    // Extract JSON object containing intent key
-                    val regex = Regex("(?s)\\{\\s*\"intent\".*?\\}")
-                    val match = regex.find(respStr)
-                    if (match != null) {
-                        val jsonText = match.value
-                        try {
-                            val parsed = Json.parseToJsonElement(jsonText).jsonObject
-                            val intent = parsed["intent"]?.toString()?.trim('"')
-                            val contact = parsed["contact"]?.toString()?.trim('"')
-                            var number = parsed["number"]?.toString()?.trim('"')
-
-                            // If model returned a name without number, resolve locally from contacts
-                            if (!contact.isNullOrBlank() && (number == null || number.isBlank())) {
-                                val found = candidateContacts.firstOrNull { pair ->
-                                    pair.first.equals(contact, ignoreCase = true) || pair.first.contains(contact, ignoreCase = true)
-                                }
-                                if (found != null) {
-                                    number = found.second
-                                }
-                            }
-
-                            return@withContext GeminiIntent(intent, contact, number)
-                        } catch (e: Exception) {
-                            if (BuildConfig.DEBUG) {
-                                Log.w(TAG, "Could not decode model response JSON")
-                            }
-                            return@withContext null
-                        }
-                    }
-
-                    // Fallback heuristic if keyword "call" is detected
-                    if (respStr.contains("call", true)) {
-                        val words = transcribedText.split(" ")
-                        val contact = words.drop(1).joinToString(" ").trim()
-                        return@withContext GeminiIntent("call", if (contact.isNotEmpty()) contact else null)
+                    // Validate and decode response
+                    val parsedIntent = parseAndValidateResponse(respStr, candidateContacts, transcribedText)
+                    if (parsedIntent != null) {
+                        return@withContext parsedIntent
                     }
                 }
             } catch (e: IOException) {
                 if (BuildConfig.DEBUG) {
-                    Log.w(TAG, "Network attempt $attempt failed: ${e.message}")
+                    Log.w(TAG, "Gemini network attempt $attempt failed: ${e.message}")
                 }
-                if (attempt < maxAttempts) {
-                    delay(250L * attempt)
+                if (attempt < MAX_RETRIES) {
+                    val backoffMs = (250L * (1 shl (attempt - 1))) + (0..100).random()
+                    delay(backoffMs)
                     continue
                 }
             }
         }
 
-        return@withContext null
+        // Final fallback if all attempts exhausted
+        return@withContext fallbackOfflineMatch(transcribedText, candidateContacts, context)
+    }
+
+    /**
+     * Validates and extracts structured JSON from the Gemini response body.
+     */
+    private fun parseAndValidateResponse(
+        responseBody: String,
+        candidateContacts: List<Pair<String, String>>,
+        originalText: String
+    ): GeminiIntent? {
+        try {
+            val root = jsonParser.parseToJsonElement(responseBody).jsonObject
+
+            // Check candidates array
+            val candidates = root["candidates"] as? kotlinx.serialization.json.JsonArray
+            val firstCandidate = candidates?.firstOrNull()?.jsonObject
+            val content = firstCandidate?.get("content")?.jsonObject
+            val parts = content?.get("parts") as? kotlinx.serialization.json.JsonArray
+            val textPart = parts?.firstOrNull()?.jsonObject?.get("text")?.jsonPrimitive?.content
+
+            val targetJson = if (!textPart.isNullOrBlank()) {
+                textPart
+            } else {
+                // Fallback: search root for JSON object containing intent
+                val regex = Regex("(?s)\\{\\s*\"intent\".*?\\}")
+                regex.find(responseBody)?.value
+            }
+
+            if (!targetJson.isNullOrBlank()) {
+                val parsed = jsonParser.parseToJsonElement(targetJson).jsonObject
+                val intent = parsed["intent"]?.jsonPrimitive?.content?.trim('"')?.lowercase()
+                var contact = parsed["contact"]?.jsonPrimitive?.content?.trim('"')
+                var number = parsed["number"]?.jsonPrimitive?.content?.trim('"')
+
+                if (contact.equals("null", ignoreCase = true)) contact = null
+                if (number.equals("null", ignoreCase = true)) number = null
+
+                // If contact is provided without phone number, resolve locally from candidate pairs
+                if (!contact.isNullOrBlank() && (number == null || number.isBlank())) {
+                    val found = candidateContacts.firstOrNull { pair ->
+                        pair.first.equals(contact, ignoreCase = true) ||
+                            pair.first.contains(contact, ignoreCase = true)
+                    }
+                    if (found != null) {
+                        number = found.second
+                    }
+                }
+
+                if (intent != null) {
+                    return GeminiIntent(intent, contact, number)
+                }
+            }
+        } catch (e: Exception) {
+            if (BuildConfig.DEBUG) {
+                Log.w(TAG, "Error parsing Gemini structured JSON: ${e.message}")
+            }
+        }
+
+        // Secondary heuristic fallback if model text mentions call
+        if (responseBody.contains("call", ignoreCase = true)) {
+            val words = originalText.split(" ")
+            val contactName = words.drop(1).joinToString(" ").trim()
+            val matchedNumber = candidateContacts.firstOrNull {
+                it.first.contains(contactName, ignoreCase = true)
+            }?.second
+
+            return GeminiIntent("call", if (contactName.isNotEmpty()) contactName else null, matchedNumber)
+        }
+
+        return null
+    }
+
+    /**
+     * Offline ContactResolver fallback when network is unavailable or API fails.
+     */
+    private fun fallbackOfflineMatch(
+        transcribedText: String,
+        contacts: List<Pair<String, String>>,
+        context: Context?
+    ): GeminiIntent? {
+        val cleanQuery = transcribedText
+            .replace("call", "", ignoreCase = true)
+            .replace("please", "", ignoreCase = true)
+            .replace("dial", "", ignoreCase = true)
+            .trim()
+
+        if (cleanQuery.isBlank()) return null
+
+        // If Android Context is available, use ContactResolver with Levenshtein fuzzy matching
+        if (context != null) {
+            val matches = ContactResolver.findMatches(context, cleanQuery)
+            val topMatch = matches.firstOrNull()
+            if (topMatch != null) {
+                return GeminiIntent("call", topMatch.name, topMatch.number)
+            }
+        }
+
+        // Otherwise match against the supplied contact pairs
+        val found = contacts.firstOrNull { pair ->
+            pair.first.equals(cleanQuery, ignoreCase = true) ||
+                pair.first.contains(cleanQuery, ignoreCase = true)
+        }
+        if (found != null) {
+            return GeminiIntent("call", found.first, found.second)
+        }
+
+        return null
     }
 }

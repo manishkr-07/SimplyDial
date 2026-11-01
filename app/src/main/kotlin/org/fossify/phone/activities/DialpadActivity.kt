@@ -526,7 +526,7 @@ class DialpadActivity : SimpleActivity() {
 
         lifecycleScope.launch {
             val parsed = try {
-                GeminiService.parseIntent(spoken, contactsPairs)
+                GeminiService.parseIntent(spoken, contactsPairs, this@DialpadActivity)
             } catch (e: Exception) {
                 null
             }

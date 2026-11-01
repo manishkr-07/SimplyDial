@@ -179,6 +179,8 @@ class CallActivity : SimpleActivity() {
         EventBus.getDefault().unregister(this)
     }
 
+    @Deprecated("Deprecated in Java")
+    @Suppress("DEPRECATION")
     override fun onBackPressed() {
         if (binding.dialpadWrapper.isVisible()) {
             hideDialpad()

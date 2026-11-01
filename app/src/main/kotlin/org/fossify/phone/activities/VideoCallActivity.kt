@@ -486,6 +486,8 @@ class VideoCallActivity : SimpleActivity() {
         VideoCallRejoinDialog.dismissCurrent()
     }
     
+    @Deprecated("Deprecated in Java")
+    @Suppress("DEPRECATION")
     override fun onBackPressed() {
         if (binding.videoCallWebView.canGoBack()) {
             binding.videoCallWebView.goBack()
