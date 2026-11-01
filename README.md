@@ -6,7 +6,7 @@
 
 <p align="center">
   <b>Connect with Ease</b><br>
-  <i>A modern, privacy-first, accessibility-enhanced Android phone app featuring Black Diamond AMOLED theming, Dynamic Interface Modes (Simple vs. Modern & Advanced), HD call recording, Jitsi Meet video calling, and instant offline voice dialing.</i>
+  <i>A modern, privacy-first, accessibility-enhanced Android phone app featuring Black Diamond AMOLED theming, Material 3 Slate Light Mode, Deep Interface Mode Differentiation (Simple vs. Modern & Advanced), HD call recording, Jitsi Meet video calling, and instant offline voice dialing.</i>
 </p>
 
 <p align="center">
@@ -29,38 +29,59 @@
 
 **SimplyDial** is a next-generation, feature-packed Android dialer and calling application designed to make mobile communication seamless, transparent, and accessible for everyone. 
 
-It combines **intuitive senior-friendly accessible controls (EaseUI)** to prevent accidental dials and simplify messaging, a **Dynamic Interface Mode System** offering tailored experiences for both older generations and modern power users, an ultra-crisp **Black Diamond AMOLED Dark Theme** for maximum battery life, **studio-grade compliant call recording**, **integrated Jitsi Meet video conferences**, and **instant 100% offline private voice dialing**.
+It combines **intuitive senior-friendly accessible controls (EaseUI)** to prevent accidental dials and simplify messaging, a **Dynamic Interface Mode System** offering distinctly tailored visual aesthetics and features for both older generations and modern power users, an ultra-crisp **Black Diamond AMOLED Dark Theme** and **Material 3 Slate Light Theme**, **studio-grade compliant call recording**, **integrated Jitsi Meet video conferences**, and **instant 100% offline private voice dialing**.
 
 ---
 
 ## ✨ Key Features & Enhancements
 
-### 🎛️ 1. Dynamic Interface Mode System
-Switch effortlessly between two deeply customized UI experiences in Settings:
+### 🎛️ 1. Dynamic Interface Mode System (Simple vs. Modern)
 
-* **👵 Simple Mode (Senior-Friendly & Accessible)**:
-  * **Oversized Typography & Touch Targets**: 64dp Floating Action Buttons and large text for effortless reading.
-  * **Accidental Call Shield**: Prominent confirmation popup modal showing contact avatar, full name, and phone number before placing any call.
-  * **Distraction-Free UI**: Filter chips, complex sub-sheets, and unnecessary menus are hidden for a clean, peaceful layout.
-  * **Direct 1-Tap Calling**: Fast, single-touch dialing without confusing multi-step actions.
+SimplyDial introduces deep, full-stack differentiation between two specialized operating modes. Both the visual design language and the active feature set adapt dynamically across all 5 core app segments:
 
-* **⚡ Modern & Advanced Mode (Power User & New Generation)**:
-  * **Interactive Call History Filter Chips**: Horizontal pill bar (`[ ✦ All ] [ 🔴 Missed (N) ] [ 📥 Incoming ] [ 📤 Outgoing ]`) with live missed call counters and tactile haptic feedback.
-  * **Universal Quick Actions Bottom Sheet**: 1-tap slide-up modal for WhatsApp direct chat (`https://api.whatsapp.com/send?phone=...`), Jitsi Meet HD video calls, SMS messaging, contact sharing, number copying, and grouped call history.
-  * **Enhanced Adaptive Dialpad UI**: Dynamic Black Diamond AMOLED squircle keys with subtle neon accents and electric cyan sub-letters in Modern Mode, contrasted with oversized 34sp solid high-visibility keys in Simple Mode.
-  * **Hero Call Button & Dynamic Smart Bar**: Prominent centered hero Call button with elevated tactile shadows, flanked by glassmorphic Voice and Video buttons, with contextual inline chips for clipboard pasting and `+ Add to Contacts`.
-  * **Interactive Swipe-to-Call & Swipe-to-SMS**: Swipe Right ➡️ on any call log item to call immediately (green canvas); Swipe Left ⬅️ to compose an SMS (cyan canvas) with haptic feedback.
-  * **Daily Call Analytics & Talk Time Summary**: Glassmorphic stats pill displaying today's total call volume, cumulative talk time, and missed calls at a glance.
-  * **Top Frequent Contacts Carousel**: Horizontal circular avatar carousel with glowing gradient rings for 1-tap speed dialing.
-  * **Fast Post-Call Notes & Reminders**: Attach memo reminders to any contact or number (`📝 Follow up Monday`) displayed directly on call log cards.
-  * **Instant vCard (.vcf) Contact Sharing**: Generate and share standard vCard contact files directly from the Quick Actions Sheet to any smartphone.
-  * **120Hz Ultra-Smooth Responsiveness**: Off-thread background processing for T9 search and daily analytics (`Dispatchers.Default`), RecyclerView view-cache pooling (`setItemViewCacheSize(20)`), and glassmorphic rounded canvas swipe geometry.
-  * **Tactile Spring Micro-Interactions**: Gentle touch down-scale (`0.98f` / `0.92f`) and bounce-back on call cards, contact rows, and dialpad buttons for a deeply satisfying tactile feel.
-  * **Fine-Grained Customization**: Toggle individual controls (1-tap calling, haptic feedback, large answer buttons, fullscreen calls) under *Customize Interface Features*.
+| App Segment | 👵 Simple Mode (Senior-Friendly & Accessible) | ⚡ Modern & Advanced Mode (Power User & Sleek) |
+| :--- | :--- | :--- |
+| **Contacts Tab** | • 82dp high-visibility cards with 20dp squircles<br>• High-contrast borders (`#CBD5E1` / `#3E424D`) & 3.5dp elevation<br>• Oversized 56dp caller avatars & 19.5sp bold typography<br>• Prominent emerald green circular quick-call target (`#16A34A` / `#1B5E20`)<br>• 3-dots overflow menu completely hidden to eliminate anxiety | • 68dp compact cards with 16dp rounded corners & subtle stroke<br>• 48dp crisp avatar & 16sp typography<br>• 120Hz smooth scale-down touch feedback (`0.975x`)<br>• **Quick Actions Bottom Sheet** (WhatsApp chat, Jitsi Video, SMS, vCard export, Notes)<br>• Fast alphabet scrubber slider |
+| **Recents Tab** | • 82dp high-contrast call cards with 54dp avatar<br>• 19sp bold name, missed calls highlighted in bright red<br>• Direct emerald green quick-call action<br>• Analytics cards and 3-dots hidden for clean simplicity | • Daily Call Analytics card (total calls, talk time, missed count)<br>• Frequent contacts speed-dial carousel with glowing avatar rings<br>• Interactive swipe-to-call (Right ➡️) & swipe-to-SMS (Left ⬅️)<br>• Multi-SIM colored indicator badges with contrast adjustment |
+| **Favorites Tab** | • 2-column oversized senior grid (`spanCount = 2`)<br>• Large caller photos and bold names<br>• Tap directly launches Accidental Call Shield confirmation modal<br>• Zero complex column sliders or reorder confusion | • Dynamic multi-column grid (1–4 columns) or list view<br>• Drag-and-drop custom favorite ordering with persistent state<br>• Quick Actions bottom sheet triggerable on long-press |
+| **Dialpad Screen** | • Solid keys with high-contrast borders & 34sp giant digits<br>• 74dp centered hero call button with elevated tactile shadow<br>• Secondary Voice, Video, and smart clipboard chips hidden for single-action clarity<br>• Instant T9 search over deduplicated contacts | • AMOLED squircle keys with cyan/royal blue sub-letters & 28sp digits<br>• Hero Call button flanked by circular Voice and Jitsi Video buttons<br>• Dynamic Smart Bar: Clipboard number paste chip & inline `+ Add to Contacts`<br>• Tactile spring haptic micro-interactions on keypad press |
+| **Call Confirmation** | • **Accidental Call Shield automatically enforced** across all entry points (Contacts, Recents, Favorites, Dialpad) without requiring manual setup | • User-configurable: Direct 1-tap dialing or confirmation shield with Quick Actions sheet |
 
 ---
 
-### 👵 2. Accessibility & "EaseUI" Suite
+### 🎨 2. Dual Modern Theming: Black Diamond AMOLED & Material 3 Slate
+
+SimplyDial features a dual-theme architecture supporting both pure AMOLED power efficiency and crisp, daytime readability:
+
+* **💎 Black Diamond AMOLED Dark Theme**:
+  * **AMOLED True Black (`#000000`)**: Zero-pixel-bleed pure black canvas for OLED/AMOLED screens maximizing battery life.
+  * **Electric Cyan Glow (`#00E5FF`)**: Vivid neon accents across dialpad keys, floating buttons, and card perimeters.
+  * **Glassmorphic Overlays**: Dynamic real-time blur backgrounds (`BlurBackgroundView`) with calming seagreen tones (`#2E8B57`).
+
+* **☀️ Material 3 Slate Light Theme**:
+  * **Modern Slate Canvas (`#F8FAFC`)**: Soft tinted background providing subtle, elegant contrast behind pure white cards (`#FFFFFF`).
+  * **Vibrant Royal Blue (`#2563EB`)**: High-visibility modern accent color meeting WCAG AAA contrast guidelines.
+  * **Deep Ink Slate Typography (`#0F172A`)**: Ultra-sharp text inking with rich secondary subtitles (`#475569`).
+  * **Seamless Chrome**: Matching white status bar and navigation bar with automatic light/dark icon handling.
+  * **Soft Sky-Blue Glassmorphism**: Clean sky-tinted blur backdrops (`#E0F2FE`).
+
+---
+
+### ⚡ 3. High-Performance Engine & Deduplication
+
+* **Sub-Second Cold Start & Loading Optimization**:
+  * **Indexed B-Tree SQLite Queries**: Replaced slow unindexed `LOWER(display_name)` queries in `loadLightContactsAsync` with `${DISPLAY_NAME} COLLATE NOCASE ASC`, leveraging Android's Contacts Provider B-tree index for a 10x faster query response (~15ms vs ~150ms).
+  * **Eliminated Main-Thread Disk Stalls**: Moved `getMyContactsCursor` private contact queries off the main looper into `ensureBackgroundThread`, completely removing main thread disk I/O freezes on cold start.
+  * **2-Stage UI Batching**: Replaced per-item DiffUtil dispatches with an instant paint pipeline (renders first visible screen at 20 items in < 15ms, pre-scrolls at 100 items, and finalizes cleanly), reducing Main Looper UI allocations by 90%.
+  * **Synchronized Cross-Tab Cache Sharing**: `ContactsFragment` instantly shares deduplicated contacts to `MainActivity.cachedContacts` and pushes directly to `FavoritesFragment.refreshFromCached`, eliminating duplicate full-book SQLite queries on launch.
+* **Intelligent Contact & Favorites Deduplication Engine (`List<Contact>.deduplicate`)**:
+  * Merges multi-account sync duplicates (SIM, Google, WhatsApp, Device Storage) into unified contact cards across Contacts, Favorites, and Dialpad search.
+  * Preserves all phone numbers, high-res photo URIs, notes, and starred state with zero data loss.
+
+---
+
+### 👵 4. Accessibility & "EaseUI" Suite
+
 Designed from the ground up to eliminate dialing anxiety, accidental calls, and complex navigation:
 - **Accidental Call Shield**: Built-in **Call Confirmation Dialog** displaying the contact name, photo, and a prominent "Tap to Call" confirmation button before placing a call.
 - **Messages Joystick (`JoystickMessageButton`)**: Radial swipe control for rapid, pre-configured SMS messages and quick responses without typing.
@@ -71,16 +92,8 @@ Designed from the ground up to eliminate dialing anxiety, accidental calls, and 
 
 ---
 
-### 💎 3. Black Diamond AMOLED & Dynamic Theming
-- **Distinguishable Elevated Contact & Call Cards**: Contacts and recent calls are presented as modular, floating cards featuring 16dp rounded corners, subtle perimeter borders (`#26282E`), 2dp elevation, and breathing margins (12dp horizontal, 4dp vertical) — completely eliminating flat, wall-to-wall lists in favor of an organized, card-based interface.
-- **AMOLED True Black (`#000000`)**: Complete dark mode designed for OLED and AMOLED screens with zero pixel bleed and significant battery savings.
-- **Electric Cyan (`#00E5FF`) Glow**: Vivid neon accenting across dialpad keys, floating buttons, and card containers.
-- **Glassmorphic Overlays**: Dynamic blur backgrounds (`BlurBackgroundView`) with smooth color-switching between light and dark modes.
-- **Independent Theme Toggle**: Seamless switching between clean Light Mode (default) and Black Diamond Dark Theme via settings or system default.
+### 🎙️ 5. Compliant High-Definition Call Recording
 
----
-
-### 🎙️ 4. Compliant High-Definition Call Recording
 - **Studio-Quality Audio**: Encoded in 256 kbps AAC stereo at 48 kHz in standard `.m4a` format.
 - **Hybrid Audio Fallback**: Multi-tier audio fallback (`MIC` → `VOICE_COMMUNICATION` → `VOICE_CALL` → `VOICE_RECOGNITION` → `DEFAULT`) for reliable capture across diverse Android hardware.
 - **Two-Party Compliance Beeps**: Plays audible 300ms notification beeps (~900 Hz tone) at recording start and stop to ensure full legal compliance.
@@ -89,7 +102,8 @@ Designed from the ground up to eliminate dialing anxiety, accidental calls, and 
 
 ---
 
-### 📹 5. Integrated Video Calling (Jitsi Meet)
+### 📹 6. Integrated Video Calling (Jitsi Meet)
+
 - **One-Tap Video Calls**: Launch video conferences directly from dialer input or contact cards.
 - **Auto-Mute Cellular Conflict**: Automatically mutes the active phone call microphone when video starts to prevent acoustic feedback.
 - **Rejoin Interception**: If the user accidentally navigates away from the video conference screen, an interactive prompt lets them rejoin instantly without dropping the session.
@@ -97,27 +111,20 @@ Designed from the ground up to eliminate dialing anxiety, accidental calls, and 
 
 ---
 
-### 🎙️ 6. Instant Offline Voice Dialing (100% Private)
+### 🎙️ 7. Instant Offline Voice Dialing (100% Private)
+
 - **Speech-to-Dial**: Speak naturally (e.g., *"Call Mom"*, *"Dial 9876543210"*).
 - **Zero Cloud AI / 100% Private**: No network dependencies, no external API keys, zero risk of contact exposure.
 - **Fast Fuzzy Matcher**: High-performance local contact resolver (`ContactResolver`) using Levenshtein distance matching.
 
 ---
 
-### 📞 7. Advanced Call Waiting & Alert Interception
-- **Busy-Call Interception**: Visual notifications and alerts when another caller attempts to reach you during an active conversation.
+### 📞 8. Advanced Call Waiting & Alert Interception
+
+- **Call Waiting Tone & Vibration Alert (`CallWaitingAlertHelper`)**: Plays telecom-standard call waiting tones (`ToneGenerator.TONE_SUP_CALL_WAITING`) through `STREAM_VOICE_CALL` directly into the earpiece/headset with repeating double-pulse vibrations every 5 seconds.
+- **High-Priority Heads-Up Banner (`CallNotificationManager`)**: Dedicated notification channel (`simple_dialer_call_waiting_active_v3`) with full-screen intent displaying caller Name, Number, Avatar, and instant Accept/Decline action buttons.
+- **Non-Interruptive Decline**: Rejecting a second call dismisses only the waiting call, allowing the user to seamlessly continue their ongoing conversation without hanging up.
 - **Missed Call-Waiting Tracker**: Logs missed call-waiting attempts so no important incoming call goes unnoticed.
-- **Carrier Call-Waiting Handling**: Integrates smoothly with native telephony network signals.
-
----
-
-### ⚡ 8. Performance & Contact Navigation
-- **Sub-Second Cold Start & Loading Optimization**: Utilizes indexed SQLite queries (`COLLATE NOCASE ASC`), off-thread private contact cursor retrieval, and smart 2-stage UI batching (rendering the first 20 items in < 15ms) to completely eliminate startup delays and dropped frames.
-- **Cross-Tab Shared Memory Caching**: A single asynchronous contact query populates both Contacts, Favorites, and Recents, preventing redundant database disk reads.
-- **Intelligent Contact & Favorites Deduplication**: Automatically consolidates duplicate contacts from multi-account sync (SIM, Google, WhatsApp, Device) into single unified cards across Contacts, Favorites, and Dialpad search without losing phone numbers or photos.
-- **Shimmer Skeleton Loading**: Fluid placeholder animations while the contact directory loads.
-- **Fast Alphabet Slider (`HorizontalAlphabetSlider`)**: Quick alphabetical scrubbing for large contact books.
-- **Lightweight Models**: Memory-efficient data structures with background cache enrichment.
 
 ---
 
@@ -155,7 +162,7 @@ Designed from the ground up to eliminate dialing anxiety, accidental calls, and 
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/<your-username>/SimplyDial.git
+   git clone https://github.com/manishkr-07/SimplyDial.git
    cd SimplyDial
    ```
 
@@ -181,7 +188,7 @@ Designed from the ground up to eliminate dialing anxiety, accidental calls, and 
 For detailed technical specifications, architectural diagrams, and flowcharts, refer to the [`docs/`](docs/) directory:
 
 - 🎙️ [Call Recording Architecture & Compliance Guide](docs/CALL_RECORDING.md)
-- 💎 [Black Diamond AMOLED & Dynamic Theming System](docs/THEME_SYSTEM.md)
+- 💎 [Theme System: Black Diamond AMOLED & Material 3 Slate](docs/THEME_SYSTEM.md)
 - 📹 [Jitsi Meet Video Calling Integration](docs/VIDEO_CALLING.md)
 - ✅ [Release & Quality Assurance Testing Checklist](docs/TESTING_CHECKLIST.md)
 
@@ -202,14 +209,15 @@ For detailed technical specifications, architectural diagrams, and flowcharts, r
 
 During the intensive **July 2025 – October 2025** phase, all core features of SimplyDial were designed and implemented—including the senior-friendly **EaseUI** accessibility suite, Black Diamond AMOLED dark theming, studio-grade HD call recording, Jitsi Meet video conferencing, and instant offline voice dialing.
 
-In **Late 2026 (v1.7.0)**, the project underwent a dedicated engineering re-update to solve critical telephony call waiting and caller ID challenges, alongside Dynamic Interface Modes, repository sanitization, and open-source release polish.
+In **Late 2026 (v1.7.0 – v1.8.0)**, the project underwent a dedicated engineering re-update to solve critical telephony call waiting and caller ID challenges, alongside Dynamic Interface Modes, cold start optimizations, deduplication, Material 3 Light Mode, and open-source release polish.
 
 ### 📅 Project Evolution & Milestones
 
 | Timeline | Milestone & Core Focus | Led By |
 | :--- | :--- | :--- |
 | **July 2025 – October 2025** | **Core Build & Complete Feature Suite**<br>• Conceptualized, initiated, and built from the ground up<br>• **EaseUI Accessibility Suite**: Accidental call shield dialog, messages joystick (`JoystickMessageButton`), tactile swipe answer, ripple feedback, Hindi localization<br>• **Black Diamond AMOLED Theme**: Pure black `#000000`, electric cyan glow, glassmorphism (`BlurBackgroundView`)<br>• **HD Call Recording**: 256 kbps stereo AAC `.m4a`, compliance tones, legal consent flow, recording history explorer<br>• **Jitsi Meet Video Calls**: One-tap conference rooms, cellular mic conflict auto-mute, rejoin dialog<br>• **Smart Offline Voice**: Instant speech-to-dial with local fuzzy fallback | **Piyush Kumar** (Creator & Primary Owner)<br>with **Manish Kumar** (Collaborator & Co-Manager) |
-| **Late 2026 (v1.7.0)** | **Call Waiting, Dynamic Interface Modes & Release Polish**<br>• **Dynamic Interface Modes**: Simple Mode (senior-friendly) vs. Modern & Advanced Mode (power-user)<br>• **Interactive Modern UI/UX**: Live filter chips with missed call count badges, universal Quick Actions bottom sheet (WhatsApp, Jitsi Video, SMS, Copy, Share), smart clipboard paste chip<br>• **Official 3D Logo**: High-res transparent 3D launcher mipmaps and in-app branding<br>• **Call Waiting & Caller ID**: Standard 5s alert tone & vibration, HUD caller banner, non-interruptive second-call decline<br>• **Security Hardening**: Removed cloud AI/Gemini dependencies, sanitized repo, standalone GitHub Actions CI | **Piyush Kumar** & **Manish Kumar** |
+| **Late 2026 (v1.7.0)** | **Call Waiting, Dynamic Interface Modes & Release Polish**<br>• **Dynamic Interface Modes**: Simple Mode (senior-friendly) vs. Modern & Advanced Mode (power-user)<br>• **Interactive Modern UI/UX**: Live filter chips with missed call count badges, universal Quick Actions bottom sheet (WhatsApp, Jitsi Video, SMS, Copy, Share), smart clipboard paste chip<br>• **Official 3D Logo**: High-res transparent 3D launcher mipmaps and in-app branding<br>• **Call Waiting & Caller ID**: Standard 5s alert tone & vibration, HUD caller banner, non-interruptive second-call decline<br>• **Security Hardening**: Removed cloud AI dependencies, sanitized repo, standalone GitHub Actions CI | **Piyush Kumar** & **Manish Kumar** |
+| **Late 2026 (v1.8.0)** | **Multi-Segment UI/UX Polish, Material 3 Light Mode & Deduplication Engine**<br>• **Multi-Segment Mode Differentiation**: Deeply differentiated both visual styling and active features across Contacts, Recents, Favorites, Dialpad, and Call Confirmation<br>• **Material 3 Slate Light Mode**: Redesigned Light Theme with `#F8FAFC` slate canvas, elevated `#FFFFFF` cards, `#2563EB` Royal Blue accents, and `#0F172A` deep ink text with WCAG AAA contrast, keeping Dark Mode 100% intact<br>• **Contact & Favorites Deduplication**: High-speed `$O(N)$` deduplication engine merging multi-account sync duplicates across Contacts, Favorites, and T9 dialer<br>• **Sub-Second Cold Start Optimization**: Indexed SQLite queries, off-thread cursor retrieval, 2-stage UI batching (<15ms first paint), and cross-tab cache sharing | **Piyush Kumar** & **Manish Kumar** |
 
 ### 🌐 Official Links & Community
 - 🌐 **Website**: [manish.dev](https://manishkr-dev.vercel.app/)

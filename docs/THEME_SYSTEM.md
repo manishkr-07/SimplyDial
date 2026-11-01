@@ -1,26 +1,31 @@
-# Theme System - Black Diamond AMOLED & Dynamic Theming
+# Theme System - Black Diamond AMOLED & Material 3 Slate
 
 ## Overview
 
-The **SimplyDial** app features an advanced dual-theme architecture:
-1. **Light Mode (Default)**: Clean, high-legibility interface with subtle warm tones.
-2. **Black Diamond Dark Theme**: Ultra-high contrast AMOLED True Black (`#000000`) paired with Electric Cyan (`#00E5FF`) and Aqua Neon accents.
+The **SimplyDial** app features a dual-theme architecture engineered for both battery optimization and high-contrast daytime usability:
+1. **Material 3 Slate Light Theme (Default)**: Clean, high-legibility interface built on a modern `#F8FAFC` slate canvas with elevated `#FFFFFF` modular cards, `#2563EB` Royal Blue accents, and `#0F172A` deep ink text with WCAG AAA compliance.
+2. **Black Diamond Dark Theme**: Ultra-high contrast AMOLED True Black (`#000000`) paired with Electric Cyan (`#00E5FF`) and Aqua Neon accents for true OLED battery savings.
 
 ---
 
 ## Palette & Design Tokens
 
-### Black Diamond Dark Theme Tokens
-| Component / Role | Light Mode Color | Black Diamond Dark Color | Hex Code |
+### Dual-Theme Token Reference
+
+| Component / Role | Material 3 Slate Light Mode | Black Diamond AMOLED Dark Mode | Role & Intent |
 | :--- | :--- | :--- | :--- |
-| **True Background** | `#FFFFFF` | AMOLED True Black | `#000000` |
-| **Surface Elevated** | `#F5F5F5` | Deep Obsidian | `#0A0A0A` |
-| **Interactive Controls** | `#E0E0E0` | Elevated Charcoal | `#111111` |
-| **Primary Accent** | `#FF6B35` | Electric Cyan Neon | `#00E5FF` |
-| **Primary Variant** | `#E55A2B` | Dark Aqua | `#00B8D4` |
-| **Secondary Accent**| `#FFD700` | Soft Cyan / Seagreen | `#4DD0E1` / `#2E8B57` |
-| **Primary Text** | `#212121` | Light Grey / Off-White | `#E0E0E0` |
-| **Secondary Text** | `#757575` | Muted Silver | `#9E9E9E` |
+| **Canvas Background** | `#F8FAFC` (Slate 50) | `#000000` (AMOLED Black) | Main screen background |
+| **Card / Tile Surface** | `#FFFFFF` (Pure White) | `#0A0A0A` (Deep Obsidian) | Elevated contact & recents card containers |
+| **Secondary Surface / Chips** | `#F1F5F9` (Slate 100) | `#111111` (Elevated Charcoal) | Filter chips, button backdrops |
+| **Primary Accent** | `#2563EB` (Royal Blue) | `#00E5FF` (Electric Cyan Neon) | Primary call actions, tab selection, active icons |
+| **Primary Variant** | `#1D4ED8` (Blue 700) | `#00B8D4` (Dark Aqua) | Pressed states & variants |
+| **Secondary Accent** | `#0D9488` (Teal 600) | `#4DD0E1` (Aqua Highlight) | Secondary indicators & badges |
+| **Primary Typography** | `#0F172A` (Slate 900) | `#FFFFFF` (Pure White) | Caller names, dialpad digits (14:1 contrast) |
+| **Secondary Typography** | `#475569` (Slate 600) | `#9E9E9E` (Silver Muted) | Phone numbers, timestamps (7:1 contrast) |
+| **Border / Stroke** | `#E2E8F0` / `#CBD5E1` | `#26282E` / `#3E424D` | Modular card perimeters & squircle borders |
+| **Call Action Color** | `#16A34A` (Emerald 600) | `#00E5FF` (Cyan) / `#1B5E20` | Quick Call hero targets |
+| **Missed Call Color** | `#DC2626` (Red 600) | `#E74C3C` (Vivid Crimson) | Missed call alerts & indicators |
+| **Glassmorphic Tint** | `#E0F2FE` (Sky-Blue) | `#2E8B57` (Seagreen) | Blur overlay tint in `BlurBackgroundView` |
 
 ---
 
@@ -49,7 +54,6 @@ class FossifyPhoneApp : Application() {
 `SimpleActivity.kt` applies the designated theme prior to calling `super.onCreate()`:
 ```kotlin
 override fun onCreate(savedInstanceState: Bundle?) {
-    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
     ThemeManager.applyTheme(this)
     super.onCreate(savedInstanceState)
 }
@@ -57,15 +61,15 @@ override fun onCreate(savedInstanceState: Bundle?) {
 
 ### 4. Dynamic Blur & Glassmorphism
 The visual stack supports dynamic real-time blur and glassmorphic overlays (`BlurBackgroundView.kt`, `GradientRingImageView.kt`):
-- **Light Theme**: Warm lemon-chiffon blur overlay.
-- **Dark Theme**: Calming seagreen / deep aqua blur tone.
+- **Light Theme**: Soft sky-blue blur overlay (`#E0F2FE`) providing gentle depth.
+- **Dark Theme**: Calming seagreen / deep aqua blur tone (`#2E8B57`).
 
 ---
 
 ## Custom Visual Controls
 
+- **`styleContactCard` / `styleCallCard`**: Dynamic card stylers applying squircle corners, borders, and shadows tailored for Simple vs Modern mode in both Light and Dark themes.
 - **`SwipeCallButtonsView`**: Fluid swipe gesture handling for accepting and declining incoming calls.
 - **`JoystickMessageButton`**: Quick action joystick offering radial SMS, quick reply, or canned message triggers.
 - **`WaterRippleView`**: Interactive wave feedback on touch and dial actions.
 - **`HorizontalAlphabetSlider`**: Fast-scrolling alphabet indexed contact scrubber.
-

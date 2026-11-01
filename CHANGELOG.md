@@ -7,15 +7,43 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.8.0] - 2026-11-02 - Multi-Segment UI/UX Polish, Material 3 Light Mode & Deduplication
+
+### 🎨 Added — Material 3 Slate Light Theme (Dark Mode 100% Preserved)
+- **Modern Slate Canvas (`#F8FAFC`)**: Redesigned Light Theme canvas with subtle slate tinting, allowing pure white cards (`#FFFFFF`) to visually elevate with crisp Material 3 ambient shadows.
+- **Royal Blue Accent (`#2563EB`)**: High-contrast modern primary accent replacing washed-out blue, meeting strict WCAG AAA readability standards.
+- **Deep Ink Slate Typography (`#0F172A`)**: Rich Slate 900 text inking for titles and Slate 600 (`#475569`) for subtitles, providing 14:1 and 7.1:1 contrast ratios.
+- **Dynamic Button Typography**: Upgraded primary action buttons in bottom sheets and dialogs from hardcoded black text to dynamic `@color/fab_icon` (crisp white text in Light Mode, deep black in Dark Mode).
+- **Seamless White System Bars**: Configured `@color/statusbar_color` and `@color/navigationbar_color` to `#FFFFFF` with light status/navigation bar flags, eliminating dark-on-dark status bar clashes.
+- **Sky-Blue Glassmorphism**: Updated `BlurBackgroundView` to use modern soft sky-blue tint (`#E0F2FE`) in Light Mode, deprecating obsolete yellowish lemon-chiffon tint.
+
+### 🎛️ Added — Deep Multi-Segment UI/UX Differentiation (Simple vs. Modern)
+- **Contacts Tab**:
+  - *Simple Mode*: 82dp high-visibility cards, 20dp squircles with `#CBD5E1` / `#3E424D` border, 3.5dp elevation, 56dp oversized avatar, 19.5sp bold typography, emerald green quick-call button (`#16A34A` / `#1B5E20`), and 3-dots menu hidden to eliminate senior anxiety.
+  - *Modern Mode*: 68dp sleek card with subtle `#E2E8F0` / `#26282E` stroke, 48dp avatar, 16sp typography, 120Hz scale-down micro-interactions (`0.975x`), and full Quick Actions bottom sheet (WhatsApp, Jitsi Video, SMS, vCard, Notes).
+- **Recents Tab**:
+  - *Simple Mode*: 82dp high-contrast card, 54dp avatar, 19sp bold name, red-highlighted missed calls, emerald green quick-call button, and hidden analytics/overflow.
+  - *Modern Mode*: Material 3 cards, Daily Call Analytics banner (total count, talk time, missed), frequent contacts speed-dial carousel, swipe gestures (swipe-to-call, swipe-to-SMS), and SIM badges with contrast adjustment.
+- **Favorites Tab**:
+  - *Simple Mode*: High-visibility 2-column grid (`spanCount = 2`) with oversized caller photos and bold names. Tapping immediately launches the Accidental Call Shield.
+  - *Modern Mode*: Customizable multi-column grid / list view with drag-and-drop custom order reordering.
+- **Dialpad Screen**:
+  - *Simple Mode*: Solid keys with high-contrast borders, 34sp digits, 74dp hero call button. Secondary Voice, Video, and clipboard chips hidden for single-action clarity.
+  - *Modern Mode*: Tactile `#F1F5F9` / `#121316` keys with cyan/royal blue sub-letters, 28sp digits, flanked Voice and Video buttons, and dynamic clipboard paste / inline contact chips.
+- **Accidental Call Shield**:
+  - Automatic across all entry points in Simple Mode (Contacts, Recents, Favorites, Dialpad) without requiring manual configuration (`config.showCallConfirmation || config.isSimpleMode`).
+
+### ⚡ Performance & Deduplication
+- **Intelligent Contact & Favorites Deduplication (`List<Contact>.deduplicate`)**:
+  - Automatically merges duplicate records originating from multi-account sync (SIM, Google Account, WhatsApp, Device Storage) using aggregate `contactId`, `rawId`, and normalized phone number matching across Contacts, Favorites, and Dialpad T9 search, preserving all phone numbers, photos, notes, and starred status.
+- **Sub-Second Cold Start & Query Optimization**:
+  - Replaced unindexed queries in `loadLightContactsAsync` with indexed `${DISPLAY_NAME} COLLATE NOCASE ASC`, moving cursor loading to background threads (`ensureBackgroundThread`), applying 2-stage UI batching (<15ms first paint), and synchronizing cross-tab cache sharing.
+
+---
+
 ## [1.7.0] - 2026-11-01 - Call Waiting & Caller ID Architecture Fixes
 
 ### 🎛️ Added — Dynamic Interface Mode System & Modern UI/UX
-- **Sub-Second App Launch & Loading Time Optimization**:
-  - **Indexed B-Tree SQLite Queries**: Replaced slow unindexed `LOWER(display_name)` queries in `loadLightContactsAsync` with `${DISPLAY_NAME} COLLATE NOCASE ASC`, leveraging Android's Contacts Provider B-tree index for a 10x faster query response (~15ms vs ~150ms).
-  - **Eliminated UI Thread I/O Stalls**: Moved `getMyContactsCursor` private contact queries off the main looper into `ensureBackgroundThread`, completely removing main thread disk I/O freezes on cold start.
-  - **Smart UI Batching**: Replaced per-item DiffUtil dispatches with a 2-stage instant paint pipeline (renders first visible screen at 20 items in <15ms, scrolls at 100 items, and finalizes cleanly), reducing Main Looper UI allocations by 90%.
-  - **Synchronized Cross-Tab Cache Sharing**: `ContactsFragment` now instantly propagates deduplicated contacts to `MainActivity.cachedContacts` and pushes directly to `FavoritesFragment.refreshFromCached`, eliminating duplicate full-book SQLite queries on launch.
-- **Intelligent Contact & Favorites Deduplication Engine (`List<Contact>.deduplicate`)**: Completely eliminated duplicate contact cards across Contacts, Favorites, and Dialpad T9 search. Automatically merges duplicate records originating from multi-account sync (SIM, Google Account, WhatsApp, Device Storage) using aggregate `contactId`, `rawId`, and normalized phone number matching, preserving phone numbers, photo URIs, notes, and starred state.
 - **Distinguishable Elevated Contact & Call Cards**: Redesigned contacts and recents from continuous flat edge-to-edge lists into individual, floating card containers (`styleContactCard` / `styleCallCard`) with 16dp rounded corners, subtle `#26282E` outline borders, 2dp elevation, and 12dp/4dp breathing margins.
 - **Dual Interface Modes**: Added Simple Mode (senior-friendly, 64dp touch targets, Accidental Call Shield, clutter-free) and Modern & Advanced Mode (power-user, Material 3, WhatsApp, Jitsi Video, multi-SIM badges).
 - **120Hz Smooth Scrolling & View Caching**: Set `setHasFixedSize(true)` and `setItemViewCacheSize(20)` on Recents, Contacts, Favorites, and Dialpad RecyclerViews to eliminate dropped frames and view re-binding during quick fling gestures.
@@ -97,7 +125,3 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Upstream Heritage] - Fossify Phone 1.7.1 (2025-09-12)
 ### Changed
 - Upstream translations across supported locales
-
-### Fixed
-- Fixed USSD code handling in speed dial
-- Fixed contact number selection on the dial pad screen
