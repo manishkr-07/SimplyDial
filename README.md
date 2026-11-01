@@ -72,6 +72,7 @@ Designed from the ground up to eliminate dialing anxiety, accidental calls, and 
 ---
 
 ### 💎 3. Black Diamond AMOLED & Dynamic Theming
+- **Distinguishable Elevated Contact & Call Cards**: Contacts and recent calls are presented as modular, floating cards featuring 16dp rounded corners, subtle perimeter borders (`#26282E`), 2dp elevation, and breathing margins (12dp horizontal, 4dp vertical) — completely eliminating flat, wall-to-wall lists in favor of an organized, card-based interface.
 - **AMOLED True Black (`#000000`)**: Complete dark mode designed for OLED and AMOLED screens with zero pixel bleed and significant battery savings.
 - **Electric Cyan (`#00E5FF`) Glow**: Vivid neon accenting across dialpad keys, floating buttons, and card containers.
 - **Glassmorphic Overlays**: Dynamic blur backgrounds (`BlurBackgroundView`) with smooth color-switching between light and dark modes.

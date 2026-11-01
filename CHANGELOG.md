@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.7.0] - 2026-11-01 - Call Waiting & Caller ID Architecture Fixes
 
 ### 🎛️ Added — Dynamic Interface Mode System & Modern UI/UX
+- **Distinguishable Elevated Contact & Call Cards**: Redesigned contacts and recents from continuous flat edge-to-edge lists into individual, floating card containers (`styleContactCard` / `styleCallCard`) with 16dp rounded corners, subtle `#26282E` outline borders, 2dp elevation, and 12dp/4dp breathing margins.
 - **Dual Interface Modes**: Added Simple Mode (senior-friendly, 64dp touch targets, Accidental Call Shield, clutter-free) and Modern & Advanced Mode (power-user, Material 3, WhatsApp, Jitsi Video, multi-SIM badges).
 - **120Hz Smooth Scrolling & View Caching**: Set `setHasFixedSize(true)` and `setItemViewCacheSize(20)` on Recents, Contacts, Favorites, and Dialpad RecyclerViews to eliminate dropped frames and view re-binding during quick fling gestures.
 - **Off-Thread Heavy Processing**: Moved call analytics calculations (`sumOf`, `groupBy`, sorting) in `RecentsFragment` and T9 contact matching in `DialpadActivity` to background coroutines (`Dispatchers.Default`) with job cancellation.
