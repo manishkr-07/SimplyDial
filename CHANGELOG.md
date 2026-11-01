@@ -14,6 +14,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Interactive Call History Filter Chips**: Real-time filtering by All, Missed (with live count badges), Incoming, and Outgoing calls with tactile haptics.
 - **Universal Quick Actions Bottom Sheet (`QuickActionsHelper`)**: Modern slide-up sheet on contacts and recents with 1-tap WhatsApp chat, Jitsi Meet video, SMS, number copying, contact sharing, and call history.
 - **Smart Clipboard Detection**: Live phone number detection in clipboard with a 1-tap paste chip on the dialpad.
+- **Interactive Swipe Actions**: Samsung One UI-style Swipe-to-Call (Right) and Swipe-to-SMS (Left) on call log rows with custom canvas backgrounds and haptic feedback.
+- **Daily Call Analytics**: Glassmorphic summary pill on recents showing today's call count, cumulative talk duration, and missed call count.
+- **Top Frequent Contacts Carousel**: Dynamic circular avatar carousel for quick 1-tap access to frequent callers.
+- **Post-Call Notes & Reminders**: Quick memo system (`Config.getContactNote` / `setContactNote`) with visual sticky badges on call history items.
+- **Instant vCard (.vcf) Export**: Standards-compliant vCard contact generation and sharing via Android FileProvider.
 - **Official 3D SimplyDial Logo**: High-res squircle 3D brand logo across launcher mipmaps, Settings header, and About dialog.
 
 ### 📞 Fixed & Added — Call Waiting & Caller ID Engine

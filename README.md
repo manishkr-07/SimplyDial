@@ -48,6 +48,11 @@ Switch effortlessly between two deeply customized UI experiences in Settings:
   * **Interactive Call History Filter Chips**: Horizontal pill bar (`[ ✦ All ] [ 🔴 Missed (N) ] [ 📥 Incoming ] [ 📤 Outgoing ]`) with live missed call counters and tactile haptic feedback.
   * **Universal Quick Actions Bottom Sheet**: 1-tap slide-up modal for WhatsApp direct chat (`https://api.whatsapp.com/send?phone=...`), Jitsi Meet HD video calls, SMS messaging, contact sharing, number copying, and grouped call history.
   * **Smart Clipboard Paste Chip**: Automatically detects copied phone numbers (3+ digits) and presents a 1-tap `[ 📋 Paste ]` chip directly above the keypad.
+  * **Interactive Swipe-to-Call & Swipe-to-SMS**: Swipe Right ➡️ on any call log item to call immediately (green canvas); Swipe Left ⬅️ to compose an SMS (cyan canvas) with haptic feedback.
+  * **Daily Call Analytics & Talk Time Summary**: Glassmorphic stats pill displaying today's total call volume, cumulative talk time, and missed calls at a glance.
+  * **Top Frequent Contacts Carousel**: Horizontal circular avatar carousel with glowing gradient rings for 1-tap speed dialing.
+  * **Fast Post-Call Notes & Reminders**: Attach memo reminders to any contact or number (`📝 Follow up Monday`) displayed directly on call log cards.
+  * **Instant vCard (.vcf) Contact Sharing**: Generate and share standard vCard contact files directly from the Quick Actions Sheet to any smartphone.
   * **Fine-Grained Customization**: Toggle individual controls (1-tap calling, haptic feedback, large answer buttons, fullscreen calls) under *Customize Interface Features*.
 
 ---
