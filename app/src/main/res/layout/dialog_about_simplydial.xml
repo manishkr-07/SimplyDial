@@ -205,7 +205,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:alpha="0.7"
-                    android:text="github.com/manishkr-07"
+                    android:text="@string/about_github_val"
                     android:textSize="12sp" />
             </LinearLayout>
 
