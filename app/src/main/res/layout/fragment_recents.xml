@@ -12,6 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:clipToPadding="false"
+        android:fillViewport="true"
         android:overScrollMode="never"
         android:paddingHorizontal="12dp"
         android:paddingVertical="8dp"
@@ -32,10 +33,13 @@
                 android:layout_marginEnd="8dp"
                 android:checkable="true"
                 android:checked="true"
+                android:clickable="true"
+                android:focusable="true"
                 android:text="@string/filter_all"
                 android:textSize="13sp"
                 app:chipCornerRadius="16dp"
-                app:chipMinHeight="36dp" />
+                app:chipMinHeight="36dp"
+                app:ensureMinTouchTargetSize="false" />
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/filter_missed"
@@ -44,10 +48,13 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
                 android:checkable="true"
+                android:clickable="true"
+                android:focusable="true"
                 android:text="@string/filter_missed"
                 android:textSize="13sp"
                 app:chipCornerRadius="16dp"
-                app:chipMinHeight="36dp" />
+                app:chipMinHeight="36dp"
+                app:ensureMinTouchTargetSize="false" />
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/filter_incoming"
@@ -56,10 +63,13 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
                 android:checkable="true"
+                android:clickable="true"
+                android:focusable="true"
                 android:text="@string/filter_incoming"
                 android:textSize="13sp"
                 app:chipCornerRadius="16dp"
-                app:chipMinHeight="36dp" />
+                app:chipMinHeight="36dp"
+                app:ensureMinTouchTargetSize="false" />
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/filter_outgoing"
@@ -67,10 +77,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:checkable="true"
+                android:clickable="true"
+                android:focusable="true"
                 android:text="@string/filter_outgoing"
                 android:textSize="13sp"
                 app:chipCornerRadius="16dp"
-                app:chipMinHeight="36dp" />
+                app:chipMinHeight="36dp"
+                app:ensureMinTouchTargetSize="false" />
 
         </LinearLayout>
     </HorizontalScrollView>

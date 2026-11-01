@@ -13,6 +13,9 @@
 
     <!-- Recents -->
     <string name="no_previous_calls">No previous calls have been found</string>
+    <string name="no_missed_calls">No missed calls found</string>
+    <string name="no_incoming_calls">No incoming calls found</string>
+    <string name="no_outgoing_calls">No outgoing calls found</string>
     <string name="could_not_access_the_call_history">Could not access the call history</string>
     <string name="request_access">Request access</string>
     <string name="remove_confirmation">Are you sure you want to remove the selected items from the Call History?</string>

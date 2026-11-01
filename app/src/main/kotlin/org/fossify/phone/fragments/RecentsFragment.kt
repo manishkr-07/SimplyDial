@@ -1,6 +1,8 @@
 package org.fossify.phone.fragments
 
 import android.content.Context
+import android.content.res.ColorStateList
+import android.view.View
 import android.provider.CallLog.Calls
 import android.util.AttributeSet
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -95,9 +97,7 @@ class RecentsFragment(
         binding.recentsPlaceholder.setTextColor(textColor)
         binding.recentsPlaceholder2.setTextColor(properPrimaryColor)
 
-        listOf(binding.filterAll, binding.filterMissed, binding.filterIncoming, binding.filterOutgoing).forEach {
-            it.setTextColor(textColor)
-        }
+        updateFilterChips()
 
         recentsAdapter?.apply {
             updateTextColor(textColor)
@@ -136,8 +136,9 @@ class RecentsFragment(
 
     override fun onSearchClosed() {
         searchQuery = null
-        showOrHidePlaceholder(allRecentCalls.isEmpty())
-        recentsAdapter?.updateItems(allRecentCalls)
+        val filtered = filterCalls(allRecentCalls)
+        showOrHidePlaceholder(filtered.isEmpty())
+        recentsAdapter?.updateItems(filtered)
     }
 
     override fun onSearchQueryChanged(text: String) {
@@ -196,10 +197,22 @@ class RecentsFragment(
         if (recents.isEmpty()) {
             binding.progressIndicator.hide()
             binding.apply {
+                val placeholderRes = when (currentFilter) {
+                    FILTER_MISSED -> R.string.no_missed_calls
+                    FILTER_INCOMING -> R.string.no_incoming_calls
+                    FILTER_OUTGOING -> R.string.no_outgoing_calls
+                    else -> R.string.no_previous_calls
+                }
+                recentsPlaceholder.text = if (context.hasPermission(PERMISSION_READ_CALL_LOG)) {
+                    context.getString(placeholderRes)
+                } else {
+                    context.getString(R.string.could_not_access_the_call_history)
+                }
                 showOrHidePlaceholder(true)
                 recentsPlaceholder2.beGoneIf(context.hasPermission(PERMISSION_READ_CALL_LOG))
                 recentsList.beGone()
             }
+            recentsAdapter?.updateItems(emptyList())
         } else {
             binding.apply {
                 showOrHidePlaceholder(false)
@@ -215,6 +228,7 @@ class RecentsFragment(
                     showOverflowMenu = true,
                     itemDelete = { deleted ->
                         allRecentCalls = allRecentCalls.filter { it !in deleted }
+                        gotRecents(filterCalls(allRecentCalls))
                     },
                     itemClick = {
                         val recentCall = it as RecentCall
@@ -545,7 +559,8 @@ class RecentsFragment(
         }
         if (changed) Perf.markFirstName()
         allRecentCalls = updated
-        recentsAdapter?.updateItems(updated)
+        val filtered = filterCalls(updated)
+        recentsAdapter?.updateItems(filtered)
     }
 
     private fun findContactByCall(recentCall: RecentCall): Contact? {
@@ -553,10 +568,20 @@ class RecentsFragment(
     }
 
     private fun setupFilterChips() {
-        binding.filterAll.setOnClickListener { applyFilter(FILTER_ALL) }
-        binding.filterMissed.setOnClickListener { applyFilter(FILTER_MISSED) }
-        binding.filterIncoming.setOnClickListener { applyFilter(FILTER_INCOMING) }
-        binding.filterOutgoing.setOnClickListener { applyFilter(FILTER_OUTGOING) }
+        val clickListener = View.OnClickListener { v ->
+            val filter = when (v.id) {
+                R.id.filter_missed -> FILTER_MISSED
+                R.id.filter_incoming -> FILTER_INCOMING
+                R.id.filter_outgoing -> FILTER_OUTGOING
+                else -> FILTER_ALL
+            }
+            applyFilter(filter)
+        }
+
+        binding.filterAll.setOnClickListener(clickListener)
+        binding.filterMissed.setOnClickListener(clickListener)
+        binding.filterIncoming.setOnClickListener(clickListener)
+        binding.filterOutgoing.setOnClickListener(clickListener)
 
         // Set initial state
         updateFilterChips()
@@ -569,10 +594,33 @@ class RecentsFragment(
     }
 
     private fun updateFilterChips() {
-        binding.filterAll.isChecked = currentFilter == FILTER_ALL
-        binding.filterMissed.isChecked = currentFilter == FILTER_MISSED
-        binding.filterIncoming.isChecked = currentFilter == FILTER_INCOMING
-        binding.filterOutgoing.isChecked = currentFilter == FILTER_OUTGOING
+        val simpleAct = activity as? SimpleActivity
+        val primaryColor = simpleAct?.getProperPrimaryColor() ?: context.getColor(R.color.color_primary)
+        val surfaceColor = context.getColor(R.color.elevated_surface_color)
+        val textColor = simpleAct?.getProperTextColor() ?: context.getColor(R.color.text_primary)
+        val contrastColor = primaryColor.getContrastColor()
+        val dividerColor = context.getColor(R.color.divider_color)
+
+        val chips = listOf(
+            binding.filterAll to (currentFilter == FILTER_ALL),
+            binding.filterMissed to (currentFilter == FILTER_MISSED),
+            binding.filterIncoming to (currentFilter == FILTER_INCOMING),
+            binding.filterOutgoing to (currentFilter == FILTER_OUTGOING)
+        )
+
+        chips.forEach { (chip, isSelected) ->
+            chip.isChecked = isSelected
+            if (isSelected) {
+                chip.chipBackgroundColor = ColorStateList.valueOf(primaryColor)
+                chip.setTextColor(contrastColor)
+                chip.chipStrokeWidth = 0f
+            } else {
+                chip.chipBackgroundColor = ColorStateList.valueOf(surfaceColor)
+                chip.setTextColor(textColor)
+                chip.chipStrokeColor = ColorStateList.valueOf(dividerColor)
+                chip.chipStrokeWidth = resources.displayMetrics.density * 1f
+            }
+        }
     }
 
     private fun refreshFilteredCalls() {
@@ -589,7 +637,7 @@ class RecentsFragment(
             .filterIsInstance<RecentCall>()
             .filter { call ->
                 when (currentFilter) {
-                    FILTER_MISSED -> call.type == Calls.MISSED_TYPE
+                    FILTER_MISSED -> call.type == Calls.MISSED_TYPE || call.type == Calls.REJECTED_TYPE
                     FILTER_INCOMING -> call.type == Calls.INCOMING_TYPE
                     FILTER_OUTGOING -> call.type == Calls.OUTGOING_TYPE
                     else -> true
