@@ -747,8 +747,8 @@ class RecentsFragment(
             }
 
             val cornerRadius = 16 * resources.displayMetrics.density
-            val horizontalMargin = 10 * resources.displayMetrics.density
-            val verticalMargin = 3 * resources.displayMetrics.density
+            val horizontalMargin = 12 * resources.displayMetrics.density
+            val verticalMargin = 4 * resources.displayMetrics.density
             val bgPaint = android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG)
 
             override fun onChildDraw(

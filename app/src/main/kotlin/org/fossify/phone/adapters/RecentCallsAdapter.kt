@@ -1,6 +1,10 @@
 package org.fossify.phone.adapters
 
 import android.annotation.SuppressLint
+import android.content.res.ColorStateList
+import android.graphics.Color
+import android.graphics.drawable.GradientDrawable
+import android.graphics.drawable.RippleDrawable
 import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.provider.CallLog.Calls
@@ -459,10 +463,10 @@ class RecentCallsAdapter(
         allowLongClick = refreshItemsListener != null && !call.isUnknownNumber
     ) { _, layoutPosition ->
         binding.apply {
-            root.setupViewBackground(activity)
-
+            val isSelected = selectedKeys.contains(call.id)
             itemRecentsHolder.apply {
-                isSelected = selectedKeys.contains(call.id)
+                this.isSelected = isSelected
+                styleCallCard(this, isSelected)
                 if (!activity.config.isSimpleMode) {
                     setOnTouchListener { v, event ->
                         when (event.action) {
@@ -677,6 +681,42 @@ class RecentCallsAdapter(
         val first = lm.findFirstVisibleItemPosition().coerceAtLeast(0)
         val last = lm.findLastVisibleItemPosition().coerceAtLeast(first)
         if (first <= last) notifyItemRangeChanged(first, last - first + 1)
+    }
+
+    private fun styleCallCard(cardView: View, isSelected: Boolean) {
+        val density = cardView.resources.displayMetrics.density
+        val radius = 16 * density
+        val isDark = textColor == -1 || activity.getProperBackgroundColor() == Color.BLACK || activity.getProperBackgroundColor().getContrastColor() == Color.WHITE
+
+        val bgColor = if (isSelected) {
+            properPrimaryColor.adjustAlpha(0.18f)
+        } else {
+            if (isDark) Color.parseColor("#121316") else Color.WHITE
+        }
+
+        val strokeColor = if (isSelected) {
+            properPrimaryColor
+        } else {
+            if (isDark) Color.parseColor("#26282E") else Color.parseColor("#E5E7EB")
+        }
+        val strokeWidth = ((if (isSelected) 2 else 1) * density).toInt()
+
+        val cardShape = GradientDrawable().apply {
+            shape = GradientDrawable.RECTANGLE
+            cornerRadius = radius
+            setColor(bgColor)
+            setStroke(strokeWidth, strokeColor)
+        }
+
+        val maskShape = GradientDrawable().apply {
+            shape = GradientDrawable.RECTANGLE
+            cornerRadius = radius
+            setColor(Color.WHITE)
+        }
+
+        val rippleColor = properPrimaryColor.adjustAlpha(0.20f)
+        cardView.background = RippleDrawable(ColorStateList.valueOf(rippleColor), cardShape, maskShape)
+        cardView.elevation = (if (isSelected) 4 else 2) * density
     }
 
     private inner class RecentCallDateViewHolder(val binding: ItemRecentsDateBinding) : ViewHolder(binding.root) {

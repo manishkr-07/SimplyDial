@@ -1,6 +1,10 @@
 package org.fossify.phone.adapters
 
 import android.annotation.SuppressLint
+import android.content.res.ColorStateList
+import android.graphics.Color
+import android.graphics.drawable.GradientDrawable
+import android.graphics.drawable.RippleDrawable
 import android.content.Intent
 import android.content.pm.ShortcutInfo
 import android.graphics.Outline
@@ -391,9 +395,10 @@ class ContactsAdapter(
     @SuppressLint("ClickableViewAccessibility")
     private fun setupView(binding: ItemViewBinding, contact: Contact, holder: ViewHolder) {
         binding.apply {
-            root.setupViewBackground(activity)
+            val isSelected = selectedKeys.contains(contact.rawId)
             itemContactFrame.apply {
-                isSelected = selectedKeys.contains(contact.rawId)
+                this.isSelected = isSelected
+                styleContactCard(this, isSelected)
                 if (!activity.config.isSimpleMode) {
                     setOnTouchListener { v, event ->
                         when (event.action) {
@@ -961,6 +966,42 @@ class ContactsAdapter(
         }
 
         notifyItemMoved(fromPosition, toPosition)
+    }
+
+    private fun styleContactCard(cardView: View, isSelected: Boolean) {
+        val density = cardView.resources.displayMetrics.density
+        val radius = 16 * density
+        val isDark = textColor == -1 || activity.getProperBackgroundColor() == Color.BLACK || activity.getProperBackgroundColor().getContrastColor() == Color.WHITE
+
+        val bgColor = if (isSelected) {
+            properPrimaryColor.adjustAlpha(0.18f)
+        } else {
+            if (isDark) Color.parseColor("#121316") else Color.WHITE
+        }
+
+        val strokeColor = if (isSelected) {
+            properPrimaryColor
+        } else {
+            if (isDark) Color.parseColor("#26282E") else Color.parseColor("#E5E7EB")
+        }
+        val strokeWidth = ((if (isSelected) 2 else 1) * density).toInt()
+
+        val cardShape = GradientDrawable().apply {
+            shape = GradientDrawable.RECTANGLE
+            cornerRadius = radius
+            setColor(bgColor)
+            setStroke(strokeWidth, strokeColor)
+        }
+
+        val maskShape = GradientDrawable().apply {
+            shape = GradientDrawable.RECTANGLE
+            cornerRadius = radius
+            setColor(Color.WHITE)
+        }
+
+        val rippleColor = properPrimaryColor.adjustAlpha(0.20f)
+        cardView.background = RippleDrawable(ColorStateList.valueOf(rippleColor), cardShape, maskShape)
+        cardView.elevation = (if (isSelected) 4 else 2) * density
     }
 
     override fun onRowSelected(myViewHolder: ViewHolder?) {}
