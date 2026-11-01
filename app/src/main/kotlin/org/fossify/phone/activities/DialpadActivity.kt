@@ -26,6 +26,11 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import android.content.res.ColorStateList
+import android.graphics.Color
+import android.graphics.drawable.GradientDrawable
+import android.graphics.drawable.RippleDrawable
+import org.fossify.commons.extensions.adjustAlpha
 import org.fossify.commons.extensions.applyColorFilter
 import org.fossify.commons.extensions.beVisibleIf
 import org.fossify.commons.extensions.checkAppSideloading
@@ -160,26 +165,7 @@ class DialpadActivity : SimpleActivity() {
                 dialpad0Holder.visibility = View.INVISIBLE
             }
 
-            val buttonAlpha = if (config.isSimpleMode) 255 else LOWER_ALPHA_INT
-            arrayOf(
-                dialpad0Holder,
-                dialpad1Holder,
-                dialpad2Holder,
-                dialpad3Holder,
-                dialpad4Holder,
-                dialpad5Holder,
-                dialpad6Holder,
-                dialpad7Holder,
-                dialpad8Holder,
-                dialpad9Holder,
-                dialpadPlusHolder,
-                dialpadAsteriskHolder,
-                dialpadHashtagHolder
-            ).forEach {
-                it.background =
-                    ResourcesCompat.getDrawable(resources, R.drawable.pill_background, theme)
-                it.background?.alpha = buttonAlpha
-            }
+            styleDialpadKeys()
         }
 
         setupOptionsMenu()
@@ -256,7 +242,15 @@ class DialpadActivity : SimpleActivity() {
                     showVoiceLanguageSelectionDialog()
                 }
             }
-            dialpadInput.onTextChangeListener { dialpadValueChanged(it) }
+            dialpadInput.onTextChangeListener { text ->
+                dialpadValueChanged(text)
+                dialpadClearChar.beVisibleIf(text.isNotEmpty())
+                updateSmartBar(text)
+            }
+            dialpadAddContactChip.setOnClickListener {
+                it.performHapticFeedback(android.view.HapticFeedbackConstants.KEYBOARD_TAP)
+                addNumberToContact()
+            }
             dialpadInput.requestFocus()
             dialpadInput.disableKeyboard()
             if (config.isSimpleMode) {
@@ -270,19 +264,7 @@ class DialpadActivity : SimpleActivity() {
 
         val properPrimaryColor = getProperPrimaryColor()
         binding.apply {
-            val callIcon = resources.getColoredDrawableWithColor(
-                drawableId = R.drawable.ic_phone_vector,
-                color = properPrimaryColor.getContrastColor()
-            )
-            dialpadCallButton.setImageDrawable(callIcon)
-            dialpadCallButton.background.applyColorFilter(properPrimaryColor)
-            
-            val videoCallIcon = resources.getColoredDrawableWithColor(
-                drawableId = R.drawable.ic_video_call_vector,
-                color = properPrimaryColor.getContrastColor()
-            )
-            dialpadVideoCallButton.setImageDrawable(videoCallIcon)
-            dialpadVideoCallButton.background.applyColorFilter(properPrimaryColor)
+            styleActionButtons()
 
             letterFastscroller.textColor = getProperTextColor().getColorStateList()
             letterFastscroller.pressedTextColor = properPrimaryColor
@@ -296,9 +278,12 @@ class DialpadActivity : SimpleActivity() {
         super.onResume()
         updateTextColors(binding.dialpadHolder)
         binding.dialpadClearChar.applyColorFilter(getProperTextColor())
+        binding.dialpadClearChar.beVisibleIf(binding.dialpadInput.value.isNotEmpty())
         updateNavigationBarColor(getProperBackgroundColor())
         setupToolbar(binding.dialpadToolbar, NavigationIcon.Arrow)
-        checkClipboardForNumber()
+        styleDialpadKeys()
+        styleActionButtons()
+        updateSmartBar(binding.dialpadInput.value)
     }
 
     private fun setupOptionsMenu() {
@@ -720,6 +705,211 @@ class DialpadActivity : SimpleActivity() {
             contactName = contactName,
             contactNumber = number
         )
+    }
+    private fun styleDialpadKeys() {
+        val isSimple = config.isSimpleMode
+        val properPrimaryColor = getProperPrimaryColor()
+        val properTextColor = getProperTextColor()
+        val isDarkTheme = properTextColor == -1 || getProperBackgroundColor() == Color.BLACK || getProperBackgroundColor().getContrastColor() == Color.WHITE
+        val density = resources.displayMetrics.density
+        val keyCornerRadius = (if (isSimple) 18f else 22f) * density
+        val strokeWidth = ((if (isSimple) 2 else 1) * density).toInt()
+
+        val keyBgColor = if (isSimple) {
+            if (isDarkTheme) Color.parseColor("#1C1C1E") else Color.WHITE
+        } else {
+            if (isDarkTheme) Color.parseColor("#121316") else Color.parseColor("#F3F5FA")
+        }
+
+        val strokeColor = if (isSimple) {
+            if (isDarkTheme) Color.parseColor("#38383A") else Color.parseColor("#D1D5DB")
+        } else {
+            if (isDarkTheme) properPrimaryColor.adjustAlpha(0.22f) else properPrimaryColor.adjustAlpha(0.15f)
+        }
+
+        val rippleColor = properPrimaryColor.adjustAlpha(0.25f)
+
+        val keys = arrayOf(
+            binding.dialpadWrapper.dialpad0Holder,
+            binding.dialpadWrapper.dialpad1Holder,
+            binding.dialpadWrapper.dialpad2Holder,
+            binding.dialpadWrapper.dialpad3Holder,
+            binding.dialpadWrapper.dialpad4Holder,
+            binding.dialpadWrapper.dialpad5Holder,
+            binding.dialpadWrapper.dialpad6Holder,
+            binding.dialpadWrapper.dialpad7Holder,
+            binding.dialpadWrapper.dialpad8Holder,
+            binding.dialpadWrapper.dialpad9Holder,
+            binding.dialpadWrapper.dialpadPlusHolder,
+            binding.dialpadWrapper.dialpadAsteriskHolder,
+            binding.dialpadWrapper.dialpadHashtagHolder
+        )
+
+        keys.forEach { holder ->
+            val contentDrawable = GradientDrawable().apply {
+                shape = GradientDrawable.RECTANGLE
+                cornerRadius = keyCornerRadius
+                setColor(keyBgColor)
+                setStroke(strokeWidth, strokeColor)
+            }
+
+            val maskDrawable = GradientDrawable().apply {
+                shape = GradientDrawable.RECTANGLE
+                cornerRadius = keyCornerRadius
+                setColor(Color.WHITE)
+            }
+
+            holder.background = RippleDrawable(
+                ColorStateList.valueOf(rippleColor),
+                contentDrawable,
+                maskDrawable
+            )
+            holder.elevation = if (isSimple) (4 * density) else (2 * density)
+        }
+
+        // Sub-letters coloring & typography
+        val letterColor = if (isSimple) properTextColor.adjustAlpha(0.80f) else properPrimaryColor.adjustAlpha(0.90f)
+        val numberSize = if (isSimple) 34f else 28f
+        val letterSize = if (isSimple) 13f else 11f
+
+        val numberViews = arrayOf(
+            binding.dialpadWrapper.dialpad0,
+            binding.dialpadWrapper.dialpad1,
+            binding.dialpadWrapper.dialpad2,
+            binding.dialpadWrapper.dialpad3,
+            binding.dialpadWrapper.dialpad4,
+            binding.dialpadWrapper.dialpad5,
+            binding.dialpadWrapper.dialpad6,
+            binding.dialpadWrapper.dialpad7,
+            binding.dialpadWrapper.dialpad8,
+            binding.dialpadWrapper.dialpad9,
+            binding.dialpadWrapper.dialpadAsterisk,
+            binding.dialpadWrapper.dialpadHashtag,
+            binding.dialpadWrapper.dialpadPlusAlt
+        )
+
+        numberViews.forEach { tv ->
+            tv.setTextColor(properTextColor)
+            tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, numberSize)
+            tv.setTypeface(tv.typeface, android.graphics.Typeface.BOLD)
+        }
+
+        val letterViews = arrayOf(
+            binding.dialpadWrapper.dialpad2Letters,
+            binding.dialpadWrapper.dialpad3Letters,
+            binding.dialpadWrapper.dialpad4Letters,
+            binding.dialpadWrapper.dialpad5Letters,
+            binding.dialpadWrapper.dialpad6Letters,
+            binding.dialpadWrapper.dialpad7Letters,
+            binding.dialpadWrapper.dialpad8Letters,
+            binding.dialpadWrapper.dialpad9Letters,
+            binding.dialpadWrapper.dialpadPlusLetters
+        )
+
+        letterViews.forEach { tv ->
+            tv.setTextColor(letterColor)
+            tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, letterSize)
+            if (!isSimple) {
+                tv.setTypeface(tv.typeface, android.graphics.Typeface.BOLD)
+            }
+        }
+    }
+
+    private fun styleActionButtons() {
+        val isSimple = config.isSimpleMode
+        val properPrimaryColor = getProperPrimaryColor()
+        val properTextColor = getProperTextColor()
+        val contrastColor = properPrimaryColor.getContrastColor()
+        val density = resources.displayMetrics.density
+
+        binding.apply {
+            // Call button styling
+            val callBtnSize = ((if (isSimple) 74 else 68) * density).toInt()
+            dialpadCallButton.layoutParams.width = callBtnSize
+            dialpadCallButton.layoutParams.height = callBtnSize
+
+            val callBg = GradientDrawable().apply {
+                shape = GradientDrawable.OVAL
+                setColor(properPrimaryColor)
+            }
+            dialpadCallButton.background = RippleDrawable(
+                ColorStateList.valueOf(Color.parseColor("#40FFFFFF")),
+                callBg,
+                null
+            )
+            dialpadCallButton.elevation = 6 * density
+            dialpadCallButton.setImageDrawable(
+                resources.getColoredDrawableWithColor(R.drawable.ic_phone_vector, contrastColor)
+            )
+
+            // Voice button styling
+            val voiceBg = GradientDrawable().apply {
+                shape = GradientDrawable.OVAL
+                val bgColor = if (properTextColor == -1 || getProperBackgroundColor() == Color.BLACK) {
+                    Color.parseColor("#1C1D21")
+                } else {
+                    Color.parseColor("#EBF0F7")
+                }
+                setColor(bgColor)
+                setStroke((1.5f * density).toInt(), properPrimaryColor.adjustAlpha(0.35f))
+            }
+            dialpadVoiceButton.background = RippleDrawable(
+                ColorStateList.valueOf(properPrimaryColor.adjustAlpha(0.25f)),
+                voiceBg,
+                null
+            )
+            dialpadVoiceButton.setImageDrawable(
+                resources.getColoredDrawableWithColor(R.drawable.ic_mic_vector, properPrimaryColor)
+            )
+
+            // Video button styling
+            if (isSimple) {
+                dialpadVideoCallButton.beGone()
+            } else {
+                dialpadVideoCallButton.beVisible()
+                val videoBg = GradientDrawable().apply {
+                    shape = GradientDrawable.OVAL
+                    val bgColor = if (properTextColor == -1 || getProperBackgroundColor() == Color.BLACK) {
+                        Color.parseColor("#1C1D21")
+                    } else {
+                        Color.parseColor("#EBF0F7")
+                    }
+                    setColor(bgColor)
+                    setStroke((1.5f * density).toInt(), properPrimaryColor.adjustAlpha(0.35f))
+                }
+                dialpadVideoCallButton.background = RippleDrawable(
+                    ColorStateList.valueOf(properPrimaryColor.adjustAlpha(0.25f)),
+                    videoBg,
+                    null
+                )
+                dialpadVideoCallButton.setImageDrawable(
+                    resources.getColoredDrawableWithColor(R.drawable.ic_video_call_vector, properPrimaryColor)
+                )
+            }
+        }
+    }
+
+    private fun updateSmartBar(text: String) {
+        if (config.isSimpleMode) {
+            binding.dialpadSmartBar.beGone()
+            return
+        }
+
+        if (text.isEmpty()) {
+            binding.dialpadAddContactChip.beGone()
+            checkClipboardForNumber()
+        } else {
+            binding.dialpadPasteChip.beGone()
+            val digitsOnly = text.filter { it.isDigit() || it == '+' }
+            val hasExactContact = allContacts.any { c -> c.phoneNumbers.any { it.normalizedNumber == digitsOnly } }
+            if (!hasExactContact && digitsOnly.length >= 3) {
+                binding.dialpadAddContactChip.beVisible()
+                binding.dialpadSmartBar.beVisible()
+            } else {
+                binding.dialpadAddContactChip.beGone()
+                binding.dialpadSmartBar.beGone()
+            }
+        }
     }
     private fun checkClipboardForNumber() {
         if (config.isSimpleMode) {
