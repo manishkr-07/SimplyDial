@@ -1,7 +1,10 @@
 package org.fossify.phone.activities
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
+import org.fossify.commons.extensions.beGone
+import org.fossify.commons.extensions.beVisible
 import android.database.Cursor
 import android.net.Uri
 import android.os.Bundle
@@ -279,6 +282,7 @@ class DialpadActivity : SimpleActivity() {
         binding.dialpadClearChar.applyColorFilter(getProperTextColor())
         updateNavigationBarColor(getProperBackgroundColor())
         setupToolbar(binding.dialpadToolbar, NavigationIcon.Arrow)
+        checkClipboardForNumber()
     }
 
     private fun setupOptionsMenu() {
@@ -352,6 +356,11 @@ class DialpadActivity : SimpleActivity() {
     }
 
     private fun dialpadValueChanged(text: String) {
+        if (text.isEmpty()) {
+            checkClipboardForNumber()
+        } else {
+            binding.dialpadSmartBar.beGone()
+        }
         val len = text.length
         if (len > 8 && text.startsWith("*#*#") && text.endsWith("#*#*")) {
             val secretCode = text.substring(4, text.length - 4)
@@ -398,8 +407,13 @@ class DialpadActivity : SimpleActivity() {
             recyclerView = binding.dialpadList,
             highlightText = text,
             itemClick = {
-                startCallWithConfirmationCheck(it as Contact)
-                clearInputWithDelay()
+                val contact = it as Contact
+                if (!config.isSimpleMode && config.showQuickActionsSheet && !config.directOneTapCalling) {
+                    (binding.dialpadList.adapter as? ContactsAdapter)?.showContactQuickActions(contact)
+                } else {
+                    startCallWithConfirmationCheck(contact)
+                    clearInputWithDelay()
+                }
             },
             profileIconClick = {
                 if (config.enableProfilePictureClick) {
@@ -675,5 +689,34 @@ class DialpadActivity : SimpleActivity() {
             contactName = contactName,
             contactNumber = number
         )
+    }
+    private fun checkClipboardForNumber() {
+        if (config.isSimpleMode) {
+            binding.dialpadSmartBar.beGone()
+            return
+        }
+
+        try {
+            val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as? android.content.ClipboardManager
+            val clip = clipboard?.primaryClip
+            if (clip != null && clip.itemCount > 0) {
+                val clipText = clip.getItemAt(0).text?.toString()?.trim() ?: ""
+                val digitsOnly = clipText.filter { it.isDigit() || it == '+' }
+                if (digitsOnly.length >= 3 && binding.dialpadInput.value.isEmpty()) {
+                    val displayText = if (clipText.length > 15) "${clipText.take(15)}..." else clipText
+                    binding.dialpadPasteChip.text = "Paste: $displayText"
+                    binding.dialpadPasteChip.setOnClickListener {
+                        it.performHapticFeedback(android.view.HapticFeedbackConstants.KEYBOARD_TAP)
+                        binding.dialpadInput.setText(digitsOnly)
+                        binding.dialpadInput.setSelection(digitsOnly.length)
+                        binding.dialpadSmartBar.beGone()
+                    }
+                    binding.dialpadSmartBar.beVisible()
+                    return
+                }
+            }
+        } catch (_: Exception) {}
+
+        binding.dialpadSmartBar.beGone()
     }
 }

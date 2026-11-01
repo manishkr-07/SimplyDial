@@ -616,12 +616,25 @@ class RecentCallsAdapter(
                 overflowMenuIcon.applyColorFilter(activity.getProperTextColor().adjustAlpha(0.75f))
 
                 overflowMenuIcon.setOnClickListener {
-                    showPopupMenu(overflowMenuAnchor, call)
+                    if (!activity.config.isSimpleMode && activity.config.showQuickActionsSheet) {
+                        org.fossify.phone.helpers.QuickActionsHelper.showRecentCallQuickActions(activity as SimpleActivity, call) {
+                            refreshItemsListener?.refreshItems()
+                        }
+                    } else {
+                        showPopupMenu(overflowMenuAnchor, call)
+                    }
                 }
 
                 root.setOnLongClickListener {
-                    showPopupMenu(overflowMenuAnchor, call)
-                    true
+                    if (!activity.config.isSimpleMode && activity.config.showQuickActionsSheet) {
+                        org.fossify.phone.helpers.QuickActionsHelper.showRecentCallQuickActions(activity as SimpleActivity, call) {
+                            refreshItemsListener?.refreshItems()
+                        }
+                        true
+                    } else {
+                        showPopupMenu(overflowMenuAnchor, call)
+                        true
+                    }
                 }
             }
         }

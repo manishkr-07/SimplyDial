@@ -272,4 +272,12 @@
     <string name="reset_to_mode_defaults">Reset to Mode Defaults</string>
     <string name="apply_and_save">Apply &amp; Save</string>
     <string name="settings_updated">Settings updated successfully</string>
+    <string name="outgoing_call">Outgoing Call</string>
+    <string name="incoming_call">Incoming Call</string>
+    <string name="missed_call">Missed Call</string>
+    <string name="block_number">Block number</string>
+    <string name="unblock_number">Unblock number</string>
+    <string name="block_contact">Block contact</string>
+    <string name="unblock_contact">Unblock contact</string>
+    <string name="paste">Paste</string>
 </resources>

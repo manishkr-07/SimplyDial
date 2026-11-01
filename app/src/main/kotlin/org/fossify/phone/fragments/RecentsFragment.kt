@@ -189,6 +189,17 @@ class RecentsFragment(
     }
 
     private fun gotRecents(recents: List<CallLogItem>) {
+        if (!context.config.isSimpleMode) {
+            binding.filterScrollView.beVisible()
+            val missedCount = allRecentCalls.filterIsInstance<RecentCall>().count { it.type == Calls.MISSED_TYPE || it.type == Calls.REJECTED_TYPE }
+            if (missedCount > 0) {
+                binding.filterMissed.text = "${context.getString(R.string.filter_missed)} ($missedCount)"
+            } else {
+                binding.filterMissed.text = context.getString(R.string.filter_missed)
+            }
+        } else {
+            binding.filterScrollView.beGone()
+        }
         // Hide progress indicator immediately when we have items to show
         if (recents.isNotEmpty()) {
             binding.progressIndicator.hide()
@@ -497,7 +508,15 @@ class RecentsFragment(
                 },
                 itemClick = {
                     val recentCall = it as RecentCall
-                    activity?.startCallWithConfirmationCheck(recentCall.phoneNumber, recentCall.name)
+                    if (!context.config.isSimpleMode && context.config.showQuickActionsSheet && !context.config.directOneTapCalling) {
+                        (activity as? org.fossify.phone.activities.SimpleActivity)?.let { act ->
+                            org.fossify.phone.helpers.QuickActionsHelper.showRecentCallQuickActions(act, recentCall) {
+                                refreshItems(invalidate = false)
+                            }
+                        }
+                    } else {
+                        activity?.startCallWithConfirmationCheck(recentCall.phoneNumber, recentCall.name)
+                    }
                 },
                 profileIconClick = {
                     if (context.config.enableProfilePictureClick) {
@@ -568,7 +587,15 @@ class RecentsFragment(
     }
 
     private fun setupFilterChips() {
+        if (context.config.isSimpleMode) {
+            binding.filterScrollView.beGone()
+            return
+        } else {
+            binding.filterScrollView.beVisible()
+        }
+
         val clickListener = View.OnClickListener { v ->
+            v.performHapticFeedback(android.view.HapticFeedbackConstants.KEYBOARD_TAP)
             val filter = when (v.id) {
                 R.id.filter_missed -> FILTER_MISSED
                 R.id.filter_incoming -> FILTER_INCOMING

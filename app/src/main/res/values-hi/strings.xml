@@ -113,4 +113,12 @@
     <string name="reset_to_mode_defaults">मोड डिफ़ॉल्ट पर रीसेट करें</string>
     <string name="apply_and_save">लागू करें और सहेजें</string>
     <string name="settings_updated">सेटिंग्स सफलतापूर्वक अपडेट की गईं</string>
+    <string name="outgoing_call">आउटगोइंग कॉल</string>
+    <string name="incoming_call">इनकमिंग कॉल</string>
+    <string name="missed_call">मिस्ड कॉल</string>
+    <string name="block_number">नंबर ब्लॉक करें</string>
+    <string name="unblock_number">नंबर अनब्लॉक करें</string>
+    <string name="block_contact">संपर्क ब्लॉक करें</string>
+    <string name="unblock_contact">संपर्क अनब्लॉक करें</string>
+    <string name="paste">पेस्ट करें</string>
 </resources>
