@@ -10,6 +10,10 @@
 </p>
 
 <p align="center">
+  <a href="https://github.com/manishkr-07/SimplyDial/releases/latest"><img src="https://img.shields.io/badge/Download-APK%20v1.8.0-2563EB?style=for-the-badge&logo=android&logoColor=white" alt="Download APK v1.8.0"></a>
+</p>
+
+<p align="center">
   <img src="https://img.shields.io/badge/Platform-Android%208.0%2B%20(API%2026%2B)-3DDC84?logo=android&logoColor=white" alt="Android API 26+">
   <img src="https://img.shields.io/badge/Gradle-9.8.2-02303A?logo=gradle&logoColor=white" alt="Gradle 9.8.2">
   <img src="https://img.shields.io/badge/AGP-9.5.0-34A853?logo=android&logoColor=white" alt="AGP 9.5.0">
@@ -30,6 +34,47 @@
 **SimplyDial** is a next-generation, feature-packed Android dialer and calling application designed to make mobile communication seamless, transparent, and accessible for everyone. 
 
 It combines **intuitive senior-friendly accessible controls (EaseUI)** to prevent accidental dials and simplify messaging, a **Dynamic Interface Mode System** offering distinctly tailored visual aesthetics and features for both older generations and modern power users, an ultra-crisp **Black Diamond AMOLED Dark Theme** and **Material 3 Slate Light Theme**, **studio-grade compliant call recording**, **integrated Jitsi Meet video conferences**, and **instant 100% offline private voice dialing**.
+
+---
+
+## 📦 APK Installation Guide
+
+You can download and install SimplyDial directly onto any Android device running **Android 8.0 (API level 26) or higher**.
+
+### Method 1: Direct Download & Sideload (Recommended for Users)
+
+1. **Download the Latest APK**:
+   * Grab the latest pre-compiled build directly from [GitHub Releases](https://github.com/manishkr-07/SimplyDial/releases/latest):
+     * **[Download SimplyDial-v1.8.0.apk](https://github.com/manishkr-07/SimplyDial/releases/latest)** (~37.9 MB)
+2. **Open the APK on Your Android Device**:
+   * Open your device's **Files**, **Downloads**, or file manager app and tap `SimplyDial-v1.8.0.apk`.
+3. **Allow Installation from Unknown Sources** *(if prompted)*:
+   * If Android warns: *"For your security, your phone is not allowed to install unknown apps from this source"*:
+     1. Tap **Settings** in the popup.
+     2. Toggle **Allow from this source** to ON.
+     3. Press the back button to return to the installer.
+4. **Complete Installation**:
+   * Tap **Install** and wait for the process to finish, then tap **Open**.
+5. **Set as Default Phone App**:
+   * When prompted on first launch, select **SimplyDial** as your **Default Phone App**. This is required for incoming call interception, call waiting HUD banners, and active call management.
+6. **Grant Essential Permissions**:
+   * **Phone & Call Logs**: To place calls, display call history, and identify incoming callers.
+   * **Contacts**: To search, display, and manage your contacts book.
+   * **Microphone**: For high-definition call recording and offline speech-to-dial voice recognition.
+
+---
+
+### Method 2: Installation via ADB (For Developers & Power Users)
+
+If you have your Android phone connected to your PC via USB with USB Debugging enabled:
+
+```bash
+# Check connected devices
+adb devices
+
+# Install APK (use -r to reinstall/update while keeping app data)
+adb install -r SimplyDial-v1.8.0.apk
+```
 
 ---
 
@@ -151,7 +196,7 @@ Designed from the ground up to eliminate dialing anxiety, accidental calls, and 
 
 ---
 
-## 🚀 Getting Started & Building
+## 🚀 Building from Source
 
 ### Prerequisites
 - **JDK 21 LTS** (Eclipse Adoptium or Android Studio JBR)
