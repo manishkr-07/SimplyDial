@@ -185,4 +185,12 @@ class Config(context: Context) : BaseConfig(context) {
 
     val isSimpleMode: Boolean
         get() = interfaceMode == INTERFACE_MODE_SIMPLE
+
+    var directOneTapCalling: Boolean
+        get() = prefs.getBoolean(DIRECT_ONE_TAP_CALLING, isSimpleMode)
+        set(value) = prefs.edit().putBoolean(DIRECT_ONE_TAP_CALLING, value).apply()
+
+    var showQuickActionsSheet: Boolean
+        get() = prefs.getBoolean(SHOW_QUICK_ACTIONS_SHEET, !isSimpleMode)
+        set(value) = prefs.edit().putBoolean(SHOW_QUICK_ACTIONS_SHEET, value).apply()
 }

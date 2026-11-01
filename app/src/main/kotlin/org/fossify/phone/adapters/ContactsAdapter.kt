@@ -648,6 +648,49 @@ class ContactsAdapter(
                 contactNumbersSection.beGone()
             }
 
+            // Action: Copy Number
+            contactActionCopy.setOnClickListener {
+                dialog.dismiss()
+                if (primaryNumber.isNotEmpty()) {
+                    activity.copyToClipboard(primaryNumber)
+                }
+            }
+
+            // Action: WhatsApp Direct Chat (Modern & Advanced Mode)
+            contactActionWhatsapp.setOnClickListener {
+                dialog.dismiss()
+                val cleanNumber = primaryNumber.filter { it.isDigit() }
+                if (cleanNumber.isNotEmpty()) {
+                    try {
+                        val waIntent = Intent(Intent.ACTION_VIEW).apply {
+                            data = Uri.parse("https://api.whatsapp.com/send?phone=$cleanNumber")
+                            `package` = "com.whatsapp"
+                        }
+                        activity.startActivity(waIntent)
+                    } catch (e: Exception) {
+                        try {
+                            val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://api.whatsapp.com/send?phone=$cleanNumber"))
+                            activity.startActivity(browserIntent)
+                        } catch (e2: Exception) {
+                            activity.toast("Could not open WhatsApp")
+                        }
+                    }
+                } else {
+                    activity.toast("No valid number found")
+                }
+            }
+
+            // Action: Share Contact
+            contactActionShare.setOnClickListener {
+                dialog.dismiss()
+                val shareText = "${contact.getNameToDisplay()}: $primaryNumber"
+                val shareIntent = Intent(Intent.ACTION_SEND).apply {
+                    type = "text/plain"
+                    putExtra(Intent.EXTRA_TEXT, shareText)
+                }
+                activity.startActivity(Intent.createChooser(shareIntent, "Share Contact"))
+            }
+
             // Block / Unblock Check
             activity.isContactBlocked(contact) { isBlocked ->
                 activity.runOnUiThread {

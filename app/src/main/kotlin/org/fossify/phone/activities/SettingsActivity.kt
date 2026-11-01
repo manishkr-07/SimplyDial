@@ -35,6 +35,7 @@ import org.fossify.phone.R
 import org.fossify.phone.databinding.ActivitySettingsBinding
 import org.fossify.phone.dialogs.ExportCallHistoryDialog
 import org.fossify.phone.dialogs.LanguageBottomSheetDialog
+import org.fossify.phone.dialogs.CustomizeInterfaceBottomSheetDialog
 import org.fossify.phone.dialogs.InterfaceModeBottomSheetDialog
 import org.fossify.phone.dialogs.ManageVisibleTabsDialog
 import org.fossify.phone.helpers.INTERFACE_MODE_SIMPLE
@@ -110,6 +111,7 @@ class SettingsActivity : SimpleActivity() {
         setupManageSpeedDial()
         setupChangeDateTimeFormat()
         setupInterfaceMode()
+        setupCustomizeInterfaceMode()
         setupFontSize()
         setupDarkTheme()
         setupManageShownTabs()
@@ -241,6 +243,16 @@ class SettingsActivity : SimpleActivity() {
     private fun setupChangeDateTimeFormat() {
         binding.settingsChangeDateTimeFormatHolder.setOnClickListener {
             ChangeDateTimeFormatDialog(this) {}
+        }
+    }
+
+    private fun setupCustomizeInterfaceMode() {
+        binding.apply {
+            settingsCustomizeModeHolder.setOnClickListener {
+                CustomizeInterfaceBottomSheetDialog.show(supportFragmentManager) {
+                    settingsInterfaceModeValue.text = getInterfaceModeText()
+                }
+            }
         }
     }
 

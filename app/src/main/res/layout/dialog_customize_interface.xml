@@ -1,0 +1,404 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/dialog_rounded_background"
+    android:orientation="vertical"
+    android:padding="20dp">
+
+    <!-- Handle Bar -->
+    <View
+        android:layout_width="40dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="16dp"
+        android:alpha="0.3"
+        android:background="@color/text_secondary" />
+
+    <!-- Header Section -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:background="@drawable/settings_icon_pill"
+            android:contentDescription="@null"
+            android:padding="6dp"
+            android:src="@drawable/ic_interface_mode_vector"
+            app:tint="@color/primary_color" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/dialog_customize_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/customize_interface_features"
+                android:textColor="@color/text_primary"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/dialog_customize_subtitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:text="@string/customize_interface_features_desc"
+                android:textColor="@color/text_secondary"
+                android:textSize="12sp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="12dp"
+        android:background="@color/divider_color" />
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:maxHeight="420dp"
+        android:scrollbars="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- Switch 1: Direct 1-Tap Calling -->
+            <RelativeLayout
+                android:id="@+id/holder_direct_one_tap"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackground"
+                android:paddingVertical="10dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:layout_toStartOf="@+id/switch_direct_one_tap"
+                    android:orientation="vertical"
+                    android:paddingEnd="12dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/direct_one_tap_calling_title"
+                        android:textColor="@color/text_primary"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:text="@string/direct_one_tap_calling_desc"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="12sp" />
+
+                </LinearLayout>
+
+                <org.fossify.commons.views.MyMaterialSwitch
+                    android:id="@+id/switch_direct_one_tap"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true" />
+
+            </RelativeLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/divider_color" />
+
+            <!-- Switch 2: Quick Action Sheet -->
+            <RelativeLayout
+                android:id="@+id/holder_quick_actions"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackground"
+                android:paddingVertical="10dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:layout_toStartOf="@+id/switch_quick_actions"
+                    android:orientation="vertical"
+                    android:paddingEnd="12dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/quick_actions_sheet_title"
+                        android:textColor="@color/text_primary"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:text="@string/quick_actions_sheet_desc"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="12sp" />
+
+                </LinearLayout>
+
+                <org.fossify.commons.views.MyMaterialSwitch
+                    android:id="@+id/switch_quick_actions"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true" />
+
+            </RelativeLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/divider_color" />
+
+            <!-- Switch 3: Large Tap Answer Buttons -->
+            <RelativeLayout
+                android:id="@+id/holder_large_answer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackground"
+                android:paddingVertical="10dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:layout_toStartOf="@+id/switch_large_answer"
+                    android:orientation="vertical"
+                    android:paddingEnd="12dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/large_answer_buttons_title"
+                        android:textColor="@color/text_primary"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:text="@string/large_answer_buttons_desc"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="12sp" />
+
+                </LinearLayout>
+
+                <org.fossify.commons.views.MyMaterialSwitch
+                    android:id="@+id/switch_large_answer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true" />
+
+            </RelativeLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/divider_color" />
+
+            <!-- Switch 4: Fullscreen Incoming Call Display -->
+            <RelativeLayout
+                android:id="@+id/holder_fullscreen_call"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackground"
+                android:paddingVertical="10dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:layout_toStartOf="@+id/switch_fullscreen_call"
+                    android:orientation="vertical"
+                    android:paddingEnd="12dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/fullscreen_call_title"
+                        android:textColor="@color/text_primary"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:text="@string/fullscreen_call_desc"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="12sp" />
+
+                </LinearLayout>
+
+                <org.fossify.commons.views.MyMaterialSwitch
+                    android:id="@+id/switch_fullscreen_call"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true" />
+
+            </RelativeLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/divider_color" />
+
+            <!-- Switch 5: Dialpad Vibration -->
+            <RelativeLayout
+                android:id="@+id/holder_dialpad_vibration"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackground"
+                android:paddingVertical="10dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:layout_toStartOf="@+id/switch_dialpad_vibration"
+                    android:orientation="vertical"
+                    android:paddingEnd="12dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/dialpad_vibrations"
+                        android:textColor="@color/text_primary"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+
+                <org.fossify.commons.views.MyMaterialSwitch
+                    android:id="@+id/switch_dialpad_vibration"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true" />
+
+            </RelativeLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/divider_color" />
+
+            <!-- Switch 6: Dialpad Beeps -->
+            <RelativeLayout
+                android:id="@+id/holder_dialpad_beeps"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackground"
+                android:paddingVertical="10dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:layout_toStartOf="@+id/switch_dialpad_beeps"
+                    android:orientation="vertical"
+                    android:paddingEnd="12dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/dialpad_beeps"
+                        android:textColor="@color/text_primary"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+
+                <org.fossify.commons.views.MyMaterialSwitch
+                    android:id="@+id/switch_dialpad_beeps"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true" />
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+    <!-- Bottom Buttons Row -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/btn_reset_defaults"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_weight="1"
+            android:background="@drawable/settings_chip_bg"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center"
+            android:paddingVertical="12dp"
+            android:text="@string/reset_to_mode_defaults"
+            android:textColor="@color/text_primary"
+            android:textSize="13sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/btn_apply_save"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_weight="1"
+            android:background="@drawable/contact_action_pill_primary_bg"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center"
+            android:paddingVertical="12dp"
+            android:text="@string/apply_and_save"
+            android:textColor="@android:color/black"
+            android:textSize="13sp"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
+</LinearLayout>
+

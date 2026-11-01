@@ -99,4 +99,18 @@
     <string name="restart_app_to_apply_mode_title">सिम्पलीडायल पुनरारंभ करें</string>
     <string name="restart_app_to_apply_mode_msg">%s पर स्विच करने के लिए सभी लेआउट और सुविधाओं को लागू करने हेतु सिम्पलीडायल को पुनः आरंभ करना होगा। क्या आप अभी पुनः आरंभ करना चाहते हैं?</string>
     <string name="restart_now">अभी रीस्टार्ट करें</string>
+    <!-- Customize Interface Mode -->
+    <string name="customize_interface_features">इंटरफ़ेस सुविधाएँ कस्टमाइज़ करें</string>
+    <string name="customize_interface_features_desc">1-टैप कॉलिंग, हैप्टिक्स, उत्तर बटन और एक्शन शीट कस्टमाइज़ करें</string>
+    <string name="direct_one_tap_calling_title">डायरेक्ट 1-टैप कॉलिंग</string>
+    <string name="direct_one_tap_calling_desc">संपर्कों या कॉल इतिहास पर टैप करते ही बिना किसी अतिरिक्त मेनू के तुरंत कॉल करें।</string>
+    <string name="quick_actions_sheet_title">आधुनिक त्वरित एक्शन शीट</string>
+    <string name="quick_actions_sheet_desc">एसएमएस, व्हाट्सएप, एचडी वीडियो कॉल, इतिहास और शेयर शॉर्टकट वाली शीट खोलें।</string>
+    <string name="large_answer_buttons_title">बड़े टैप उत्तर बटन</string>
+    <string name="large_answer_buttons_desc">स्वाइप के बजाय बड़े हरे \'स्वीकार\' और लाल \'अस्वीकार\' बटन दिखाएं।</string>
+    <string name="fullscreen_call_title">फ़ुलस्क्रीन इनकमिंग कॉल</string>
+    <string name="fullscreen_call_desc">हमेशा इनकमिंग कॉल को फ़ुल स्क्रीन में दिखाएं ताकि कोई कॉल न छूटे।</string>
+    <string name="reset_to_mode_defaults">मोड डिफ़ॉल्ट पर रीसेट करें</string>
+    <string name="apply_and_save">लागू करें और सहेजें</string>
+    <string name="settings_updated">सेटिंग्स सफलतापूर्वक अपडेट की गईं</string>
 </resources>

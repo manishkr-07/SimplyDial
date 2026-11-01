@@ -109,6 +109,8 @@ class InterfaceModeBottomSheetDialog : BaseBottomSheetDialogFragment() {
 
         if (newMode == INTERFACE_MODE_SIMPLE) {
             // Apply Senior-friendly defaults
+            config.directOneTapCalling = true
+            config.showQuickActionsSheet = false
             config.fontSize = FONT_SIZE_EXTRA_LARGE
             config.dialpadVibration = true
             config.dialpadBeeps = true
@@ -116,6 +118,8 @@ class InterfaceModeBottomSheetDialog : BaseBottomSheetDialogFragment() {
             config.disableSwipeToAnswer = true
         } else {
             // Apply Modern & Advanced defaults
+            config.directOneTapCalling = false
+            config.showQuickActionsSheet = true
             config.fontSize = FONT_SIZE_MEDIUM
             config.alwaysShowFullscreen = false
             config.disableSwipeToAnswer = false

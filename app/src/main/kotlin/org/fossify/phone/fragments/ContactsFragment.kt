@@ -155,7 +155,7 @@ override fun setupFragment() {
                     refreshItemsListener = this,
                     itemClick = {
                         val contact = it as Contact
-                        if (context.config.isSimpleMode) {
+                        if (context.config.directOneTapCalling) {
                             (activity as? SimpleActivity)?.startCallWithConfirmationCheck(contact)
                         } else {
                             (binding.fragmentList.adapter as? ContactsAdapter)?.showContactQuickActions(contact)
