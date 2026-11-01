@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="default_phone_app_prompt">தயவு செய்து இந்த செயலியை இயல்புநிலை செயலியாக மாற்றவும்</string>
     <string name="allow_displaying_over_other_apps">இந்த செயலி நன்கு வேலை செய்ய மற்ற செயலிகள் மீது தன்னை காட்சிப்படுத்த அனுமதிக்கவும்</string>
@@ -15,7 +15,7 @@
     <string name="dialpad">அழைப்பு பலகை</string>
     <string name="hashtag">ஹேஷ்டேக்</string>
     <string name="call_number">தொலைபேசி எண்னை அழைக்கவும்</string>
-    <string name="app_launcher_name">தொலைபேசி</string>
+    <string name="app_launcher_name">SimplyDial</string>
     <string name="accept">ஏற்றுக்கொள்க</string>
     <string name="accept_call">அழைப்பை ஏற்கவும்</string>
     <string name="always_use_this_sim">எப்போதும் இந்த எண்ணிற்கு இந்த சிம் ஐ பயன்படுத்தவும்</string>

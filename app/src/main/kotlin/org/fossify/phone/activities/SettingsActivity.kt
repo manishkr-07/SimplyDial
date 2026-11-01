@@ -502,7 +502,16 @@ class SettingsActivity : SimpleActivity() {
             }
 
             settingsSupportHolder.setOnClickListener {
-                openExternalUrl(getString(R.string.about_website_url))
+                val email = getString(R.string.about_support_email)
+                try {
+                    val intent = Intent(Intent.ACTION_SENDTO).apply {
+                        data = Uri.parse("mailto:$email")
+                        putExtra(Intent.EXTRA_SUBJECT, "SimplyDial Support & Feedback")
+                    }
+                    startActivity(intent)
+                } catch (e: Exception) {
+                    openExternalUrl("mailto:$email")
+                }
             }
 
             settingsCommunityHolder.setOnClickListener {
