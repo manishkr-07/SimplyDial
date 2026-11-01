@@ -175,7 +175,11 @@ class RecentCallsAdapter(
         super.onViewRecycled(holder)
         if (!activity.isDestroyed && !activity.isFinishing) {
             when (holder) {
-                is RecentCallViewHolder -> Glide.with(activity).clear(holder.binding.itemRecentsImage)
+                is RecentCallViewHolder -> {
+                    holder.binding.itemRecentsHolder.scaleX = 1.0f
+                    holder.binding.itemRecentsHolder.scaleY = 1.0f
+                    Glide.with(activity).clear(holder.binding.itemRecentsImage)
+                }
                 is SkeletonViewHolder -> holder.stopShimmer()
             }
         }
@@ -459,6 +463,17 @@ class RecentCallsAdapter(
 
             itemRecentsHolder.apply {
                 isSelected = selectedKeys.contains(call.id)
+                if (!activity.config.isSimpleMode) {
+                    setOnTouchListener { v, event ->
+                        when (event.action) {
+                            android.view.MotionEvent.ACTION_DOWN -> v.animate().scaleX(0.98f).scaleY(0.98f).setDuration(80).start()
+                            android.view.MotionEvent.ACTION_UP, android.view.MotionEvent.ACTION_CANCEL -> v.animate().scaleX(1.0f).scaleY(1.0f).setDuration(120).start()
+                        }
+                        false
+                    }
+                } else {
+                    setOnTouchListener(null)
+                }
             }
 
             val currentFontSize = fontSize

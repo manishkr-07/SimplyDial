@@ -44,6 +44,7 @@ class ContactsFragment(context: Context, attributeSet: AttributeSet) : MyViewPag
         innerBinding = LettersInnerBinding(binding)
         // RecyclerView perf tweaks
         binding.fragmentList.setHasFixedSize(true)
+        binding.fragmentList.setItemViewCacheSize(20)
         binding.fragmentList.itemAnimator = null
     }
 

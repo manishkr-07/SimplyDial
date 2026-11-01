@@ -22,6 +22,7 @@ import androidx.core.net.toUri
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -97,6 +98,7 @@ class DialpadActivity : SimpleActivity() {
     private var speedDialValues = ArrayList<SpeedDial>()
     private var privateCursor: Cursor? = null
     private var toneGeneratorHelper: ToneGeneratorHelper? = null
+    private var t9SearchJob: kotlinx.coroutines.Job? = null
     private val longPressTimeout = ViewConfiguration.getLongPressTimeout().toLong()
     private val longPressHandler = Handler(Looper.getMainLooper())
     private val pressedKeys = mutableSetOf<Char>()
@@ -133,6 +135,8 @@ class DialpadActivity : SimpleActivity() {
                 useTopSearchMenu = false
             )
             setupMaterialScrollListener(dialpadList, dialpadToolbar)
+            dialpadList.setHasFixedSize(true)
+            dialpadList.setItemViewCacheSize(20)
         }
 
         updateNavigationBarColor(getProperBackgroundColor())
@@ -231,6 +235,18 @@ class DialpadActivity : SimpleActivity() {
             dialpadCallButton.setOnClickListener { initCall(dialpadInput.value) }
             dialpadCallButton.setOnLongClickListener { initCallWithSimSelector() }
             dialpadVideoCallButton.setOnClickListener { initVideoCall(dialpadInput.value) }
+
+            // Tactile micro-scale touch feedback
+            val touchScaleListener = View.OnTouchListener { v, event ->
+                when (event.action) {
+                    MotionEvent.ACTION_DOWN -> v.animate().scaleX(0.92f).scaleY(0.92f).setDuration(60).start()
+                    MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> v.animate().scaleX(1.0f).scaleY(1.0f).setDuration(120).start()
+                }
+                false
+            }
+            dialpadCallButton.setOnTouchListener(touchScaleListener)
+            dialpadVoiceButton.setOnTouchListener(touchScaleListener)
+            dialpadVideoCallButton.setOnTouchListener(touchScaleListener)
             dialpadVoiceButton.setOnClickListener {
                 // Request RECORD_AUDIO permission if not granted
                 if (ContextCompat.checkSelfPermission(this@DialpadActivity, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
@@ -380,51 +396,64 @@ class DialpadActivity : SimpleActivity() {
 
         (binding.dialpadList.adapter as? ContactsAdapter)?.finishActMode()
 
-        val filtered = allContacts.filter { contact ->
-            var convertedName = KeypadHelper.convertKeypadLettersToDigits(
-                contact.name.normalizeString()
-            ).filterNot { it.isWhitespace() }
-
-            if (hasRussianLocale) {
-                var currConvertedName = ""
-                convertedName.lowercase(Locale.getDefault()).forEach { char ->
-                    val convertedChar = russianCharsMap.getOrElse(char) { char }
-                    currConvertedName += convertedChar
-                }
-                convertedName = currConvertedName
-            }
-
-            contact.doesContainPhoneNumber(text) || (convertedName.contains(text, true))
-        }.sortedWith(compareBy {
-            !it.doesContainPhoneNumber(text)
-        }).toMutableList() as ArrayList<Contact>
-
-        binding.letterFastscroller.setupWithContacts(binding.dialpadList, filtered)
-
-        ContactsAdapter(
-            activity = this,
-            contacts = filtered,
-            recyclerView = binding.dialpadList,
-            highlightText = text,
-            itemClick = {
-                val contact = it as Contact
-                if (!config.isSimpleMode && config.showQuickActionsSheet && !config.directOneTapCalling) {
-                    (binding.dialpadList.adapter as? ContactsAdapter)?.showContactQuickActions(contact)
-                } else {
-                    startCallWithConfirmationCheck(contact)
-                    clearInputWithDelay()
-                }
-            },
-            profileIconClick = {
-                if (config.enableProfilePictureClick) {
-                    startContactDetailsIntent(it as Contact)
-                }
-            }).apply {
-            binding.dialpadList.adapter = this
+        t9SearchJob?.cancel()
+        if (text.isEmpty()) {
+            binding.dialpadList.adapter = null
+            binding.dialpadPlaceholder.beGone()
+            binding.letterFastscroller.beGone()
+            return
         }
 
-        binding.dialpadPlaceholder.beVisibleIf(filtered.isEmpty())
-        binding.dialpadList.beVisibleIf(filtered.isNotEmpty())
+        t9SearchJob = lifecycleScope.launch(Dispatchers.Default) {
+            val filtered = allContacts.filter { contact ->
+                var convertedName = KeypadHelper.convertKeypadLettersToDigits(
+                    contact.name.normalizeString()
+                ).filterNot { it.isWhitespace() }
+
+                if (hasRussianLocale) {
+                    var currConvertedName = ""
+                    convertedName.lowercase(Locale.getDefault()).forEach { char ->
+                        val convertedChar = russianCharsMap.getOrElse(char) { char }
+                        currConvertedName += convertedChar
+                    }
+                    convertedName = currConvertedName
+                }
+
+                contact.doesContainPhoneNumber(text) || (convertedName.contains(text, true))
+            }.sortedWith(compareBy {
+                !it.doesContainPhoneNumber(text)
+            }).toMutableList() as ArrayList<Contact>
+
+            withContext(Dispatchers.Main) {
+                if (!isActive) return@withContext
+                binding.letterFastscroller.setupWithContacts(binding.dialpadList, filtered)
+
+                ContactsAdapter(
+                    activity = this@DialpadActivity,
+                    contacts = filtered,
+                    recyclerView = binding.dialpadList,
+                    highlightText = text,
+                    itemClick = {
+                        val contact = it as Contact
+                        if (!config.isSimpleMode && config.showQuickActionsSheet && !config.directOneTapCalling) {
+                            (binding.dialpadList.adapter as? ContactsAdapter)?.showContactQuickActions(contact)
+                        } else {
+                            startCallWithConfirmationCheck(contact)
+                            clearInputWithDelay()
+                        }
+                    },
+                    profileIconClick = {
+                        if (config.enableProfilePictureClick) {
+                            startContactDetailsIntent(it as Contact)
+                        }
+                    }).apply {
+                    binding.dialpadList.adapter = this
+                }
+
+                binding.dialpadPlaceholder.beVisibleIf(filtered.isEmpty())
+                binding.dialpadList.beVisibleIf(filtered.isNotEmpty())
+            }
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, resultData: Intent?) {
@@ -631,6 +660,7 @@ class DialpadActivity : SimpleActivity() {
         view.setOnTouchListener { _, event ->
             when (event.action) {
                 MotionEvent.ACTION_DOWN -> {
+                    view.animate().scaleX(0.90f).scaleY(0.90f).setDuration(60).start()
                     dialpadPressed(char, view)
                     startDialpadTone(char)
                     if (longClickable) {
@@ -642,6 +672,7 @@ class DialpadActivity : SimpleActivity() {
                 }
 
                 MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                    view.animate().scaleX(1.0f).scaleY(1.0f).setDuration(120).start()
                     stopDialpadTone(char)
                     if (longClickable) {
                         longPressHandler.removeCallbacksAndMessages(null)

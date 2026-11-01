@@ -381,6 +381,8 @@ class ContactsAdapter(
         super.onViewRecycled(holder)
         if (!activity.isDestroyed && !activity.isFinishing) {
             Binding.getByItemViewType(holder.itemViewType).bind(holder.itemView).apply {
+                itemContactFrame.scaleX = 1.0f
+                itemContactFrame.scaleY = 1.0f
                 Glide.with(activity).clear(itemContactImage)
             }
         }
@@ -390,7 +392,20 @@ class ContactsAdapter(
     private fun setupView(binding: ItemViewBinding, contact: Contact, holder: ViewHolder) {
         binding.apply {
             root.setupViewBackground(activity)
-            itemContactFrame.isSelected = selectedKeys.contains(contact.rawId)
+            itemContactFrame.apply {
+                isSelected = selectedKeys.contains(contact.rawId)
+                if (!activity.config.isSimpleMode) {
+                    setOnTouchListener { v, event ->
+                        when (event.action) {
+                            android.view.MotionEvent.ACTION_DOWN -> v.animate().scaleX(0.98f).scaleY(0.98f).setDuration(80).start()
+                            android.view.MotionEvent.ACTION_UP, android.view.MotionEvent.ACTION_CANCEL -> v.animate().scaleX(1.0f).scaleY(1.0f).setDuration(120).start()
+                        }
+                        false
+                    }
+                } else {
+                    setOnTouchListener(null)
+                }
+            }
 
             itemContactImage.apply {
                 if (profileIconClick != null && viewType != VIEW_TYPE_GRID && activity.config.enableProfilePictureClick) {

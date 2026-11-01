@@ -42,6 +42,8 @@ class FavoritesFragment(context: Context, attributeSet: AttributeSet) : MyViewPa
         super.onFinishInflate()
         binding = FragmentLettersLayoutBinding.bind(FragmentFavoritesBinding.bind(this).favoritesFragment)
         innerBinding = LettersInnerBinding(binding)
+        binding.fragmentList.setHasFixedSize(true)
+        binding.fragmentList.setItemViewCacheSize(20)
         binding.fragmentList.itemAnimator = null
     }
 
