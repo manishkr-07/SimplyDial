@@ -15,7 +15,7 @@ class ConferenceActivity : SimpleActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         binding.apply {
-            updateMaterialActivityViews(conferenceCoordinator, conferenceList, useTransparentNavigation = true, useTopSearchMenu = false)
+            updateMaterialActivityViews(conferenceCoordinator, conferenceList, useTransparentNavigation = false, useTopSearchMenu = false)
             setupMaterialScrollListener(conferenceList, conferenceToolbar)
             conferenceList.adapter = ConferenceCallsAdapter(this@ConferenceActivity, conferenceList, ArrayList(CallManager.getConferenceCalls())) {}
         }

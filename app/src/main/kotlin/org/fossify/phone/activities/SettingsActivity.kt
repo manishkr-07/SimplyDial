@@ -90,7 +90,7 @@ class SettingsActivity : SimpleActivity() {
         refreshMenuItems()
 
         binding.apply {
-            updateMaterialActivityViews(settingsCoordinator, settingsHolder, useTransparentNavigation = true, useTopSearchMenu = false)
+            updateMaterialActivityViews(settingsCoordinator, settingsHolder, useTransparentNavigation = false, useTopSearchMenu = false)
             setupMaterialScrollListener(settingsNestedScrollview, settingsToolbar)
         }
     }

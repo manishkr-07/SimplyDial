@@ -16,6 +16,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.snackbar.Snackbar
 import me.grantland.widget.AutofitHelper
@@ -115,6 +117,31 @@ class MainActivity : SimpleActivity() {
         
         // Show language selection dialog on first launch
         showLanguageSelectionIfNeeded()
+    }
+
+    override fun setupDefaultWindowInsets(rootView: android.view.View) {
+        val initialCoordinatorTop = binding.mainCoordinator.paddingTop
+        val initialTabsBottom = binding.mainTabsHolder.paddingBottom
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding.mainCoordinator) { _, windowInsets ->
+            val insets = windowInsets.getInsets(
+                WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
+            )
+            binding.mainCoordinator.setPadding(
+                insets.left,
+                initialCoordinatorTop + insets.top,
+                insets.right,
+                0
+            )
+            binding.mainTabsHolder.setPadding(
+                binding.mainTabsHolder.paddingLeft,
+                binding.mainTabsHolder.paddingTop,
+                binding.mainTabsHolder.paddingRight,
+                initialTabsBottom + insets.bottom
+            )
+            windowInsets
+        }
+        ViewCompat.requestApplyInsets(binding.mainCoordinator)
     }
 
     override fun onResume() {

@@ -125,7 +125,7 @@ class DialpadActivity : SimpleActivity() {
             updateMaterialActivityViews(
                 mainCoordinatorLayout = dialpadCoordinator,
                 nestedView = dialpadHolder,
-                useTransparentNavigation = true,
+                useTransparentNavigation = false,
                 useTopSearchMenu = false
             )
             setupMaterialScrollListener(dialpadList, dialpadToolbar)

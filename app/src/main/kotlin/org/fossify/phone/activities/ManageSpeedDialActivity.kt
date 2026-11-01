@@ -32,7 +32,7 @@ class ManageSpeedDialActivity : SimpleActivity(), RemoveSpeedDialListener {
         setContentView(binding.root)
 
         binding.apply {
-            updateMaterialActivityViews(manageSpeedDialCoordinator, manageSpeedDialHolder, useTransparentNavigation = true, useTopSearchMenu = false)
+            updateMaterialActivityViews(manageSpeedDialCoordinator, manageSpeedDialHolder, useTransparentNavigation = false, useTopSearchMenu = false)
             setupMaterialScrollListener(manageSpeedDialScrollview, manageSpeedDialToolbar)
 
         }
