@@ -87,14 +87,14 @@
                 android:layout_width="22dp"
                 android:layout_height="22dp"
                 android:src="@drawable/ic_phone_vector"
-                app:tint="@android:color/black" />
+                app:tint="@color/fab_icon" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:text="@string/call"
-                android:textColor="@android:color/black"
+                android:textColor="@color/fab_icon"
                 android:textSize="11sp"
                 android:textStyle="bold" />
         </LinearLayout>

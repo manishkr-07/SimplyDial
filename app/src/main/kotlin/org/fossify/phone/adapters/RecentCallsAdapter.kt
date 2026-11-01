@@ -467,6 +467,13 @@ class RecentCallsAdapter(
             itemRecentsHolder.apply {
                 this.isSelected = isSelected
                 styleCallCard(this, isSelected)
+                val isSimple = activity.config.isSimpleMode
+                val isDark = textColor == -1 || activity.getProperBackgroundColor() == Color.BLACK || activity.getProperBackgroundColor().getContrastColor() == Color.WHITE
+                val density = resources.displayMetrics.density
+                minimumHeight = ((if (isSimple) 82 else 70) * density).toInt()
+                val avatarSize = ((if (isSimple) 54 else 48) * density).toInt()
+                itemRecentsImage.layoutParams.width = avatarSize
+                itemRecentsImage.layoutParams.height = avatarSize
                 if (!activity.config.isSimpleMode) {
                     setOnTouchListener { v, event ->
                         when (event.action) {
@@ -519,7 +526,8 @@ class RecentCallsAdapter(
                     text = nameToShow
                     val nameColor = if (activity.config.isSimpleMode && call.type == Calls.MISSED_TYPE) missedCallColor else textColor
                     setTextColor(nameColor)
-                    setTextSize(TypedValue.COMPLEX_UNIT_PX, currentFontSize)
+                    setTextSize(TypedValue.COMPLEX_UNIT_PX, if (activity.config.isSimpleMode) currentFontSize * 1.15f else currentFontSize)
+                    setTypeface(typeface, android.graphics.Typeface.BOLD)
                 }
 
                 itemRecentsDateTime.apply {
@@ -631,14 +639,32 @@ class RecentCallsAdapter(
 
                 itemRecentsType.setImageDrawable(drawable)
 
+                val isSimple = activity.config.isSimpleMode
+                val isDark = textColor == -1 || activity.getProperBackgroundColor() == Color.BLACK || activity.getProperBackgroundColor().getContrastColor() == Color.WHITE
+                val density = resources.displayMetrics.density
                 itemRecentsCallButton.apply {
                     beVisibleIf(selectedKeys.isEmpty())
+                    if (isSimple) {
+                        val callBg = GradientDrawable().apply {
+                            shape = GradientDrawable.OVAL
+                            setColor(if (isDark) Color.parseColor("#1B5E20") else Color.parseColor("#16A34A"))
+                        }
+                        background = callBg
+                        val pad = (8 * density).toInt()
+                        setPadding(pad, pad, pad, pad)
+                        applyColorFilter(Color.WHITE)
+                    } else {
+                        background = null
+                        val pad = (9 * density).toInt()
+                        setPadding(pad, pad, pad, pad)
+                        applyColorFilter(properPrimaryColor)
+                    }
                     setOnClickListener {
                         (activity as SimpleActivity).startCallWithConfirmationCheck(call.phoneNumber, call.name)
                     }
                 }
 
-                overflowMenuIcon.beVisibleIf(showOverflowMenu)
+                overflowMenuIcon.beVisibleIf(showOverflowMenu && !isSimple)
                 overflowMenuIcon.setImageDrawable(ContextCompat.getDrawable(activity, R.drawable.ic_three_dots_vector))
                 overflowMenuIcon.applyColorFilter(activity.getProperTextColor().adjustAlpha(0.75f))
 
@@ -685,21 +711,27 @@ class RecentCallsAdapter(
 
     private fun styleCallCard(cardView: View, isSelected: Boolean) {
         val density = cardView.resources.displayMetrics.density
-        val radius = 16 * density
+        val isSimple = activity.config.isSimpleMode
+        val radius = (if (isSimple) 20 else 16) * density
         val isDark = textColor == -1 || activity.getProperBackgroundColor() == Color.BLACK || activity.getProperBackgroundColor().getContrastColor() == Color.WHITE
 
         val bgColor = if (isSelected) {
             properPrimaryColor.adjustAlpha(0.18f)
         } else {
-            if (isDark) Color.parseColor("#121316") else Color.WHITE
+            if (isDark) { if (isSimple) Color.parseColor("#181A20") else Color.parseColor("#121316") } else Color.WHITE
         }
 
         val strokeColor = if (isSelected) {
             properPrimaryColor
         } else {
-            if (isDark) Color.parseColor("#26282E") else Color.parseColor("#E5E7EB")
+            if (isDark) { if (isSimple) Color.parseColor("#3E424D") else Color.parseColor("#26282E") } else { if (isSimple) Color.parseColor("#CBD5E1") else Color.parseColor("#E5E7EB") }
         }
-        val strokeWidth = ((if (isSelected) 2 else 1) * density).toInt()
+        val strokeMultiplier = when {
+            isSelected -> 2f
+            isSimple -> 1.5f
+            else -> 1f
+        }
+        val strokeWidth = (strokeMultiplier * density).toInt()
 
         val cardShape = GradientDrawable().apply {
             shape = GradientDrawable.RECTANGLE
@@ -716,7 +748,12 @@ class RecentCallsAdapter(
 
         val rippleColor = properPrimaryColor.adjustAlpha(0.20f)
         cardView.background = RippleDrawable(ColorStateList.valueOf(rippleColor), cardShape, maskShape)
-        cardView.elevation = (if (isSelected) 4 else 2) * density
+        val elevMultiplier = when {
+            isSelected -> 5f
+            isSimple -> 3.5f
+            else -> 2f
+        }
+        cardView.elevation = elevMultiplier * density
     }
 
     private inner class RecentCallDateViewHolder(val binding: ItemRecentsDateBinding) : ViewHolder(binding.root) {

@@ -724,9 +724,9 @@ class DialpadActivity : SimpleActivity() {
         }
 
         val strokeColor = if (isSimple) {
-            if (isDarkTheme) Color.parseColor("#38383A") else Color.parseColor("#D1D5DB")
+            if (isDarkTheme) Color.parseColor("#38383A") else Color.parseColor("#CBD5E1")
         } else {
-            if (isDarkTheme) properPrimaryColor.adjustAlpha(0.22f) else properPrimaryColor.adjustAlpha(0.15f)
+            if (isDarkTheme) properPrimaryColor.adjustAlpha(0.22f) else Color.parseColor("#E2E8F0")
         }
 
         val rippleColor = properPrimaryColor.adjustAlpha(0.25f)
@@ -845,24 +845,34 @@ class DialpadActivity : SimpleActivity() {
             )
 
             // Voice button styling
-            val voiceBg = GradientDrawable().apply {
-                shape = GradientDrawable.OVAL
-                val bgColor = if (properTextColor == -1 || getProperBackgroundColor() == Color.BLACK) {
-                    Color.parseColor("#1C1D21")
-                } else {
-                    Color.parseColor("#EBF0F7")
+            if (isSimple) {
+                dialpadVoiceButton.beGone()
+            } else {
+                dialpadVoiceButton.beVisible()
+                val voiceBg = GradientDrawable().apply {
+                    shape = GradientDrawable.OVAL
+                    val bgColor = if (properTextColor == -1 || getProperBackgroundColor() == Color.BLACK) {
+                        Color.parseColor("#1C1D21")
+                    } else {
+                        Color.parseColor("#F1F5F9")
+                    }
+                    setColor(bgColor)
+                    val strokeCol = if (properTextColor == -1 || getProperBackgroundColor() == Color.BLACK) {
+                        properPrimaryColor.adjustAlpha(0.35f)
+                    } else {
+                        Color.parseColor("#CBD5E1")
+                    }
+                    setStroke((1.5f * density).toInt(), strokeCol)
                 }
-                setColor(bgColor)
-                setStroke((1.5f * density).toInt(), properPrimaryColor.adjustAlpha(0.35f))
+                dialpadVoiceButton.background = RippleDrawable(
+                    ColorStateList.valueOf(properPrimaryColor.adjustAlpha(0.25f)),
+                    voiceBg,
+                    null
+                )
+                dialpadVoiceButton.setImageDrawable(
+                    resources.getColoredDrawableWithColor(R.drawable.ic_mic_vector, properPrimaryColor)
+                )
             }
-            dialpadVoiceButton.background = RippleDrawable(
-                ColorStateList.valueOf(properPrimaryColor.adjustAlpha(0.25f)),
-                voiceBg,
-                null
-            )
-            dialpadVoiceButton.setImageDrawable(
-                resources.getColoredDrawableWithColor(R.drawable.ic_mic_vector, properPrimaryColor)
-            )
 
             // Video button styling
             if (isSimple) {
@@ -874,10 +884,15 @@ class DialpadActivity : SimpleActivity() {
                     val bgColor = if (properTextColor == -1 || getProperBackgroundColor() == Color.BLACK) {
                         Color.parseColor("#1C1D21")
                     } else {
-                        Color.parseColor("#EBF0F7")
+                        Color.parseColor("#F1F5F9")
                     }
                     setColor(bgColor)
-                    setStroke((1.5f * density).toInt(), properPrimaryColor.adjustAlpha(0.35f))
+                    val strokeCol = if (properTextColor == -1 || getProperBackgroundColor() == Color.BLACK) {
+                        properPrimaryColor.adjustAlpha(0.35f)
+                    } else {
+                        Color.parseColor("#CBD5E1")
+                    }
+                    setStroke((1.5f * density).toInt(), strokeCol)
                 }
                 dialpadVideoCallButton.background = RippleDrawable(
                     ColorStateList.valueOf(properPrimaryColor.adjustAlpha(0.25f)),

@@ -21,10 +21,10 @@ class BlurBackgroundView @JvmOverloads constructor(
     
     // Dynamic color based on theme
     private val blurColor: Int
-        get() = if (config.isDarkThemeEnabled) {
+        get() = if (config.isDarkThemeEnabled || org.fossify.phone.helpers.ThemeManager.isDarkThemeEnabled(context)) {
             Color.parseColor("#2E8B57") // Seagreen/blue dark shade for dark mode
         } else {
-            Color.parseColor("#FFFACD") // Lemon chiffon for light mode
+            Color.parseColor("#E0F2FE") // Soft modern sky-blue tint for light mode
         }
     
     init {

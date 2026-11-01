@@ -1,96 +1,96 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Light Theme Colors - Default for all users -->
+    <!-- Light Theme Colors - Modern Material 3 Slate & Royal Blue Palette -->
     <!-- These colors are automatically overridden by values-night/colors.xml when system dark mode is enabled -->
     
     <!-- Primary Backgrounds - Light Mode -->
-    <color name="background_color">#FFFFFF</color>
-    <color name="surface_color">#F5F5F5</color>
+    <color name="background_color">#F8FAFC</color>
+    <color name="surface_color">#F1F5F9</color>
     <color name="elevated_surface_color">#FFFFFF</color>
     
     <!-- Card and Dialog Backgrounds -->
     <color name="card_background">#FFFFFF</color>
-    <color name="dialog_background">#FAFAFA</color>
+    <color name="dialog_background">#FFFFFF</color>
     
-    <!-- Primary Accent - Material Blue -->
-    <color name="primary_color">#2196F3</color>
-    <color name="primary_variant_color">#1976D2</color>
-    <color name="primary_dark_color">#0D47A1</color>
+    <!-- Primary Accent - Modern Vibrant Royal Blue -->
+    <color name="primary_color">#2563EB</color>
+    <color name="primary_variant_color">#1D4ED8</color>
+    <color name="primary_dark_color">#1E40AF</color>
     
-    <!-- Secondary Accent - Material Teal -->
-    <color name="secondary_color">#009688</color>
-    <color name="secondary_variant_color">#00796B</color>
+    <!-- Secondary Accent - Modern Slate Teal -->
+    <color name="secondary_color">#0D9488</color>
+    <color name="secondary_variant_color">#0F766E</color>
     
-    <!-- Text Colors - Dark on Light -->
-    <color name="text_primary">#212121</color>
-    <color name="text_secondary">#757575</color>
-    <color name="text_tertiary">#9E9E9E</color>
-    <color name="text_disabled">#BDBDBD</color>
+    <!-- Text Colors - Ultra-Crisp Slate Palette with WCAG AAA Contrast -->
+    <color name="text_primary">#0F172A</color>
+    <color name="text_secondary">#475569</color>
+    <color name="text_tertiary">#64748B</color>
+    <color name="text_disabled">#94A3B8</color>
     
     <!-- Icon Colors -->
-    <color name="icon_primary">#212121</color>
-    <color name="icon_secondary">#757575</color>
-    <color name="icon_disabled">#BDBDBD</color>
+    <color name="icon_primary">#0F172A</color>
+    <color name="icon_secondary">#475569</color>
+    <color name="icon_disabled">#94A3B8</color>
     
     <!-- Divider and Border Colors -->
-    <color name="divider_color">#E0E0E0</color>
-    <color name="border_color">#BDBDBD</color>
+    <color name="divider_color">#E2E8F0</color>
+    <color name="border_color">#CBD5E1</color>
     
-    <!-- Status Colors - Universal -->
-    <color name="success_color">#4CAF50</color>
-    <color name="warning_color">#FF9800</color>
-    <color name="error_color">#F44336</color>
-    <color name="info_color">#2196F3</color>
+    <!-- Status Colors - Clean Modern Indicators -->
+    <color name="success_color">#16A34A</color>
+    <color name="warning_color">#D97706</color>
+    <color name="error_color">#DC2626</color>
+    <color name="info_color">#2563EB</color>
     
     <!-- Call Status Colors -->
-    <color name="color_missed_call">#F44336</color>
-    <color name="color_outgoing_call">#4CAF50</color>
-    <color name="color_incoming_call">#2196F3</color>
+    <color name="color_missed_call">#DC2626</color>
+    <color name="color_outgoing_call">#16A34A</color>
+    <color name="color_incoming_call">#2563EB</color>
     
     <!-- Bottom Navigation -->
     <color name="bottom_nav_background">#FFFFFF</color>
-    <color name="bottom_nav_selected">#2196F3</color>
-    <color name="bottom_nav_unselected">#757575</color>
+    <color name="bottom_nav_selected">#2563EB</color>
+    <color name="bottom_nav_unselected">#64748B</color>
     
     <!-- Ripple and Selection Colors -->
-    <color name="ripple_foreground">#1F000000</color>
-    <color name="ripple_color">#1F000000</color>
-    <color name="selection_color">#1F2196F3</color>
-    <color name="highlight_color">#332196F3</color>
+    <color name="ripple_foreground">#142563EB</color>
+    <color name="ripple_color">#142563EB</color>
+    <color name="selection_color">#1A2563EB</color>
+    <color name="highlight_color">#262563EB</color>
     
     <!-- FAB Colors -->
-    <color name="fab_background">#2196F3</color>
+    <color name="fab_background">#2563EB</color>
     <color name="fab_icon">#FFFFFF</color>
     
     <!-- Statusbar and Navigation Bar -->
-    <color name="statusbar_color">#1976D2</color>
+    <color name="statusbar_color">#FFFFFF</color>
     <color name="navigationbar_color">#FFFFFF</color>
     
     <!-- Dialpad Specific Colors -->
     <color name="dialpad_background">#FFFFFF</color>
-    <color name="dialpad_button_background">#F5F5F5</color>
-    <color name="dialpad_button_pressed">#E0E0E0</color>
-    <color name="dialpad_text">#212121</color>
-    <color name="dialpad_text_secondary">#757575</color>
-    <color name="dialpad_call_button">#4CAF50</color>
-    <color name="dialpad_delete_button">#F44336</color>
+    <color name="dialpad_button_background">#F1F5F9</color>
+    <color name="dialpad_button_pressed">#E2E8F0</color>
+    <color name="dialpad_text">#0F172A</color>
+    <color name="dialpad_text_secondary">#2563EB</color>
+    <color name="dialpad_call_button">#16A34A</color>
+    <color name="dialpad_delete_button">#DC2626</color>
     
     <!-- Shadow Effects -->
-    <color name="neon_glow">#00000000</color>
-    <color name="shadow_color">#40000000</color>
+    <color name="neon_glow">#142563EB</color>
+    <color name="shadow_color">#14000000</color>
     
     <!-- Call Screen Colors -->
-    <color name="call_background">#FFFFFF</color>
-    <color name="call_control_background">#F5F5F5</color>
-    <color name="call_timer">#757575</color>
-    <color name="call_waveform">#2196F3</color>
+    <color name="call_background">#F8FAFC</color>
+    <color name="call_control_background">#FFFFFF</color>
+    <color name="call_timer">#475569</color>
+    <color name="call_waveform">#2563EB</color>
     
     <!-- Call State Colors -->
-    <color name="call_accept">#4CAF50</color>
-    <color name="call_reject">#F44336</color>
-    <color name="call_ringing">#2196F3</color>
-    <color name="call_muted">#FF9800</color>
-    <color name="call_recording">#F44336</color>
-    <color name="call_dialing">#2196F3</color>
-    <color name="accent_color_cyan">#00BCD4</color>
+    <color name="call_accept">#16A34A</color>
+    <color name="call_reject">#DC2626</color>
+    <color name="call_ringing">#2563EB</color>
+    <color name="call_muted">#D97706</color>
+    <color name="call_recording">#DC2626</color>
+    <color name="call_dialing">#1D4ED8</color>
+    <color name="accent_color_cyan">#0284C7</color>
 </resources>

@@ -23,7 +23,7 @@ class GradientRingImageView @JvmOverloads constructor(
     private val config = Config(context)
     
     // Dynamic gradient colors based on theme
-    private val gradientColors = if (config.isDarkThemeEnabled) {
+    private val gradientColors = if (config.isDarkThemeEnabled || org.fossify.phone.helpers.ThemeManager.isDarkThemeEnabled(context)) {
         intArrayOf(
             Color.parseColor("#d1c8b6"),  // Beige
             Color.parseColor("#00b2b6"),  // Teal

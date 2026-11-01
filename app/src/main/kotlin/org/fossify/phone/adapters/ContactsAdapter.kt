@@ -414,6 +414,16 @@ class ContactsAdapter(
                 }
             }
 
+            val isSimple = activity.config.isSimpleMode
+            val isDark = textColor == -1 || activity.getProperBackgroundColor() == Color.BLACK || activity.getProperBackgroundColor().getContrastColor() == Color.WHITE
+            val density = root.resources.displayMetrics.density
+            if (viewType != VIEW_TYPE_GRID) {
+                itemContactFrame.minimumHeight = ((if (isSimple) 82 else 68) * density).toInt()
+                val avatarSize = ((if (isSimple) 56 else 48) * density).toInt()
+                itemContactImage.layoutParams.width = avatarSize
+                itemContactImage.layoutParams.height = avatarSize
+            }
+
             itemContactImage.apply {
                 if (profileIconClick != null && viewType != VIEW_TYPE_GRID && activity.config.enableProfilePictureClick) {
                     setBackgroundResource(R.drawable.selector_clickable_circle)
@@ -438,7 +448,8 @@ class ContactsAdapter(
 
             itemContactName.apply {
                 setTextColor(textColor)
-                setTextSize(TypedValue.COMPLEX_UNIT_PX, fontSize)
+                setTextSize(TypedValue.COMPLEX_UNIT_PX, if (isSimple) fontSize * 1.15f else fontSize)
+                setTypeface(typeface, android.graphics.Typeface.BOLD)
 
                 val name = contact.getNameToDisplay()
                 text = if (textToHighlight.isEmpty()) {
@@ -486,6 +497,21 @@ class ContactsAdapter(
             // Direct Quick Call action
             itemContactCallButton?.apply {
                 beVisibleIf(selectedKeys.isEmpty())
+                if (isSimple) {
+                    val callBg = GradientDrawable().apply {
+                        shape = GradientDrawable.OVAL
+                        setColor(if (isDark) Color.parseColor("#1B5E20") else Color.parseColor("#16A34A"))
+                    }
+                    background = callBg
+                    val pad = (8 * density).toInt()
+                    setPadding(pad, pad, pad, pad)
+                    applyColorFilter(Color.WHITE)
+                } else {
+                    background = null
+                    val pad = (9 * density).toInt()
+                    setPadding(pad, pad, pad, pad)
+                    applyColorFilter(properPrimaryColor)
+                }
                 setOnClickListener {
                     if (!actModeCallback.isSelectable) {
                         (activity as SimpleActivity).startCallWithConfirmationCheck(contact)
@@ -495,9 +521,10 @@ class ContactsAdapter(
                 }
             }
 
-            // Quick Options / Sheet trigger (3 dots)
+                        // Quick Options / Sheet trigger (3 dots)
             itemContactActionButton?.apply {
-                beVisibleIf(selectedKeys.isEmpty())
+                beVisibleIf(selectedKeys.isEmpty() && !isSimple)
+                background = null
                 setImageDrawable(ContextCompat.getDrawable(activity, R.drawable.ic_three_dots_vector))
                 applyColorFilter(activity.getProperTextColor().adjustAlpha(0.75f))
                 setOnClickListener {
@@ -509,7 +536,7 @@ class ContactsAdapter(
                 }
             }
 
-            // Long-press works the EXACT SAME as tapping 3-dots
+// Long-press works the EXACT SAME as tapping 3-dots
             root.setOnLongClickListener {
                 if (!actModeCallback.isSelectable) {
                     showContactQuickActions(contact)
@@ -972,21 +999,27 @@ class ContactsAdapter(
 
     private fun styleContactCard(cardView: View, isSelected: Boolean) {
         val density = cardView.resources.displayMetrics.density
-        val radius = 16 * density
+        val isSimple = activity.config.isSimpleMode
+        val radius = (if (isSimple) 20 else 16) * density
         val isDark = textColor == -1 || activity.getProperBackgroundColor() == Color.BLACK || activity.getProperBackgroundColor().getContrastColor() == Color.WHITE
 
         val bgColor = if (isSelected) {
             properPrimaryColor.adjustAlpha(0.18f)
         } else {
-            if (isDark) Color.parseColor("#121316") else Color.WHITE
+            if (isDark) { if (isSimple) Color.parseColor("#181A20") else Color.parseColor("#121316") } else Color.WHITE
         }
 
         val strokeColor = if (isSelected) {
             properPrimaryColor
         } else {
-            if (isDark) Color.parseColor("#26282E") else Color.parseColor("#E5E7EB")
+            if (isDark) { if (isSimple) Color.parseColor("#3E424D") else Color.parseColor("#26282E") } else { if (isSimple) Color.parseColor("#CBD5E1") else Color.parseColor("#E5E7EB") }
         }
-        val strokeWidth = ((if (isSelected) 2 else 1) * density).toInt()
+        val strokeMultiplier = when {
+            isSelected -> 2f
+            isSimple -> 1.5f
+            else -> 1f
+        }
+        val strokeWidth = (strokeMultiplier * density).toInt()
 
         val cardShape = GradientDrawable().apply {
             shape = GradientDrawable.RECTANGLE
@@ -1003,7 +1036,12 @@ class ContactsAdapter(
 
         val rippleColor = properPrimaryColor.adjustAlpha(0.20f)
         cardView.background = RippleDrawable(ColorStateList.valueOf(rippleColor), cardShape, maskShape)
-        cardView.elevation = (if (isSelected) 4 else 2) * density
+        val elevMultiplier = when {
+            isSelected -> 5f
+            isSimple -> 3.5f
+            else -> 2f
+        }
+        cardView.elevation = elevMultiplier * density
     }
 
     override fun onRowSelected(myViewHolder: ViewHolder?) {}

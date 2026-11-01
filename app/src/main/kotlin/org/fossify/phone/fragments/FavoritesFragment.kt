@@ -180,7 +180,8 @@ class FavoritesFragment(context: Context, attributeSet: AttributeSet) : MyViewPa
     }
 
     fun columnCountChanged() {
-        (binding.fragmentList.layoutManager as? MyGridLayoutManager)?.spanCount = context!!.config.contactsGridColumnCount
+        val span = if (context!!.config.isSimpleMode) 2 else context!!.config.contactsGridColumnCount
+        (binding.fragmentList.layoutManager as? MyGridLayoutManager)?.spanCount = span
         binding.fragmentList.adapter?.apply {
             notifyItemRangeChanged(0, allContacts.size)
         }
@@ -232,7 +233,7 @@ class FavoritesFragment(context: Context, attributeSet: AttributeSet) : MyViewPa
     }
 
     private fun setViewType(viewType: Int) {
-        val spanCount = context.config.contactsGridColumnCount
+        val spanCount = if (context.config.isSimpleMode) 2 else context.config.contactsGridColumnCount
 
         val layoutManager = if (viewType == VIEW_TYPE_GRID) {
             binding.horizontalAlphabetSlider.beGone()

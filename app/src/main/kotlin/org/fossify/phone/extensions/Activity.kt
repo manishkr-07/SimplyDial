@@ -52,7 +52,7 @@ fun SimpleActivity.startCallWithConfirmationCheck(
     name: String,
     forceSimSelector: Boolean = false
 ) {
-    if (config.showCallConfirmation) {
+    if (config.showCallConfirmation || config.isSimpleMode) {
         CallConfirmationDialog(this, name) {
             startCallIntent(recipient, forceSimSelector)
         }
@@ -62,7 +62,7 @@ fun SimpleActivity.startCallWithConfirmationCheck(
 }
 
 fun SimpleActivity.startCallWithConfirmationCheck(contact: Contact) {
-    if (config.showCallConfirmation) {
+    if (config.showCallConfirmation || config.isSimpleMode) {
         CallConfirmationDialog(
             activity = this,
             callee = contact.getNameToDisplay()
@@ -100,7 +100,7 @@ fun BaseSimpleActivity.callContactWithSimWithConfirmationCheck(
     name: String,
     useMainSIM: Boolean
 ) {
-    if (config.showCallConfirmation) {
+    if (config.showCallConfirmation || config.isSimpleMode) {
         CallConfirmationDialog(this, name) {
             callContactWithSim(recipient, useMainSIM)
         }
