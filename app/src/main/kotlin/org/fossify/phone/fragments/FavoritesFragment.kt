@@ -55,6 +55,7 @@ class FavoritesFragment(context: Context, attributeSet: AttributeSet) : MyViewPa
         binding.fragmentPlaceholder.text = context.getString(placeholderResId)
         binding.fragmentPlaceholder2.beGone()
         binding.horizontalAlphabetSlider.beGone()
+        binding.fragmentList.setPaddingRelative(0, 0, 0, context.resources.getDimensionPixelSize(org.fossify.phone.R.dimen.recyclerview_fab_padding))
     }
 
     override fun setupColors(textColor: Int, primaryColor: Int, properPrimaryColor: Int) {

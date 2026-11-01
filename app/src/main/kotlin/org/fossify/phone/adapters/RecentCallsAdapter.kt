@@ -457,24 +457,7 @@ class RecentCallsAdapter(
         binding.apply {
             root.setupViewBackground(activity)
 
-            // Apply gold-to-white gradient border and FFFFDD-to-white gradient background
             itemRecentsHolder.apply {
-                setBackgroundResource(R.drawable.contact_item_glass_background)
-                val marginInDp = 8
-                val marginInPx = (marginInDp * resources.displayMetrics.density).toInt()
-                
-                val position = layoutPosition
-                val topMargin = if (position == 0 || (position == 1 && currentList.getOrNull(0) is CallLogItem.Date)) {
-                    marginInPx
-                } else {
-                    marginInPx / 2
-                }
-                
-                val params = layoutParams as? ViewGroup.MarginLayoutParams
-                params?.setMargins(marginInPx, topMargin, marginInPx, marginInPx / 2)
-                layoutParams = params
-                setPadding(marginInPx, marginInPx, marginInPx, marginInPx)
-                elevation = 4f
                 isSelected = selectedKeys.contains(call.id)
             }
 
@@ -619,6 +602,13 @@ class RecentCallsAdapter(
                 }
 
                 itemRecentsType.setImageDrawable(drawable)
+
+                itemRecentsCallButton.apply {
+                    beVisibleIf(selectedKeys.isEmpty())
+                    setOnClickListener {
+                        (activity as SimpleActivity).startCallWithConfirmationCheck(call.phoneNumber, call.name)
+                    }
+                }
 
                 overflowMenuIcon.beVisibleIf(showOverflowMenu)
                 overflowMenuIcon.setImageDrawable(ContextCompat.getDrawable(activity, R.drawable.ic_three_dots_vector))

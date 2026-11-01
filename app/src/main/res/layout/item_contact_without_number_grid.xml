@@ -9,22 +9,60 @@
     android:background="@drawable/contact_item_glass_background"
     android:clickable="true"
     android:focusable="true"
+    android:foreground="?attr/selectableItemBackground"
+    android:minHeight="120dp"
     android:padding="12dp">
 
-    <!-- Grid Contact Avatar -->
+    <!-- Star Indicator (top-left) -->
+    <ImageView
+        android:id="@+id/item_contact_star_badge"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:src="@drawable/ic_star_vector"
+        app:tint="@color/primary_color"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:alpha="0.85" />
+
+    <!-- Options Button (3 dots, top-right) -->
+    <ImageView
+        android:id="@+id/item_contact_action_button"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/more_options"
+        android:padding="6dp"
+        android:src="@drawable/ic_three_dots_vector"
+        app:tint="@color/text_secondary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- Drag Handle Icon (Reorder mode) -->
+    <ImageView
+        android:id="@+id/drag_handle_icon"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:contentDescription="@null"
+        android:padding="4dp"
+        android:src="@drawable/ic_drag_handle_vector"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- Grid Contact Avatar (Centered 64dp) -->
     <org.fossify.commons.views.MySquareImageView
         android:id="@+id/item_contact_image"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_marginTop="6dp"
         android:adjustViewBounds="true"
         android:scaleType="centerCrop"
         android:src="@drawable/ic_person_vector"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintWidth_max="96dp" />
+        app:layout_constraintTop_toBottomOf="@+id/item_contact_action_button" />
 
-    <!-- Grid Contact Name -->
+    <!-- Grid Contact Name (Centered) -->
     <org.fossify.commons.views.MyTextView
         android:id="@+id/item_contact_name"
         android:layout_width="match_parent"
@@ -38,35 +76,9 @@
         android:textSize="14sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/item_contact_image"
-        app:layout_constraintStart_toStartOf="@+id/item_contact_image"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/item_contact_image"
         tools:text="John Doe" />
 
-    <!-- Options Button (3 dots) -->
-    <ImageView
-        android:id="@+id/item_contact_action_button"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:contentDescription="@string/more_options"
-        android:padding="6dp"
-        android:src="@drawable/ic_three_dots_vector"
-        app:tint="@color/text_secondary"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <!-- Drag Handle Icon -->
-    <ImageView
-        android:id="@+id/drag_handle_icon"
-        android:layout_width="28dp"
-        android:layout_height="28dp"
-        android:contentDescription="@null"
-        android:padding="4dp"
-        android:src="@drawable/ic_drag_handle_vector"
-        android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>
-
