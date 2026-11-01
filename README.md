@@ -6,7 +6,7 @@
 
 <p align="center">
   <b>Connect with Ease</b><br>
-  <i>A modern, privacy-first, accessibility-enhanced Android phone app featuring Black Diamond AMOLED theming, intuitive senior-friendly UI controls, HD call recording, Jitsi Meet video calling, and instant offline voice dialing.</i>
+  <i>A modern, privacy-first, accessibility-enhanced Android phone app featuring Black Diamond AMOLED theming, Dynamic Interface Modes (Simple vs. Modern & Advanced), HD call recording, Jitsi Meet video calling, and instant offline voice dialing.</i>
 </p>
 
 <p align="center">
@@ -29,13 +29,30 @@
 
 **SimplyDial** is a next-generation, feature-packed Android dialer and calling application designed to make mobile communication seamless, transparent, and accessible for everyone. 
 
-It combines **intuitive senior-friendly accessible controls (EaseUI)** to prevent accidental dials and simplify messaging, an ultra-crisp **Black Diamond AMOLED Dark Theme** for maximum battery life, **studio-grade compliant call recording**, **integrated Jitsi Meet video conferences**, and **instant 100% offline private voice dialing**.
+It combines **intuitive senior-friendly accessible controls (EaseUI)** to prevent accidental dials and simplify messaging, a **Dynamic Interface Mode System** offering tailored experiences for both older generations and modern power users, an ultra-crisp **Black Diamond AMOLED Dark Theme** for maximum battery life, **studio-grade compliant call recording**, **integrated Jitsi Meet video conferences**, and **instant 100% offline private voice dialing**.
 
 ---
 
 ## ✨ Key Features & Enhancements
 
-### 👵 1. Accessibility & Senior-Friendly "EaseUI"
+### 🎛️ 1. Dynamic Interface Mode System
+Switch effortlessly between two deeply customized UI experiences in Settings:
+
+* **👵 Simple Mode (Senior-Friendly & Accessible)**:
+  * **Oversized Typography & Touch Targets**: 64dp Floating Action Buttons and large text for effortless reading.
+  * **Accidental Call Shield**: Prominent confirmation popup modal showing contact avatar, full name, and phone number before placing any call.
+  * **Distraction-Free UI**: Filter chips, complex sub-sheets, and unnecessary menus are hidden for a clean, peaceful layout.
+  * **Direct 1-Tap Calling**: Fast, single-touch dialing without confusing multi-step actions.
+
+* **⚡ Modern & Advanced Mode (Power User & New Generation)**:
+  * **Interactive Call History Filter Chips**: Horizontal pill bar (`[ ✦ All ] [ 🔴 Missed (N) ] [ 📥 Incoming ] [ 📤 Outgoing ]`) with live missed call counters and tactile haptic feedback.
+  * **Universal Quick Actions Bottom Sheet**: 1-tap slide-up modal for WhatsApp direct chat (`https://api.whatsapp.com/send?phone=...`), Jitsi Meet HD video calls, SMS messaging, contact sharing, number copying, and grouped call history.
+  * **Smart Clipboard Paste Chip**: Automatically detects copied phone numbers (3+ digits) and presents a 1-tap `[ 📋 Paste ]` chip directly above the keypad.
+  * **Fine-Grained Customization**: Toggle individual controls (1-tap calling, haptic feedback, large answer buttons, fullscreen calls) under *Customize Interface Features*.
+
+---
+
+### 👵 2. Accessibility & "EaseUI" Suite
 Designed from the ground up to eliminate dialing anxiety, accidental calls, and complex navigation:
 - **Accidental Call Shield**: Built-in **Call Confirmation Dialog** displaying the contact name, photo, and a prominent "Tap to Call" confirmation button before placing a call.
 - **Messages Joystick (`JoystickMessageButton`)**: Radial swipe control for rapid, pre-configured SMS messages and quick responses without typing.
@@ -44,36 +61,48 @@ Designed from the ground up to eliminate dialing anxiety, accidental calls, and 
 - **Profile-Touch Actions**: Tap avatar rings with animated gradients to quickly inspect contact details.
 - **Large Touch Targets & Water Ripple Feedback**: Tactile feedback with responsive ripple animations on all keypad presses.
 
-### 💎 2. Black Diamond AMOLED & Dynamic Theming
+---
+
+### 💎 3. Black Diamond AMOLED & Dynamic Theming
 - **AMOLED True Black (`#000000`)**: Complete dark mode designed for OLED and AMOLED screens with zero pixel bleed and significant battery savings.
 - **Electric Cyan (`#00E5FF`) Glow**: Vivid neon accenting across dialpad keys, floating buttons, and card containers.
 - **Glassmorphic Overlays**: Dynamic blur backgrounds (`BlurBackgroundView`) with smooth color-switching between light and dark modes.
 - **Independent Theme Toggle**: Seamless switching between clean Light Mode (default) and Black Diamond Dark Theme via settings or system default.
 
-### 🎙️ 3. Compliant High-Definition Call Recording
+---
+
+### 🎙️ 4. Compliant High-Definition Call Recording
 - **Studio-Quality Audio**: Encoded in 256 kbps AAC stereo at 48 kHz in standard `.m4a` format.
 - **Hybrid Audio Fallback**: Multi-tier audio fallback (`MIC` → `VOICE_COMMUNICATION` → `VOICE_CALL` → `VOICE_RECOGNITION` → `DEFAULT`) for reliable capture across diverse Android hardware.
 - **Two-Party Compliance Beeps**: Plays audible 300ms notification beeps (~900 Hz tone) at recording start and stop to ensure full legal compliance.
 - **Mandatory Consent Flow**: First-time consent modal ensures transparency and privacy adherence.
 - **Recording History & Review**: Includes live in-call indicator/timer, post-call review dialog, and a full-featured Recording History explorer to play, search, share via secure `FileProvider`, or delete audio files.
 
-### 📹 4. Integrated Video Calling (Jitsi Meet)
+---
+
+### 📹 5. Integrated Video Calling (Jitsi Meet)
 - **One-Tap Video Calls**: Launch video conferences directly from dialer input or contact cards.
 - **Auto-Mute Cellular Conflict**: Automatically mutes the active phone call microphone when video starts to prevent acoustic feedback.
 - **Rejoin Interception**: If the user accidentally navigates away from the video conference screen, an interactive prompt lets them rejoin instantly without dropping the session.
 - **SMS Room Invitation**: Automatically formats and sends an SMS invite link so the remote party can join from any smartphone or browser.
 
-### 🎙️ 5. Instant Offline Voice Dialing (100% Private)
+---
+
+### 🎙️ 6. Instant Offline Voice Dialing (100% Private)
 - **Speech-to-Dial**: Speak naturally (e.g., *"Call Mom"*, *"Dial 9876543210"*).
 - **Zero Cloud AI / 100% Private**: No network dependencies, no external API keys, zero risk of contact exposure.
 - **Fast Fuzzy Matcher**: High-performance local contact resolver (`ContactResolver`) using Levenshtein distance matching.
 
-### 📞 6. Advanced Call Waiting & Alert Interception
+---
+
+### 📞 7. Advanced Call Waiting & Alert Interception
 - **Busy-Call Interception**: Visual notifications and alerts when another caller attempts to reach you during an active conversation.
 - **Missed Call-Waiting Tracker**: Logs missed call-waiting attempts so no important incoming call goes unnoticed.
 - **Carrier Call-Waiting Handling**: Integrates smoothly with native telephony network signals.
 
-### ⚡ 7. Performance & Contact Navigation
+---
+
+### ⚡ 8. Performance & Contact Navigation
 - **Shimmer Skeleton Loading**: Fluid placeholder animations while the contact directory loads.
 - **Fast Alphabet Slider (`HorizontalAlphabetSlider`)**: Quick alphabetical scrubbing for large contact books.
 - **Lightweight Models**: Memory-efficient data structures with background cache enrichment.
@@ -94,8 +123,8 @@ Designed from the ground up to eliminate dialing anxiety, accidental calls, and 
 
 - **Language & Compiler**: [Kotlin](https://kotlinlang.org/) (Coroutines, Flow, Serialization) compiled natively via AGP 9
 - **Build System**: Gradle 9.8.2 & Android Gradle Plugin (AGP) 9.5.0
-- **SDK Target**: Android 16 (API 36 compileSdk & targetSdk)
-- **UI & Layouts**: Android XML Layouts, Custom Views, Glassmorphic Overlays, Shimmer Skeletons
+- **SDK Target**: Android 16 (API 36 compileSdk & targetSdk, Minimum SDK 26)
+- **UI & Layouts**: Android XML Layouts, Material 3 Chips, Glassmorphic Overlays, Shimmer Skeletons
 - **Video Conferencing**: [Jitsi Meet](https://jitsi.org/)
 - **Voice Recognition**: Android Native Speech Recognition + On-Device Fuzzy Matcher (`ContactResolver`)
 - **Audio Capture**: Android `MediaRecorder` with prioritized audio sources and `ToneGenerator`
@@ -150,7 +179,7 @@ For detailed technical specifications, architectural diagrams, and flowcharts, r
 
 - **100% On-Device Processing**: Call history, recordings, contact data, and preferences remain solely on your device.
 - **Zero Third-Party Trackers**: Completely free of analytics, tracking libraries, ads, and telemetry.
-- **Sanitized Repository**: Keystore passwords, signing keys, and individual API keys are kept strictly out of version control.
+- **Sanitized Repository**: Keystore passwords, signing keys, and individual credentials are kept strictly out of version control.
 - **Secure File Sharing**: Audio recordings are exposed to external apps exclusively through secure Android `FileProvider` content URIs.
 
 ---
@@ -161,14 +190,14 @@ For detailed technical specifications, architectural diagrams, and flowcharts, r
 
 During the intensive **July 2025 – October 2025** phase, all core features of SimplyDial were designed and implemented—including the senior-friendly **EaseUI** accessibility suite, Black Diamond AMOLED dark theming, studio-grade HD call recording, Jitsi Meet video conferencing, and instant offline voice dialing.
 
-In **Late 2026 (v1.7.0)**, the project underwent a dedicated engineering re-update to solve critical telephony call waiting and caller ID challenges, alongside repository sanitization and open-source release polish.
+In **Late 2026 (v1.7.0)**, the project underwent a dedicated engineering re-update to solve critical telephony call waiting and caller ID challenges, alongside Dynamic Interface Modes, repository sanitization, and open-source release polish.
 
 ### 📅 Project Evolution & Milestones
 
 | Timeline | Milestone & Core Focus | Led By |
 | :--- | :--- | :--- |
 | **July 2025 – October 2025** | **Core Build & Complete Feature Suite**<br>• Conceptualized, initiated, and built from the ground up<br>• **EaseUI Accessibility Suite**: Accidental call shield dialog, messages joystick (`JoystickMessageButton`), tactile swipe answer, ripple feedback, Hindi localization<br>• **Black Diamond AMOLED Theme**: Pure black `#000000`, electric cyan glow, glassmorphism (`BlurBackgroundView`)<br>• **HD Call Recording**: 256 kbps stereo AAC `.m4a`, compliance tones, legal consent flow, recording history explorer<br>• **Jitsi Meet Video Calls**: One-tap conference rooms, cellular mic conflict auto-mute, rejoin dialog<br>• **Smart Offline Voice**: Instant speech-to-dial with local fuzzy fallback | **Piyush Kumar** (Creator & Primary Owner)<br>with **Manish Kumar** (Collaborator & Co-Manager) |
-| **Late 2026 (v1.7.0)** | **Call Waiting & Caller ID Architecture Fixes + Public Release**<br>• **Call Waiting Alert**: Telecom-standard incoming call tone and double-pulse vibration repeating every 5 seconds in earpiece/call stream<br>• **Heads-Up Notification**: High-priority alert banner with incoming caller's details and direct Accept/Decline action buttons<br>• **Caller ID**: Displays waiting caller's name, number, and photo on the in-call screen<br>• **Dedicated Controls**: Added intuitive controls for handling incoming call-waiting requests<br>• **Decline Fix**: Rejecting a second call (`declineCall()`) no longer disconnects or interrupts the ongoing conversation<br>• **Active Call Display**: Shows ongoing call information separately in the top status bar (`"Active: [Name]"`<br>• **Carrier/OEM Interception**: Fallback notification manager (`CarrierCallWaitingNotificationManager`) and attempt tracking for non-InCallService calls<br>• **Release & Security Hardening**: Sanitized repo, removed Logcat payload leaks, established standalone GitHub Actions CI | **Piyush Kumar** & **Manish Kumar** |
+| **Late 2026 (v1.7.0)** | **Call Waiting, Dynamic Interface Modes & Release Polish**<br>• **Dynamic Interface Modes**: Simple Mode (senior-friendly) vs. Modern & Advanced Mode (power-user)<br>• **Interactive Modern UI/UX**: Live filter chips with missed call count badges, universal Quick Actions bottom sheet (WhatsApp, Jitsi Video, SMS, Copy, Share), smart clipboard paste chip<br>• **Official 3D Logo**: High-res transparent 3D launcher mipmaps and in-app branding<br>• **Call Waiting & Caller ID**: Standard 5s alert tone & vibration, HUD caller banner, non-interruptive second-call decline<br>• **Security Hardening**: Removed cloud AI/Gemini dependencies, sanitized repo, standalone GitHub Actions CI | **Piyush Kumar** & **Manish Kumar** |
 
 ### 🌐 Official Links & Community
 - 🌐 **Website**: [manish.dev](https://manishkr-dev.vercel.app/)
@@ -186,15 +215,16 @@ Contributions, feedback, and issue reports are welcome! Please review [CONTRIBUT
 
 ---
 
-## ⚖️ Upstream Attribution & Open Source Heritage
+## ⚖️ Credits and License
 
-**SimplyDial** is an independently developed and owned project modified from the open-source [Fossify Phone](https://github.com/FossifyOrg/Phone) codebase under the **GNU General Public License v3.0 (GPLv3)**.
+SimplyDial is based on the open-source [Fossify Phone](https://github.com/FossifyOrg/Phone) project.
 
-We gratefully acknowledge and credit the **Fossify Organization** and the upstream open-source community for providing the rock-solid, privacy-first telephony foundation upon which **SimplyDial**'s specialized accessibility enhancements (EaseUI), Black Diamond AMOLED design, HD call recording, Jitsi Meet video conferencing, and smart offline voice dialing are built.
+**Original project:**  
+[https://github.com/FossifyOrg/Phone](https://github.com/FossifyOrg/Phone)
 
-In full accordance with GPLv3:
-- All original open-source licenses and copyright headers are preserved.
-- All modifications and enhancements remain open-source and free for the community.
+Original copyright notices and license terms are retained.
+
+SimplyDial includes additional modifications, features, improvements, and customizations.
 
 ---
 
