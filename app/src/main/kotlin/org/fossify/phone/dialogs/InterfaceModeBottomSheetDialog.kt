@@ -4,7 +4,6 @@ import android.content.Intent
 import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.ViewGroup
-import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.FragmentManager
 import org.fossify.commons.extensions.getProperPrimaryColor
 import org.fossify.commons.extensions.getProperTextColor
@@ -18,15 +17,18 @@ import org.fossify.phone.databinding.DialogInterfaceModeSelectionBinding
 import org.fossify.phone.extensions.config
 import org.fossify.phone.helpers.INTERFACE_MODE_MODERN
 import org.fossify.phone.helpers.INTERFACE_MODE_SIMPLE
-import kotlin.system.exitProcess
 
 class InterfaceModeBottomSheetDialog : BaseBottomSheetDialogFragment() {
     private lateinit var binding: DialogInterfaceModeSelectionBinding
+    private var selectedMode = INTERFACE_MODE_MODERN
+    private var originalMode = INTERFACE_MODE_MODERN
     var onModeSelected: ((Int) -> Unit)? = null
 
     override fun setupContentView(parent: ViewGroup) {
         binding = DialogInterfaceModeSelectionBinding.inflate(layoutInflater, parent, false)
         parent.addView(binding.root)
+        originalMode = requireActivity().config.interfaceMode
+        selectedMode = originalMode
         setupInterfaceOptions()
     }
 
@@ -54,51 +56,56 @@ class InterfaceModeBottomSheetDialog : BaseBottomSheetDialogFragment() {
     }
 
     private fun setupInterfaceOptions() {
-        val currentMode = requireActivity().config.interfaceMode
+        updateCardStates()
 
         binding.apply {
-            radioModeSimple.isChecked = currentMode == INTERFACE_MODE_SIMPLE
-            radioModeModern.isChecked = currentMode == INTERFACE_MODE_MODERN
-
             optionModeSimple.setOnClickListener {
-                if (currentMode != INTERFACE_MODE_SIMPLE) {
-                    radioModeSimple.isChecked = true
-                    radioModeModern.isChecked = false
-                    confirmModeSwitch(INTERFACE_MODE_SIMPLE, getString(R.string.interface_mode_simple_title))
-                } else {
-                    dismissAllowingStateLoss()
-                }
+                selectedMode = INTERFACE_MODE_SIMPLE
+                updateCardStates()
             }
 
             optionModeModern.setOnClickListener {
-                if (currentMode != INTERFACE_MODE_MODERN) {
-                    radioModeModern.isChecked = true
-                    radioModeSimple.isChecked = false
-                    confirmModeSwitch(INTERFACE_MODE_MODERN, getString(R.string.interface_mode_modern_title))
-                } else {
+                selectedMode = INTERFACE_MODE_MODERN
+                updateCardStates()
+            }
+
+            btnApplyMode.setOnClickListener {
+                if (selectedMode == originalMode) {
                     dismissAllowingStateLoss()
+                } else {
+                    applyModeAndRestart(selectedMode)
                 }
             }
         }
     }
 
-    private fun confirmModeSwitch(targetMode: Int, targetModeTitle: String) {
-        val activity = requireActivity()
+    private fun updateCardStates() {
+        binding.apply {
+            if (selectedMode == INTERFACE_MODE_SIMPLE) {
+                optionModeSimple.setBackgroundResource(R.drawable.mode_card_selected_bg)
+                radioModeSimple.isChecked = true
+                optionModeModern.setBackgroundResource(R.drawable.mode_card_unselected_bg)
+                radioModeModern.isChecked = false
+            } else {
+                optionModeModern.setBackgroundResource(R.drawable.mode_card_selected_bg)
+                radioModeModern.isChecked = true
+                optionModeSimple.setBackgroundResource(R.drawable.mode_card_unselected_bg)
+                radioModeSimple.isChecked = false
+            }
 
-        AlertDialog.Builder(activity)
-            .setTitle(R.string.restart_app_to_apply_mode_title)
-            .setMessage(getString(R.string.restart_app_to_apply_mode_msg, targetModeTitle))
-            .setPositiveButton(R.string.restart_now) { _, _ ->
-                applyModeAndRestart(targetMode)
+            if (selectedMode != originalMode) {
+                val modeTitle = if (selectedMode == INTERFACE_MODE_SIMPLE) {
+                    getString(R.string.interface_mode_simple_title)
+                } else {
+                    getString(R.string.interface_mode_modern_title)
+                }
+                btnApplyMode.text = "Apply $modeTitle & Restart"
+                btnApplyMode.alpha = 1.0f
+            } else {
+                btnApplyMode.text = "Current Mode Active (Close)"
+                btnApplyMode.alpha = 0.85f
             }
-            .setNegativeButton(R.string.cancel) { _, _ ->
-                // Revert visual radio selection
-                val currentMode = activity.config.interfaceMode
-                binding.radioModeSimple.isChecked = currentMode == INTERFACE_MODE_SIMPLE
-                binding.radioModeModern.isChecked = currentMode == INTERFACE_MODE_MODERN
-            }
-            .setCancelable(false)
-            .show()
+        }
     }
 
     private fun applyModeAndRestart(newMode: Int) {
@@ -132,9 +139,8 @@ class InterfaceModeBottomSheetDialog : BaseBottomSheetDialogFragment() {
         val intent = Intent(activity, MainActivity::class.java).apply {
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
         }
-        activity.finishAffinity()
         activity.startActivity(intent)
-        exitProcess(0)
+        activity.finishAffinity()
     }
 
     companion object {
@@ -151,4 +157,3 @@ class InterfaceModeBottomSheetDialog : BaseBottomSheetDialogFragment() {
         }
     }
 }
-

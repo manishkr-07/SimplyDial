@@ -64,6 +64,7 @@ class MainActivity : SimpleActivity() {
     private val searchHandler = Handler(Looper.getMainLooper())
     private var searchRunnable: Runnable? = null
     private var storedShowTabs = 0
+    private var storedInterfaceMode = 0
     private var storedFontSize = 0
     private var storedStartNameWithSurname = false
     var cachedContacts = ArrayList<Contact>()
@@ -152,6 +153,12 @@ class MainActivity : SimpleActivity() {
             return
         }
 
+        if (storedInterfaceMode != config.interfaceMode) {
+            storedInterfaceMode = config.interfaceMode
+            recreate()
+            return
+        }
+
         updateMenuColors()
         val properPrimaryColor = getProperPrimaryColor()
         val dialpadIcon = resources.getColoredDrawableWithColor(R.drawable.ic_dialpad_vector, properPrimaryColor.getContrastColor())
@@ -198,6 +205,7 @@ class MainActivity : SimpleActivity() {
     override fun onPause() {
         super.onPause()
         storedShowTabs = config.showTabs
+        storedInterfaceMode = config.interfaceMode
         storedStartNameWithSurname = config.startNameWithSurname
         config.lastUsedViewPagerPage = binding.viewPager.currentItem
     }
@@ -501,6 +509,7 @@ onSearchTextChangedListener = { text ->
 
         binding.mainTabsHolder.beGoneIf(binding.mainTabsHolder.tabCount == 1)
         storedShowTabs = config.showTabs
+        storedInterfaceMode = config.interfaceMode
         storedStartNameWithSurname = config.startNameWithSurname
     }
 
