@@ -6,7 +6,6 @@ import java.util.Properties as JavaUtilProperties
 
 plugins {
     alias(libs.plugins.android)
-    alias(libs.plugins.kotlinAndroid)
     alias(libs.plugins.kotlinSerialization)
     alias(libs.plugins.detekt)
 }
@@ -33,7 +32,7 @@ android {
         targetSdk = project.libs.versions.app.build.targetSDK.get().toInt()
         versionName = project.property("VERSION_NAME").toString()
         versionCode = project.property("VERSION_CODE").toString().toInt()
-        setProperty("archivesBaseName", "phone-$versionCode")
+        base.archivesName.set("phone-$versionCode")
         // Load Gemini API key from gemini.properties at project root or environment variable (not committed)
         val geminiPropsFile: File = rootProject.file("gemini.properties")
         val geminiKey = if (geminiPropsFile.exists()) {

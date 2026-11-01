@@ -394,7 +394,7 @@ class ContactsAdapter(
                 val marginInDp = 8
                 val marginInPx = (marginInDp * resources.displayMetrics.density).toInt()
                 
-                val topMargin = if (holder.bindingAdapterPosition == 0) {
+                val topMargin = if (holder.adapterPosition == 0) {
                     marginInPx
                 } else {
                     marginInPx / 2
@@ -744,7 +744,7 @@ class ContactsAdapter(
         } else {
             expandedContacts.add(contactId)
         }
-        notifyItemChanged(holder.bindingAdapterPosition)
+        notifyItemChanged(holder.adapterPosition)
     }
     
     private fun sendSMSToContact(contact: Contact) {

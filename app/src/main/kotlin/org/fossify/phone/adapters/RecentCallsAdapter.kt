@@ -452,7 +452,7 @@ class RecentCallsAdapter(
         item = call,
         allowSingleClick = refreshItemsListener != null && !call.isUnknownNumber,
         allowLongClick = refreshItemsListener != null && !call.isUnknownNumber
-    ) { _, _ ->
+    ) { _, layoutPosition ->
         binding.apply {
             root.setupViewBackground(activity)
 
@@ -462,7 +462,7 @@ class RecentCallsAdapter(
                 val marginInDp = 8
                 val marginInPx = (marginInDp * resources.displayMetrics.density).toInt()
                 
-                val position = absoluteAdapterPosition
+                val position = layoutPosition
                 val topMargin = if (position == 0 || (position == 1 && currentList.getOrNull(0) is CallLogItem.Date)) {
                     marginInPx
                 } else {
