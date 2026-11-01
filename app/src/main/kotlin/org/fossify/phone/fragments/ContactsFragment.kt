@@ -10,6 +10,7 @@ import org.fossify.commons.helpers.ContactsHelper
 import org.fossify.commons.helpers.MyContactsContentProvider
 import org.fossify.commons.helpers.PERMISSION_READ_CONTACTS
 import org.fossify.commons.helpers.SMT_PRIVATE
+import org.fossify.commons.helpers.ensureBackgroundThread
 import org.fossify.commons.helpers.getProperText
 import org.fossify.commons.models.contacts.Contact
 import org.fossify.phone.R
@@ -103,32 +104,37 @@ override fun setupFragment() {
         // Start ultra-fast lightweight load for instant UI
         loadLightContactsAsync()
 
-        val privateCursor = context?.getMyContactsCursor(favoritesOnly = false, withPhoneNumbersOnly = true)
-        ContactsHelper(context).getContacts(showOnlyContactsWithNumbers = true) { contacts ->
-            allContacts = contacts
+        ensureBackgroundThread {
+            val privateCursor = context?.getMyContactsCursor(favoritesOnly = false, withPhoneNumbersOnly = true)
+            ContactsHelper(context).getContacts(showOnlyContactsWithNumbers = true) { contacts ->
+                ensureBackgroundThread {
+                    allContacts = contacts
 
-            if (SMT_PRIVATE !in context.baseConfig.ignoredContactSources) {
-                val privateContacts = MyContactsContentProvider.getContacts(context, privateCursor)
-                if (privateContacts.isNotEmpty()) {
-                    allContacts.addAll(privateContacts)
-                    allContacts.sort()
+                    if (SMT_PRIVATE !in context.baseConfig.ignoredContactSources) {
+                        val privateContacts = MyContactsContentProvider.getContacts(context, privateCursor)
+                        if (privateContacts.isNotEmpty()) {
+                            allContacts.addAll(privateContacts)
+                            allContacts.sort()
+                        }
+                    }
+
+                    val deduplicated = allContacts.deduplicate()
+                    allContacts = deduplicated
+
+                    // Sync with MainActivity cache and update Favorites tab without triggering redundant queries
+                    (activity as? MainActivity)?.let { main ->
+                        main.runOnUiThread {
+                            main.cachedContacts.clear()
+                            main.cachedContacts.addAll(deduplicated)
+                            main.getFavoritesFragment()?.refreshFromCached(deduplicated)
+                        }
+                    }
+
+                    activity?.runOnUiThread {
+                        gotContacts(deduplicated)
+                        callback?.invoke()
+                    }
                 }
-            }
-
-            val deduplicated = allContacts.deduplicate()
-            allContacts = deduplicated
-
-            // Sync with MainActivity cache directly without triggering a redundant query
-            (activity as? MainActivity)?.let { main ->
-                main.runOnUiThread {
-                    main.cachedContacts.clear()
-                    main.cachedContacts.addAll(deduplicated)
-                }
-            }
-
-            activity?.runOnUiThread {
-                gotContacts(deduplicated)
-                callback?.invoke()
             }
         }
     }
@@ -271,7 +277,7 @@ override fun onSearchClosed() {
                     ContactsContract.CommonDataKinds.Phone.NUMBER,
                     ContactsContract.CommonDataKinds.Phone.PHOTO_URI
                 )
-                val sortOrder = "LOWER(${ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME}) ASC"
+                val sortOrder = "${ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME} COLLATE NOCASE ASC"
                 val cursor = try {
                     context.contentResolver.query(uri, projection, null, null, sortOrder)
                 } catch (_: SecurityException) {
@@ -297,8 +303,9 @@ override fun onSearchClosed() {
 
                         lightContacts.add(LightContact(id, name, number, photo))
                         loaded++
-                        // Publish in small batches for smoothness
-                        if (loaded <= 10 || loaded % 25 == 0) {
+
+                        // Ultra-fast first frame: paint immediately on 20 items (first screen), then at 100
+                        if (loaded == 20 || loaded == 100) {
                             val snapshot = lightContacts.toList()
                             activity?.runOnUiThread {
                                 if (binding.fragmentList.adapter !is LightContactsAdapter) {
@@ -307,13 +314,13 @@ override fun onSearchClosed() {
                                 lightAdapter?.submitList(snapshot.map { LightContactItem.Data(it) })
                             }
                         }
-                        if (loaded >= 5000) {
+                        if (loaded >= 3000) {
                             // Cap to avoid huge in-memory lists on low-end devices
                             break
                         }
                     }
                 }
-                // Final publish
+                // Final publish with complete list
                 val snapshot = lightContacts.toList()
                 activity?.runOnUiThread {
                     lightAdapter?.submitList(snapshot.map { LightContactItem.Data(it) })

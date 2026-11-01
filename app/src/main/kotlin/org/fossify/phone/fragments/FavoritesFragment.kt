@@ -18,6 +18,7 @@ import org.fossify.commons.helpers.MyContactsContentProvider
 import org.fossify.commons.helpers.PERMISSION_READ_CONTACTS
 import org.fossify.commons.helpers.SMT_PRIVATE
 import org.fossify.commons.helpers.VIEW_TYPE_GRID
+import org.fossify.commons.helpers.ensureBackgroundThread
 import org.fossify.commons.models.contacts.Contact
 import org.fossify.commons.views.MyGridLayoutManager
 import org.fossify.commons.views.MyLinearLayoutManager
@@ -77,20 +78,24 @@ class FavoritesFragment(context: Context, attributeSet: AttributeSet) : MyViewPa
             return
         }
 
-        ContactsHelper(context).getContacts(showOnlyContactsWithNumbers = true) { contacts ->
-            allContacts = contacts
+        ensureBackgroundThread {
+            val privateCursor = context?.getMyContactsCursor(favoritesOnly = true, withPhoneNumbersOnly = true)
+            ContactsHelper(context).getContacts(showOnlyContactsWithNumbers = true) { contacts ->
+                ensureBackgroundThread {
+                    allContacts = contacts
 
-            if (SMT_PRIVATE !in context.baseConfig.ignoredContactSources) {
-                val privateCursor = context?.getMyContactsCursor(favoritesOnly = true, withPhoneNumbersOnly = true)
-                val privateContacts = MyContactsContentProvider.getContacts(context, privateCursor).map {
-                    it.copy(starred = 1)
-                }
-                if (privateContacts.isNotEmpty()) {
-                    allContacts.addAll(privateContacts)
-                    allContacts.sort()
+                    if (SMT_PRIVATE !in context.baseConfig.ignoredContactSources) {
+                        val privateContacts = MyContactsContentProvider.getContacts(context, privateCursor).map {
+                            it.copy(starred = 1)
+                        }
+                        if (privateContacts.isNotEmpty()) {
+                            allContacts.addAll(privateContacts)
+                            allContacts.sort()
+                        }
+                    }
+                    filterAndDisplayFavorites(allContacts.deduplicate(), callback)
                 }
             }
-            filterAndDisplayFavorites(allContacts.deduplicate(), callback)
         }
     }
 
