@@ -47,7 +47,8 @@ Switch effortlessly between two deeply customized UI experiences in Settings:
 * **⚡ Modern & Advanced Mode (Power User & New Generation)**:
   * **Interactive Call History Filter Chips**: Horizontal pill bar (`[ ✦ All ] [ 🔴 Missed (N) ] [ 📥 Incoming ] [ 📤 Outgoing ]`) with live missed call counters and tactile haptic feedback.
   * **Universal Quick Actions Bottom Sheet**: 1-tap slide-up modal for WhatsApp direct chat (`https://api.whatsapp.com/send?phone=...`), Jitsi Meet HD video calls, SMS messaging, contact sharing, number copying, and grouped call history.
-  * **Smart Clipboard Paste Chip**: Automatically detects copied phone numbers (3+ digits) and presents a 1-tap `[ 📋 Paste ]` chip directly above the keypad.
+  * **Enhanced Adaptive Dialpad UI**: Dynamic Black Diamond AMOLED squircle keys with subtle neon accents and electric cyan sub-letters in Modern Mode, contrasted with oversized 34sp solid high-visibility keys in Simple Mode.
+  * **Hero Call Button & Dynamic Smart Bar**: Prominent centered hero Call button with elevated tactile shadows, flanked by glassmorphic Voice and Video buttons, with contextual inline chips for clipboard pasting and `+ Add to Contacts`.
   * **Interactive Swipe-to-Call & Swipe-to-SMS**: Swipe Right ➡️ on any call log item to call immediately (green canvas); Swipe Left ⬅️ to compose an SMS (cyan canvas) with haptic feedback.
   * **Daily Call Analytics & Talk Time Summary**: Glassmorphic stats pill displaying today's total call volume, cumulative talk time, and missed calls at a glance.
   * **Top Frequent Contacts Carousel**: Horizontal circular avatar carousel with glowing gradient rings for 1-tap speed dialing.

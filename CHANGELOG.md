@@ -17,7 +17,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Tactile Touch Micro-Interactions**: Added smooth scale feedback (`0.98f` / `0.92f` on down, spring back to `1.0f` on release) to contact cards, call cards, frequent carousel items, and dialpad buttons in Modern & Advanced Mode.
 - **Interactive Call History Filter Chips**: Real-time filtering by All, Missed (with live count badges), Incoming, and Outgoing calls with tactile haptics.
 - **Universal Quick Actions Bottom Sheet (`QuickActionsHelper`)**: Modern slide-up sheet on contacts and recents with 1-tap WhatsApp chat, Jitsi Meet video, SMS, number copying, contact sharing, and call history.
-- **Smart Clipboard Detection**: Live phone number detection in clipboard with a 1-tap paste chip on the dialpad.
+- **Enhanced Adaptive Dialpad UI**: Redesigned dialpad with dual aesthetic modes: Black Diamond AMOLED keys with electric cyan sub-letters (`#00E5FF`) and neon border strokes in Modern Mode, vs. high-contrast solid keys (`34sp`) in Simple Mode.
+- **Hero Call Button & Balanced Action Bar**: Prominent centered 68–74dp hero Call button flanked by sleek circular glass Voice Dial and Video Call buttons (auto-simplified in Senior Mode).
+- **Dynamic Smart Dialpad Bar**: Contextual floating chips above the keypad for 1-tap clipboard number paste and inline `+ Add to Contacts` for unsaved numbers.
+- **1-Tap Direct Interface Mode Switcher**: Added Interface Mode dialog directly to the main 3-dots toolbar menu with rich visual feature checklists and seamless crash-free switching.
 - **Daily Call Analytics**: Glassmorphic summary pill on recents showing today's call count, cumulative talk duration, and missed call count.
 - **Top Frequent Contacts Carousel**: Dynamic circular avatar carousel for quick 1-tap access to frequent callers.
 - **Post-Call Notes & Reminders**: Quick memo system (`Config.getContactNote` / `setContactNote`) with visual sticky badges on call history items.
