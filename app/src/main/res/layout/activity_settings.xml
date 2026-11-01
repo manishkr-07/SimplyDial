@@ -4,13 +4,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/settings_coordinator"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/background_color">
 
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/settings_toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="?attr/colorPrimary"
+        android:elevation="4dp"
         app:menu="@menu/menu_settings"
         app:title="@string/settings"
         app:titleTextAppearance="@style/AppTheme.ActionBar.TitleTextStyle" />
@@ -18,618 +20,1657 @@
     <androidx.core.widget.NestedScrollView
         android:id="@+id/settings_nested_scrollview"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_marginTop="?attr/actionBarSize"
+        android:clipToPadding="false"
         android:fillViewport="true"
+        android:overScrollMode="never"
+        android:paddingBottom="48dp"
         android:scrollbars="none">
 
         <LinearLayout
             android:id="@+id/settings_holder"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:paddingHorizontal="16dp"
+            android:paddingTop="12dp">
 
+            <!-- Premium Hero Banner -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:background="@drawable/settings_header_banner_bg"
+                android:elevation="3dp"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:contentDescription="@string/app_launcher_name"
+                        android:src="@mipmap/ic_launcher" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/app_launcher_name"
+                            android:textColor="@color/text_primary"
+                            android:textSize="20sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:background="@drawable/settings_chip_bg"
+                            android:paddingHorizontal="8dp"
+                            android:paddingVertical="2dp"
+                            android:text="v1.7.0 • EaseUI Suite"
+                            android:textColor="@color/primary_color"
+                            android:textSize="11sp"
+                            android:textStyle="bold" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:lineSpacingExtra="2dp"
+                    android:text="Smart, private, and accessible telephony with EaseUI, Black Diamond AMOLED, HD Recording &amp; Gemini 3.8 Flash."
+                    android:textColor="@color/text_secondary"
+                    android:textSize="13sp" />
+
+            </LinearLayout>
+
+            <!-- SECTION 1: GENERAL & APPEARANCE -->
             <TextView
                 android:id="@+id/settings_general_settings_label"
-                style="@style/SettingsSectionLabelStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/general_settings" />
+                android:layout_marginStart="4dp"
+                android:layout_marginBottom="8dp"
+                android:text="@string/general_settings"
+                android:textAllCaps="true"
+                android:textColor="@color/primary_color"
+                android:textSize="12sp"
+                android:textStyle="bold" />
 
-            <RelativeLayout
-                android:id="@+id/settings_use_english_holder"
-                style="@style/SettingsHolderSwitchStyle"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:background="@drawable/settings_card_bg"
+                android:elevation="2dp"
+                android:orientation="vertical">
 
-                <org.fossify.commons.views.MyMaterialSwitch
-                    android:id="@+id/settings_use_english"
-                    style="@style/SettingsSwitchStyle"
+                <!-- Dark Theme (Black Diamond AMOLED) -->
+                <RelativeLayout
+                    android:id="@+id/settings_dark_theme_holder"
+                    style="@style/SettingsHolderSwitchStyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/use_english_language" />
+                    android:background="?attr/selectableItemBackground"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="12dp">
 
-            </RelativeLayout>
+                    <ImageView
+                        android:id="@+id/icon_dark_theme"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_alignParentStart="true"
+                        android:layout_centerVertical="true"
+                        android:background="@drawable/settings_icon_pill"
+                        android:contentDescription="@null"
+                        android:padding="6dp"
+                        android:src="@drawable/ic_palette_vector"
+                        app:tint="@color/primary_color" />
 
-            <RelativeLayout
-                android:id="@+id/settings_language_holder"
-                style="@style/SettingsHolderTextViewStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                    <org.fossify.commons.views.MyMaterialSwitch
+                        android:id="@+id/settings_dark_theme"
+                        style="@style/SettingsSwitchStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="14dp"
+                        android:layout_toEndOf="@id/icon_dark_theme"
+                        android:text="@string/dark_theme"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
 
-                <org.fossify.commons.views.MyTextView
-                    android:id="@+id/settings_language_label"
-                    style="@style/SettingsTextLabelStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/language" />
+                </RelativeLayout>
 
-                <org.fossify.commons.views.MyTextView
-                    android:id="@+id/settings_language"
-                    style="@style/SettingsTextValueStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/settings_language_label"
-                    tools:text="English" />
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginStart="62dp"
+                    android:layout_marginEnd="16dp"
+                    android:background="@color/divider_color" />
 
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:id="@+id/settings_app_language_holder"
-                style="@style/SettingsHolderTextViewStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <org.fossify.commons.views.MyTextView
-                    android:id="@+id/settings_app_language_label"
-                    style="@style/SettingsTextLabelStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/app_language_preference" />
-
-                <org.fossify.commons.views.MyTextView
-                    android:id="@+id/settings_app_language_value"
-                    style="@style/SettingsTextValueStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/settings_app_language_label"
-                    tools:text="English" />
-
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:id="@+id/settings_voice_dial_language_holder"
-                style="@style/SettingsHolderTextViewStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <org.fossify.commons.views.MyTextView
-                    android:id="@+id/settings_voice_dial_language_label"
-                    style="@style/SettingsTextLabelStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/voice_dial_language" />
-
-                <org.fossify.commons.views.MyTextView
-                    android:id="@+id/settings_voice_dial_language_value"
-                    style="@style/SettingsTextValueStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/settings_voice_dial_language_label"
-                    tools:text="English" />
-
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:id="@+id/settings_manage_blocked_numbers_holder"
-                style="@style/SettingsHolderTextViewOneLinerStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <org.fossify.commons.views.MyTextView
-                    android:id="@+id/settings_manage_blocked_numbers_label"
-                    style="@style/SettingsTextLabelStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/manage_blocked_numbers" />
-
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:id="@+id/settings_change_date_time_format_holder"
-                style="@style/SettingsHolderTextViewOneLinerStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <org.fossify.commons.views.MyTextView
-                    android:id="@+id/settings_change_date_time_format_label"
-                    style="@style/SettingsTextLabelStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/change_date_and_time_format" />
-
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:id="@+id/settings_font_size_holder"
-                style="@style/SettingsHolderTextViewStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <org.fossify.commons.views.MyTextView
-                    android:id="@+id/settings_font_size_label"
-                    style="@style/SettingsTextLabelStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/font_size" />
-
-                <org.fossify.commons.views.MyTextView
-                    android:id="@+id/settings_font_size"
-                    style="@style/SettingsTextValueStyle"
+                <!-- Font Size -->
+                <RelativeLayout
+                    android:id="@+id/settings_font_size_holder"
+                    style="@style/SettingsHolderTextViewStyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/settings_font_size_label"
-                    tools:text="@string/medium" />
+                    android:background="?attr/selectableItemBackground"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="12dp">
 
-            </RelativeLayout>
+                    <ImageView
+                        android:id="@+id/icon_font_size"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_alignParentStart="true"
+                        android:layout_centerVertical="true"
+                        android:background="@drawable/settings_icon_pill"
+                        android:contentDescription="@null"
+                        android:padding="6dp"
+                        android:src="@drawable/ic_format_size_vector"
+                        app:tint="@color/primary_color" />
 
-            <RelativeLayout
-                android:id="@+id/settings_dark_theme_holder"
-                style="@style/SettingsHolderSwitchStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="14dp"
+                        android:layout_toStartOf="@+id/chevron_font_size"
+                        android:layout_toEndOf="@id/icon_font_size"
+                        android:orientation="vertical">
 
-                <org.fossify.commons.views.MyMaterialSwitch
-                    android:id="@+id/settings_dark_theme"
-                    style="@style/SettingsSwitchStyle"
+                        <org.fossify.commons.views.MyTextView
+                            android:id="@+id/settings_font_size_label"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/font_size"
+                            android:textColor="@color/text_primary"
+                            android:textSize="15sp"
+                            android:textStyle="bold" />
+
+                        <org.fossify.commons.views.MyTextView
+                            android:id="@+id/settings_font_size"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:textColor="@color/text_secondary"
+                            android:textSize="13sp"
+                            tools:text="@string/medium" />
+
+                    </LinearLayout>
+
+                    <ImageView
+                        android:id="@+id/chevron_font_size"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:alpha="0.4"
+                        android:contentDescription="@null"
+                        android:src="@drawable/ic_chevron_right_vector"
+                        app:tint="@color/text_primary" />
+
+                </RelativeLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginStart="62dp"
+                    android:layout_marginEnd="16dp"
+                    android:background="@color/divider_color" />
+
+                <!-- App Language Preference -->
+                <RelativeLayout
+                    android:id="@+id/settings_app_language_holder"
+                    style="@style/SettingsHolderTextViewStyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/dark_theme" />
+                    android:background="?attr/selectableItemBackground"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="12dp">
 
-            </RelativeLayout>
+                    <ImageView
+                        android:id="@+id/icon_app_lang"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_alignParentStart="true"
+                        android:layout_centerVertical="true"
+                        android:background="@drawable/settings_icon_pill"
+                        android:contentDescription="@null"
+                        android:padding="6dp"
+                        android:src="@drawable/ic_globe_vector"
+                        app:tint="@color/primary_color" />
 
-            <RelativeLayout
-                android:id="@+id/settings_start_name_with_surname_holder"
-                style="@style/SettingsHolderSwitchStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="14dp"
+                        android:layout_toStartOf="@+id/chevron_app_lang"
+                        android:layout_toEndOf="@id/icon_app_lang"
+                        android:orientation="vertical">
 
-                <org.fossify.commons.views.MyMaterialSwitch
-                    android:id="@+id/settings_start_name_with_surname"
-                    style="@style/SettingsSwitchStyle"
+                        <org.fossify.commons.views.MyTextView
+                            android:id="@+id/settings_app_language_label"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/app_language_preference"
+                            android:textColor="@color/text_primary"
+                            android:textSize="15sp"
+                            android:textStyle="bold" />
+
+                        <org.fossify.commons.views.MyTextView
+                            android:id="@+id/settings_app_language_value"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:textColor="@color/text_secondary"
+                            android:textSize="13sp"
+                            tools:text="English" />
+
+                    </LinearLayout>
+
+                    <ImageView
+                        android:id="@+id/chevron_app_lang"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:alpha="0.4"
+                        android:contentDescription="@null"
+                        android:src="@drawable/ic_chevron_right_vector"
+                        app:tint="@color/text_primary" />
+
+                </RelativeLayout>
+
+                <!-- System Language (Android 13+) -->
+                <RelativeLayout
+                    android:id="@+id/settings_language_holder"
+                    style="@style/SettingsHolderTextViewStyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/start_name_with_surname" />
+                    android:background="?attr/selectableItemBackground"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="12dp">
 
-            </RelativeLayout>
+                    <ImageView
+                        android:id="@+id/icon_sys_lang"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_alignParentStart="true"
+                        android:layout_centerVertical="true"
+                        android:background="@drawable/settings_icon_pill"
+                        android:contentDescription="@null"
+                        android:padding="6dp"
+                        android:src="@drawable/ic_globe_vector"
+                        app:tint="@color/primary_color" />
 
-            <RelativeLayout
-                android:id="@+id/settings_format_phone_numbers_holder"
-                style="@style/SettingsHolderSwitchStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="14dp"
+                        android:layout_toStartOf="@+id/chevron_sys_lang"
+                        android:layout_toEndOf="@id/icon_sys_lang"
+                        android:orientation="vertical">
 
-                <org.fossify.commons.views.MyMaterialSwitch
-                    android:id="@+id/settings_format_phone_numbers"
-                    style="@style/SettingsSwitchStyle"
+                        <org.fossify.commons.views.MyTextView
+                            android:id="@+id/settings_language_label"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/language"
+                            android:textColor="@color/text_primary"
+                            android:textSize="15sp"
+                            android:textStyle="bold" />
+
+                        <org.fossify.commons.views.MyTextView
+                            android:id="@+id/settings_language"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:textColor="@color/text_secondary"
+                            android:textSize="13sp"
+                            tools:text="English" />
+
+                    </LinearLayout>
+
+                    <ImageView
+                        android:id="@+id/chevron_sys_lang"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:alpha="0.4"
+                        android:contentDescription="@null"
+                        android:src="@drawable/ic_chevron_right_vector"
+                        app:tint="@color/text_primary" />
+
+                </RelativeLayout>
+
+                <!-- Use English toggle (pre-Android 13) -->
+                <RelativeLayout
+                    android:id="@+id/settings_use_english_holder"
+                    style="@style/SettingsHolderSwitchStyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/format_phone_numbers" />
+                    android:background="?attr/selectableItemBackground"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="12dp">
 
-            </RelativeLayout>
+                    <org.fossify.commons.views.MyMaterialSwitch
+                        android:id="@+id/settings_use_english"
+                        style="@style/SettingsSwitchStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/use_english_language"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
 
-            <RelativeLayout
-                android:id="@+id/settings_enable_profile_picture_click_holder"
-                style="@style/SettingsHolderSwitchStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                </RelativeLayout>
 
-                <org.fossify.commons.views.MyMaterialSwitch
-                    android:id="@+id/settings_enable_profile_picture_click"
-                    style="@style/SettingsSwitchStyle"
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginStart="62dp"
+                    android:layout_marginEnd="16dp"
+                    android:background="@color/divider_color" />
+
+                <!-- Date & Time Format -->
+                <RelativeLayout
+                    android:id="@+id/settings_change_date_time_format_holder"
+                    style="@style/SettingsHolderTextViewOneLinerStyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/enable_profile_picture_click" />
+                    android:background="?attr/selectableItemBackground"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="14dp">
 
-            </RelativeLayout>
+                    <ImageView
+                        android:id="@+id/icon_date_time"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_alignParentStart="true"
+                        android:layout_centerVertical="true"
+                        android:background="@drawable/settings_icon_pill"
+                        android:contentDescription="@null"
+                        android:padding="6dp"
+                        android:src="@drawable/ic_today_vector"
+                        app:tint="@color/primary_color" />
 
-            <include
+                    <org.fossify.commons.views.MyTextView
+                        android:id="@+id/settings_change_date_time_format_label"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="14dp"
+                        android:layout_toStartOf="@+id/chevron_date_time"
+                        android:layout_toEndOf="@id/icon_date_time"
+                        android:text="@string/change_date_and_time_format"
+                        android:textColor="@color/text_primary"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
+
+                    <ImageView
+                        android:id="@+id/chevron_date_time"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:alpha="0.4"
+                        android:contentDescription="@null"
+                        android:src="@drawable/ic_chevron_right_vector"
+                        app:tint="@color/text_primary" />
+
+                </RelativeLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginStart="62dp"
+                    android:layout_marginEnd="16dp"
+                    android:background="@color/divider_color" />
+
+                <!-- Start name with surname -->
+                <RelativeLayout
+                    android:id="@+id/settings_start_name_with_surname_holder"
+                    style="@style/SettingsHolderSwitchStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="?attr/selectableItemBackground"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="12dp">
+
+                    <org.fossify.commons.views.MyMaterialSwitch
+                        android:id="@+id/settings_start_name_with_surname"
+                        style="@style/SettingsSwitchStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/start_name_with_surname"
+                        android:textSize="15sp" />
+
+                </RelativeLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:background="@color/divider_color" />
+
+                <!-- Format phone numbers -->
+                <RelativeLayout
+                    android:id="@+id/settings_format_phone_numbers_holder"
+                    style="@style/SettingsHolderSwitchStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="?attr/selectableItemBackground"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="12dp">
+
+                    <org.fossify.commons.views.MyMaterialSwitch
+                        android:id="@+id/settings_format_phone_numbers"
+                        style="@style/SettingsSwitchStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/format_phone_numbers"
+                        android:textSize="15sp" />
+
+                </RelativeLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:background="@color/divider_color" />
+
+                <!-- Enable profile picture click -->
+                <RelativeLayout
+                    android:id="@+id/settings_enable_profile_picture_click_holder"
+                    style="@style/SettingsHolderSwitchStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="?attr/selectableItemBackground"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="12dp">
+
+                    <org.fossify.commons.views.MyMaterialSwitch
+                        android:id="@+id/settings_enable_profile_picture_click"
+                        style="@style/SettingsSwitchStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/enable_profile_picture_click"
+                        android:textSize="15sp" />
+
+                </RelativeLayout>
+
+            </LinearLayout>
+
+            <View
                 android:id="@+id/settings_general_settings_divider"
-                layout="@layout/divider" />
+                android:layout_width="match_parent"
+                android:layout_height="4dp"
+                android:visibility="gone" />
 
+            <!-- SECTION 2: STARTUP & TABS -->
             <TextView
                 android:id="@+id/settings_startup_label"
-                style="@style/SettingsSectionLabelStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/startup" />
+                android:layout_marginStart="4dp"
+                android:layout_marginBottom="8dp"
+                android:text="@string/startup"
+                android:textAllCaps="true"
+                android:textColor="@color/primary_color"
+                android:textSize="12sp"
+                android:textStyle="bold" />
 
-            <RelativeLayout
-                android:id="@+id/settings_manage_tabs_holder"
-                style="@style/SettingsHolderTextViewOneLinerStyle"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:background="@drawable/settings_card_bg"
+                android:elevation="2dp"
+                android:orientation="vertical">
 
-                <org.fossify.commons.views.MyTextView
-                    android:id="@+id/settings_manage_tabs"
-                    style="@style/SettingsTextLabelStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/manage_shown_tabs" />
-
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:id="@+id/settings_default_tab_holder"
-                style="@style/SettingsHolderTextViewStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <org.fossify.commons.views.MyTextView
-                    android:id="@+id/settings_default_tab_label"
-                    style="@style/SettingsTextLabelStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/default_tab_to_open" />
-
-                <org.fossify.commons.views.MyTextView
-                    android:id="@+id/settings_default_tab"
-                    style="@style/SettingsTextValueStyle"
+                <!-- Manage shown tabs -->
+                <RelativeLayout
+                    android:id="@+id/settings_manage_tabs_holder"
+                    style="@style/SettingsHolderTextViewOneLinerStyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/settings_default_tab_label"
-                    tools:text="@string/last_used_tab" />
+                    android:background="?attr/selectableItemBackground"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="14dp">
 
-            </RelativeLayout>
+                    <ImageView
+                        android:id="@+id/icon_tabs"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_alignParentStart="true"
+                        android:layout_centerVertical="true"
+                        android:background="@drawable/settings_icon_pill"
+                        android:contentDescription="@null"
+                        android:padding="6dp"
+                        android:src="@drawable/ic_view_carousel_vector"
+                        app:tint="@color/primary_color" />
 
-            <RelativeLayout
-                android:id="@+id/settings_open_dialpad_at_launch_holder"
-                style="@style/SettingsHolderSwitchStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                    <org.fossify.commons.views.MyTextView
+                        android:id="@+id/settings_manage_tabs"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="14dp"
+                        android:layout_toStartOf="@+id/chevron_manage_tabs"
+                        android:layout_toEndOf="@id/icon_tabs"
+                        android:text="@string/manage_shown_tabs"
+                        android:textColor="@color/text_primary"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
 
-                <org.fossify.commons.views.MyMaterialSwitch
-                    android:id="@+id/settings_open_dialpad_at_launch"
-                    style="@style/SettingsSwitchStyle"
+                    <ImageView
+                        android:id="@+id/chevron_manage_tabs"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:alpha="0.4"
+                        android:contentDescription="@null"
+                        android:src="@drawable/ic_chevron_right_vector"
+                        app:tint="@color/text_primary" />
+
+                </RelativeLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginStart="62dp"
+                    android:layout_marginEnd="16dp"
+                    android:background="@color/divider_color" />
+
+                <!-- Default tab to open -->
+                <RelativeLayout
+                    android:id="@+id/settings_default_tab_holder"
+                    style="@style/SettingsHolderTextViewStyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/open_dialpad_by_default" />
+                    android:background="?attr/selectableItemBackground"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="12dp">
 
-            </RelativeLayout>
+                    <ImageView
+                        android:id="@+id/icon_default_tab"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_alignParentStart="true"
+                        android:layout_centerVertical="true"
+                        android:background="@drawable/settings_icon_pill"
+                        android:contentDescription="@null"
+                        android:padding="6dp"
+                        android:src="@drawable/ic_star_vector"
+                        app:tint="@color/primary_color" />
 
-            <include
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="14dp"
+                        android:layout_toStartOf="@+id/chevron_default_tab"
+                        android:layout_toEndOf="@id/icon_default_tab"
+                        android:orientation="vertical">
+
+                        <org.fossify.commons.views.MyTextView
+                            android:id="@+id/settings_default_tab_label"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/default_tab_to_open"
+                            android:textColor="@color/text_primary"
+                            android:textSize="15sp"
+                            android:textStyle="bold" />
+
+                        <org.fossify.commons.views.MyTextView
+                            android:id="@+id/settings_default_tab"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:textColor="@color/text_secondary"
+                            android:textSize="13sp"
+                            tools:text="@string/last_used_tab" />
+
+                    </LinearLayout>
+
+                    <ImageView
+                        android:id="@+id/chevron_default_tab"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:alpha="0.4"
+                        android:contentDescription="@null"
+                        android:src="@drawable/ic_chevron_right_vector"
+                        app:tint="@color/text_primary" />
+
+                </RelativeLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:background="@color/divider_color" />
+
+                <!-- Open dialpad by default -->
+                <RelativeLayout
+                    android:id="@+id/settings_open_dialpad_at_launch_holder"
+                    style="@style/SettingsHolderSwitchStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="?attr/selectableItemBackground"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="12dp">
+
+                    <org.fossify.commons.views.MyMaterialSwitch
+                        android:id="@+id/settings_open_dialpad_at_launch"
+                        style="@style/SettingsSwitchStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/open_dialpad_by_default"
+                        android:textSize="15sp" />
+
+                </RelativeLayout>
+
+            </LinearLayout>
+
+            <View
                 android:id="@+id/settings_startup_divider"
-                layout="@layout/divider" />
+                android:layout_width="match_parent"
+                android:layout_height="4dp"
+                android:visibility="gone" />
 
+            <!-- SECTION 3: CALLING EXPERIENCE -->
             <TextView
                 android:id="@+id/settings_calls_label"
-                style="@style/SettingsSectionLabelStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/calls" />
+                android:layout_marginStart="4dp"
+                android:layout_marginBottom="8dp"
+                android:text="@string/calls"
+                android:textAllCaps="true"
+                android:textColor="@color/primary_color"
+                android:textSize="12sp"
+                android:textStyle="bold" />
 
-            <RelativeLayout
-                android:id="@+id/settings_group_subsequent_calls_holder"
-                style="@style/SettingsHolderSwitchStyle"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:background="@drawable/settings_card_bg"
+                android:elevation="2dp"
+                android:orientation="vertical">
 
-                <org.fossify.commons.views.MyMaterialSwitch
-                    android:id="@+id/settings_group_subsequent_calls"
-                    style="@style/SettingsSwitchStyle"
+                <!-- Call Confirmation Dialog (Shield) -->
+                <RelativeLayout
+                    android:id="@+id/settings_show_call_confirmation_holder"
+                    style="@style/SettingsHolderSwitchStyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/group_subsequent_calls" />
+                    android:background="?attr/selectableItemBackground"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="12dp">
 
-            </RelativeLayout>
+                    <org.fossify.commons.views.MyMaterialSwitch
+                        android:id="@+id/settings_show_call_confirmation"
+                        style="@style/SettingsSwitchStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/show_call_confirmation_dialog"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
 
-            <RelativeLayout
-                android:id="@+id/settings_show_call_confirmation_holder"
-                style="@style/SettingsHolderSwitchStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                </RelativeLayout>
 
-                <org.fossify.commons.views.MyMaterialSwitch
-                    android:id="@+id/settings_show_call_confirmation"
-                    style="@style/SettingsSwitchStyle"
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:background="@color/divider_color" />
+
+                <!-- Disable swipe to answer -->
+                <RelativeLayout
+                    android:id="@+id/settings_disable_swipe_to_answer_holder"
+                    style="@style/SettingsHolderSwitchStyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/show_call_confirmation_dialog" />
+                    android:background="?attr/selectableItemBackground"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="12dp">
 
-            </RelativeLayout>
+                    <org.fossify.commons.views.MyMaterialSwitch
+                        android:id="@+id/settings_disable_swipe_to_answer"
+                        style="@style/SettingsSwitchStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/disable_swipe_to_answer"
+                        android:textSize="15sp" />
 
-            <RelativeLayout
-                android:id="@+id/settings_disable_proximity_sensor_holder"
-                style="@style/SettingsHolderSwitchStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                </RelativeLayout>
 
-                <org.fossify.commons.views.MyMaterialSwitch
-                    android:id="@+id/settings_disable_proximity_sensor"
-                    style="@style/SettingsSwitchStyle"
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:background="@color/divider_color" />
+
+                <!-- Enable messages joystick -->
+                <RelativeLayout
+                    android:id="@+id/settings_enable_messages_joystick_holder"
+                    style="@style/SettingsHolderSwitchStyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/disable_proximity_sensor" />
+                    android:background="?attr/selectableItemBackground"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="12dp">
 
-            </RelativeLayout>
+                    <org.fossify.commons.views.MyMaterialSwitch
+                        android:id="@+id/settings_enable_messages_joystick"
+                        style="@style/SettingsSwitchStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/enable_messages_joystick"
+                        android:textSize="15sp" />
 
-            <RelativeLayout
-                android:id="@+id/settings_disable_swipe_to_answer_holder"
-                style="@style/SettingsHolderSwitchStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                </RelativeLayout>
 
-                <org.fossify.commons.views.MyMaterialSwitch
-                    android:id="@+id/settings_disable_swipe_to_answer"
-                    style="@style/SettingsSwitchStyle"
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:background="@color/divider_color" />
+
+                <!-- Fullscreen incoming calls -->
+                <RelativeLayout
+                    android:id="@+id/settings_always_show_fullscreen_holder"
+                    style="@style/SettingsHolderSwitchStyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/disable_swipe_to_answer" />
+                    android:background="?attr/selectableItemBackground"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="12dp">
 
-            </RelativeLayout>
+                    <org.fossify.commons.views.MyMaterialSwitch
+                        android:id="@+id/settings_always_show_fullscreen"
+                        style="@style/SettingsSwitchStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/show_incoming_calls_full_screen"
+                        android:textSize="15sp" />
 
-            <RelativeLayout
-                android:id="@+id/settings_enable_messages_joystick_holder"
-                style="@style/SettingsHolderSwitchStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                </RelativeLayout>
 
-                <org.fossify.commons.views.MyMaterialSwitch
-                    android:id="@+id/settings_enable_messages_joystick"
-                    style="@style/SettingsSwitchStyle"
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:background="@color/divider_color" />
+
+                <!-- Group subsequent calls -->
+                <RelativeLayout
+                    android:id="@+id/settings_group_subsequent_calls_holder"
+                    style="@style/SettingsHolderSwitchStyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/enable_messages_joystick" />
+                    android:background="?attr/selectableItemBackground"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="12dp">
 
-            </RelativeLayout>
+                    <org.fossify.commons.views.MyMaterialSwitch
+                        android:id="@+id/settings_group_subsequent_calls"
+                        style="@style/SettingsSwitchStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/group_subsequent_calls"
+                        android:textSize="15sp" />
 
-            <RelativeLayout
-                android:id="@+id/settings_always_show_fullscreen_holder"
-                style="@style/SettingsHolderSwitchStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                </RelativeLayout>
 
-                <org.fossify.commons.views.MyMaterialSwitch
-                    android:id="@+id/settings_always_show_fullscreen"
-                    style="@style/SettingsSwitchStyle"
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:background="@color/divider_color" />
+
+                <!-- Manage Blocked Numbers -->
+                <RelativeLayout
+                    android:id="@+id/settings_manage_blocked_numbers_holder"
+                    style="@style/SettingsHolderTextViewOneLinerStyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/show_incoming_calls_full_screen" />
+                    android:background="?attr/selectableItemBackground"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="14dp">
 
-            </RelativeLayout>
-            <include
-                android:id="@+id/settings_dialpad_divider"
-                layout="@layout/divider" />
+                    <ImageView
+                        android:id="@+id/icon_block"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_alignParentStart="true"
+                        android:layout_centerVertical="true"
+                        android:background="@drawable/settings_icon_pill"
+                        android:contentDescription="@null"
+                        android:padding="6dp"
+                        android:src="@drawable/ic_block_vector"
+                        app:tint="@color/primary_color" />
 
+                    <org.fossify.commons.views.MyTextView
+                        android:id="@+id/settings_manage_blocked_numbers_label"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="14dp"
+                        android:layout_toStartOf="@+id/chevron_blocked"
+                        android:layout_toEndOf="@id/icon_block"
+                        android:text="@string/manage_blocked_numbers"
+                        android:textColor="@color/text_primary"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
+
+                    <ImageView
+                        android:id="@+id/chevron_blocked"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:alpha="0.4"
+                        android:contentDescription="@null"
+                        android:src="@drawable/ic_chevron_right_vector"
+                        app:tint="@color/text_primary" />
+
+                </RelativeLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:background="@color/divider_color" />
+
+                <!-- Disable Proximity Sensor -->
+                <RelativeLayout
+                    android:id="@+id/settings_disable_proximity_sensor_holder"
+                    style="@style/SettingsHolderSwitchStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="?attr/selectableItemBackground"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="12dp">
+
+                    <org.fossify.commons.views.MyMaterialSwitch
+                        android:id="@+id/settings_disable_proximity_sensor"
+                        style="@style/SettingsSwitchStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/disable_proximity_sensor"
+                        android:textSize="15sp" />
+
+                </RelativeLayout>
+
+            </LinearLayout>
+
+            <!-- SECTION 4: DIALPAD & VOICE AI -->
             <TextView
                 android:id="@+id/settings_dialpad_section_label"
-                style="@style/SettingsSectionLabelStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/dialpad" />
+                android:layout_marginStart="4dp"
+                android:layout_marginBottom="8dp"
+                android:text="@string/dialpad"
+                android:textAllCaps="true"
+                android:textColor="@color/primary_color"
+                android:textSize="12sp"
+                android:textStyle="bold" />
 
-            <RelativeLayout
-                android:id="@+id/settings_manage_speed_dial_holder"
-                style="@style/SettingsHolderTextViewOneLinerStyle"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:background="@drawable/settings_card_bg"
+                android:elevation="2dp"
+                android:orientation="vertical">
 
-                <org.fossify.commons.views.MyTextView
-                    android:id="@+id/settings_manage_speed_dial_label"
-                    style="@style/SettingsTextLabelStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/manage_speed_dial" />
-
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:id="@+id/settings_hide_dialpad_numbers_holder"
-                style="@style/SettingsHolderSwitchStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <org.fossify.commons.views.MyMaterialSwitch
-                    android:id="@+id/settings_hide_dialpad_numbers"
-                    style="@style/SettingsSwitchStyle"
+                <!-- Voice Dial Language (Gemini 3.8 Flash) -->
+                <RelativeLayout
+                    android:id="@+id/settings_voice_dial_language_holder"
+                    style="@style/SettingsHolderTextViewStyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/hide_dialpad_numbers" />
+                    android:background="?attr/selectableItemBackground"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="12dp">
 
-            </RelativeLayout>
+                    <ImageView
+                        android:id="@+id/icon_voice_dial"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_alignParentStart="true"
+                        android:layout_centerVertical="true"
+                        android:background="@drawable/settings_icon_pill"
+                        android:contentDescription="@null"
+                        android:padding="6dp"
+                        android:src="@drawable/ic_mic_vector"
+                        app:tint="@color/primary_color" />
 
-            <RelativeLayout
-                android:id="@+id/settings_dialpad_vibration_holder"
-                style="@style/SettingsHolderSwitchStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="14dp"
+                        android:layout_toStartOf="@+id/chevron_voice_dial"
+                        android:layout_toEndOf="@id/icon_voice_dial"
+                        android:orientation="vertical">
 
-                <org.fossify.commons.views.MyMaterialSwitch
-                    android:id="@+id/settings_dialpad_vibration"
-                    style="@style/SettingsSwitchStyle"
+                        <org.fossify.commons.views.MyTextView
+                            android:id="@+id/settings_voice_dial_language_label"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/voice_dial_language"
+                            android:textColor="@color/text_primary"
+                            android:textSize="15sp"
+                            android:textStyle="bold" />
+
+                        <org.fossify.commons.views.MyTextView
+                            android:id="@+id/settings_voice_dial_language_value"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:textColor="@color/text_secondary"
+                            android:textSize="13sp"
+                            tools:text="English" />
+
+                    </LinearLayout>
+
+                    <ImageView
+                        android:id="@+id/chevron_voice_dial"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:alpha="0.4"
+                        android:contentDescription="@null"
+                        android:src="@drawable/ic_chevron_right_vector"
+                        app:tint="@color/text_primary" />
+
+                </RelativeLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginStart="62dp"
+                    android:layout_marginEnd="16dp"
+                    android:background="@color/divider_color" />
+
+                <!-- Manage speed dial -->
+                <RelativeLayout
+                    android:id="@+id/settings_manage_speed_dial_holder"
+                    style="@style/SettingsHolderTextViewOneLinerStyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/dialpad_vibrations" />
+                    android:background="?attr/selectableItemBackground"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="14dp">
 
-            </RelativeLayout>
+                    <ImageView
+                        android:id="@+id/icon_speed_dial"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_alignParentStart="true"
+                        android:layout_centerVertical="true"
+                        android:background="@drawable/settings_icon_pill"
+                        android:contentDescription="@null"
+                        android:padding="6dp"
+                        android:src="@drawable/ic_dialpad_vector"
+                        app:tint="@color/primary_color" />
 
-            <RelativeLayout
-                android:id="@+id/settings_dialpad_beeps_holder"
-                style="@style/SettingsHolderSwitchStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                    <org.fossify.commons.views.MyTextView
+                        android:id="@+id/settings_manage_speed_dial_label"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="14dp"
+                        android:layout_toStartOf="@+id/chevron_speed_dial"
+                        android:layout_toEndOf="@id/icon_speed_dial"
+                        android:text="@string/manage_speed_dial"
+                        android:textColor="@color/text_primary"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
 
-                <org.fossify.commons.views.MyMaterialSwitch
-                    android:id="@+id/settings_dialpad_beeps"
-                    style="@style/SettingsSwitchStyle"
+                    <ImageView
+                        android:id="@+id/chevron_speed_dial"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:alpha="0.4"
+                        android:contentDescription="@null"
+                        android:src="@drawable/ic_chevron_right_vector"
+                        app:tint="@color/text_primary" />
+
+                </RelativeLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:background="@color/divider_color" />
+
+                <!-- Hide dialpad numbers -->
+                <RelativeLayout
+                    android:id="@+id/settings_hide_dialpad_numbers_holder"
+                    style="@style/SettingsHolderSwitchStyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/dialpad_beeps" />
+                    android:background="?attr/selectableItemBackground"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="12dp">
 
-            </RelativeLayout>
+                    <org.fossify.commons.views.MyMaterialSwitch
+                        android:id="@+id/settings_hide_dialpad_numbers"
+                        style="@style/SettingsSwitchStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/hide_dialpad_numbers"
+                        android:textSize="15sp" />
 
-            <include
-                android:id="@+id/settings_migration_divider"
-                layout="@layout/divider" />
+                </RelativeLayout>
 
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:background="@color/divider_color" />
+
+                <!-- Dialpad vibrations -->
+                <RelativeLayout
+                    android:id="@+id/settings_dialpad_vibration_holder"
+                    style="@style/SettingsHolderSwitchStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="?attr/selectableItemBackground"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="12dp">
+
+                    <org.fossify.commons.views.MyMaterialSwitch
+                        android:id="@+id/settings_dialpad_vibration"
+                        style="@style/SettingsSwitchStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/dialpad_vibrations"
+                        android:textSize="15sp" />
+
+                </RelativeLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:background="@color/divider_color" />
+
+                <!-- Dialpad beeps -->
+                <RelativeLayout
+                    android:id="@+id/settings_dialpad_beeps_holder"
+                    style="@style/SettingsHolderSwitchStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="?attr/selectableItemBackground"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="12dp">
+
+                    <org.fossify.commons.views.MyMaterialSwitch
+                        android:id="@+id/settings_dialpad_beeps"
+                        style="@style/SettingsSwitchStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/dialpad_beeps"
+                        android:textSize="15sp" />
+
+                </RelativeLayout>
+
+            </LinearLayout>
+
+            <View
+                android:id="@+id/settings_dialpad_divider"
+                android:layout_width="match_parent"
+                android:layout_height="4dp"
+                android:visibility="gone" />
+
+            <!-- SECTION 5: DATA & HISTORY MIGRATION -->
             <TextView
                 android:id="@+id/settings_migration_section_label"
-                style="@style/SettingsSectionLabelStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/migrating" />
+                android:layout_marginStart="4dp"
+                android:layout_marginBottom="8dp"
+                android:text="@string/migrating"
+                android:textAllCaps="true"
+                android:textColor="@color/primary_color"
+                android:textSize="12sp"
+                android:textStyle="bold" />
 
-            <RelativeLayout
-                android:id="@+id/settings_export_calls_holder"
-                style="@style/SettingsHolderTextViewOneLinerStyle"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:background="@drawable/settings_card_bg"
+                android:elevation="2dp"
+                android:orientation="vertical">
 
-                <org.fossify.commons.views.MyTextView
-                    android:id="@+id/settings_export_calls"
-                    style="@style/SettingsTextLabelStyle"
+                <!-- Export calls -->
+                <RelativeLayout
+                    android:id="@+id/settings_export_calls_holder"
+                    style="@style/SettingsHolderTextViewOneLinerStyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/export_call_history" />
+                    android:background="?attr/selectableItemBackground"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="14dp">
 
-            </RelativeLayout>
+                    <ImageView
+                        android:id="@+id/icon_export"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_alignParentStart="true"
+                        android:layout_centerVertical="true"
+                        android:background="@drawable/settings_icon_pill"
+                        android:contentDescription="@null"
+                        android:padding="6dp"
+                        android:src="@drawable/ic_export_vector"
+                        app:tint="@color/primary_color" />
 
-            <RelativeLayout
-                android:id="@+id/settings_import_calls_holder"
-                style="@style/SettingsHolderTextViewOneLinerStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                    <org.fossify.commons.views.MyTextView
+                        android:id="@+id/settings_export_calls"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="14dp"
+                        android:layout_toStartOf="@+id/chevron_export"
+                        android:layout_toEndOf="@id/icon_export"
+                        android:text="@string/export_call_history"
+                        android:textColor="@color/text_primary"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
 
-                <org.fossify.commons.views.MyTextView
-                    android:id="@+id/settings_import_calls"
-                    style="@style/SettingsTextLabelStyle"
+                    <ImageView
+                        android:id="@+id/chevron_export"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:alpha="0.4"
+                        android:contentDescription="@null"
+                        android:src="@drawable/ic_chevron_right_vector"
+                        app:tint="@color/text_primary" />
+
+                </RelativeLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginStart="62dp"
+                    android:layout_marginEnd="16dp"
+                    android:background="@color/divider_color" />
+
+                <!-- Import calls -->
+                <RelativeLayout
+                    android:id="@+id/settings_import_calls_holder"
+                    style="@style/SettingsHolderTextViewOneLinerStyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/import_call_history" />
+                    android:background="?attr/selectableItemBackground"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="14dp">
 
-            </RelativeLayout>
+                    <ImageView
+                        android:id="@+id/icon_import"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_alignParentStart="true"
+                        android:layout_centerVertical="true"
+                        android:background="@drawable/settings_icon_pill"
+                        android:contentDescription="@null"
+                        android:padding="6dp"
+                        android:src="@drawable/ic_import_vector"
+                        app:tint="@color/primary_color" />
 
+                    <org.fossify.commons.views.MyTextView
+                        android:id="@+id/settings_import_calls"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="14dp"
+                        android:layout_toStartOf="@+id/chevron_import"
+                        android:layout_toEndOf="@id/icon_import"
+                        android:text="@string/import_call_history"
+                        android:textColor="@color/text_primary"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
+
+                    <ImageView
+                        android:id="@+id/chevron_import"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:alpha="0.4"
+                        android:contentDescription="@null"
+                        android:src="@drawable/ic_chevron_right_vector"
+                        app:tint="@color/text_primary" />
+
+                </RelativeLayout>
+
+            </LinearLayout>
+
+            <View
+                android:id="@+id/settings_migration_divider"
+                android:layout_width="match_parent"
+                android:layout_height="4dp"
+                android:visibility="gone" />
+
+            <!-- SECTION 6: ABOUT & COMMUNITY -->
             <TextView
                 android:id="@+id/settings_about_section_label"
-                style="@style/SettingsSectionLabelStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/about_simplydial" />
+                android:layout_marginStart="4dp"
+                android:layout_marginBottom="8dp"
+                android:text="@string/about_simplydial"
+                android:textAllCaps="true"
+                android:textColor="@color/primary_color"
+                android:textSize="12sp"
+                android:textStyle="bold" />
 
-            <RelativeLayout
-                android:id="@+id/settings_about_app_holder"
-                style="@style/SettingsHolderTextViewStyle"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="24dp"
+                android:background="@drawable/settings_card_bg"
+                android:elevation="2dp"
+                android:orientation="vertical">
 
-                <org.fossify.commons.views.MyTextView
-                    android:id="@+id/settings_about_app_label"
-                    style="@style/SettingsTextLabelStyle"
-                    android:layout_width="wrap_content"
+                <!-- About SimplyDial -->
+                <RelativeLayout
+                    android:id="@+id/settings_about_app_holder"
+                    style="@style/SettingsHolderTextViewStyle"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/about_app_title" />
+                    android:background="?attr/selectableItemBackground"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="12dp">
 
-                <org.fossify.commons.views.MyTextView
-                    android:id="@+id/settings_about_app_desc"
-                    style="@style/SettingsTextValueStyle"
-                    android:layout_width="wrap_content"
+                    <ImageView
+                        android:id="@+id/icon_about_app"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_alignParentStart="true"
+                        android:layout_centerVertical="true"
+                        android:background="@drawable/settings_icon_pill"
+                        android:contentDescription="@null"
+                        android:padding="6dp"
+                        android:src="@drawable/ic_info_vector"
+                        app:tint="@color/primary_color" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="14dp"
+                        android:layout_toStartOf="@+id/chevron_about_app"
+                        android:layout_toEndOf="@id/icon_about_app"
+                        android:orientation="vertical">
+
+                        <org.fossify.commons.views.MyTextView
+                            android:id="@+id/settings_about_app_label"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/about_app_title"
+                            android:textColor="@color/text_primary"
+                            android:textSize="15sp"
+                            android:textStyle="bold" />
+
+                        <org.fossify.commons.views.MyTextView
+                            android:id="@+id/settings_about_app_desc"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:text="@string/about_app_desc"
+                            android:textColor="@color/text_secondary"
+                            android:textSize="13sp" />
+
+                    </LinearLayout>
+
+                    <ImageView
+                        android:id="@+id/chevron_about_app"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:alpha="0.4"
+                        android:contentDescription="@null"
+                        android:src="@drawable/ic_chevron_right_vector"
+                        app:tint="@color/text_primary" />
+
+                </RelativeLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginStart="62dp"
+                    android:layout_marginEnd="16dp"
+                    android:background="@color/divider_color" />
+
+                <!-- Official Website -->
+                <RelativeLayout
+                    android:id="@+id/settings_website_holder"
+                    style="@style/SettingsHolderTextViewStyle"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/settings_about_app_label"
-                    android:text="@string/about_app_desc" />
+                    android:background="?attr/selectableItemBackground"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="12dp">
 
-            </RelativeLayout>
+                    <ImageView
+                        android:id="@+id/icon_website"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_alignParentStart="true"
+                        android:layout_centerVertical="true"
+                        android:background="@drawable/settings_icon_pill"
+                        android:contentDescription="@null"
+                        android:padding="6dp"
+                        android:src="@drawable/ic_link_vector"
+                        app:tint="@color/primary_color" />
 
-            <RelativeLayout
-                android:id="@+id/settings_website_holder"
-                style="@style/SettingsHolderTextViewStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="14dp"
+                        android:layout_toStartOf="@+id/chevron_website"
+                        android:layout_toEndOf="@id/icon_website"
+                        android:orientation="vertical">
 
-                <org.fossify.commons.views.MyTextView
-                    android:id="@+id/settings_website_label"
-                    style="@style/SettingsTextLabelStyle"
-                    android:layout_width="wrap_content"
+                        <org.fossify.commons.views.MyTextView
+                            android:id="@+id/settings_website_label"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/about_website_label"
+                            android:textColor="@color/text_primary"
+                            android:textSize="15sp"
+                            android:textStyle="bold" />
+
+                        <org.fossify.commons.views.MyTextView
+                            android:id="@+id/settings_website_desc"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:text="@string/about_website_val"
+                            android:textColor="@color/text_secondary"
+                            android:textSize="13sp" />
+
+                    </LinearLayout>
+
+                    <ImageView
+                        android:id="@+id/chevron_website"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:alpha="0.4"
+                        android:contentDescription="@null"
+                        android:src="@drawable/ic_chevron_right_vector"
+                        app:tint="@color/text_primary" />
+
+                </RelativeLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginStart="62dp"
+                    android:layout_marginEnd="16dp"
+                    android:background="@color/divider_color" />
+
+                <!-- GitHub Repository -->
+                <RelativeLayout
+                    android:id="@+id/settings_github_holder"
+                    style="@style/SettingsHolderTextViewStyle"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/about_website_label" />
+                    android:background="?attr/selectableItemBackground"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="12dp">
 
-                <org.fossify.commons.views.MyTextView
-                    android:id="@+id/settings_website_desc"
-                    style="@style/SettingsTextValueStyle"
-                    android:layout_width="wrap_content"
+                    <ImageView
+                        android:id="@+id/icon_github"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_alignParentStart="true"
+                        android:layout_centerVertical="true"
+                        android:background="@drawable/settings_icon_pill"
+                        android:contentDescription="@null"
+                        android:padding="6dp"
+                        android:src="@drawable/ic_github_vector"
+                        app:tint="@color/primary_color" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="14dp"
+                        android:layout_toStartOf="@+id/chevron_github"
+                        android:layout_toEndOf="@id/icon_github"
+                        android:orientation="vertical">
+
+                        <org.fossify.commons.views.MyTextView
+                            android:id="@+id/settings_github_label"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/about_github_label"
+                            android:textColor="@color/text_primary"
+                            android:textSize="15sp"
+                            android:textStyle="bold" />
+
+                        <org.fossify.commons.views.MyTextView
+                            android:id="@+id/settings_github_desc"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:text="@string/about_github_val"
+                            android:textColor="@color/text_secondary"
+                            android:textSize="13sp" />
+
+                    </LinearLayout>
+
+                    <ImageView
+                        android:id="@+id/chevron_github"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:alpha="0.4"
+                        android:contentDescription="@null"
+                        android:src="@drawable/ic_chevron_right_vector"
+                        app:tint="@color/text_primary" />
+
+                </RelativeLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginStart="62dp"
+                    android:layout_marginEnd="16dp"
+                    android:background="@color/divider_color" />
+
+                <!-- Support Email -->
+                <RelativeLayout
+                    android:id="@+id/settings_support_holder"
+                    style="@style/SettingsHolderTextViewStyle"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/settings_website_label"
-                    android:text="@string/about_website_val" />
+                    android:background="?attr/selectableItemBackground"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="12dp">
 
-            </RelativeLayout>
+                    <ImageView
+                        android:id="@+id/icon_support"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_alignParentStart="true"
+                        android:layout_centerVertical="true"
+                        android:background="@drawable/settings_icon_pill"
+                        android:contentDescription="@null"
+                        android:padding="6dp"
+                        android:src="@drawable/ic_support_vector"
+                        app:tint="@color/primary_color" />
 
-            <RelativeLayout
-                android:id="@+id/settings_github_holder"
-                style="@style/SettingsHolderTextViewStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="14dp"
+                        android:layout_toStartOf="@+id/chevron_support"
+                        android:layout_toEndOf="@id/icon_support"
+                        android:orientation="vertical">
 
-                <org.fossify.commons.views.MyTextView
-                    android:id="@+id/settings_github_label"
-                    style="@style/SettingsTextLabelStyle"
-                    android:layout_width="wrap_content"
+                        <org.fossify.commons.views.MyTextView
+                            android:id="@+id/settings_support_label"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/about_support_label"
+                            android:textColor="@color/text_primary"
+                            android:textSize="15sp"
+                            android:textStyle="bold" />
+
+                        <org.fossify.commons.views.MyTextView
+                            android:id="@+id/settings_support_desc"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:text="@string/about_support_val"
+                            android:textColor="@color/text_secondary"
+                            android:textSize="13sp" />
+
+                    </LinearLayout>
+
+                    <ImageView
+                        android:id="@+id/chevron_support"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:alpha="0.4"
+                        android:contentDescription="@null"
+                        android:src="@drawable/ic_chevron_right_vector"
+                        app:tint="@color/text_primary" />
+
+                </RelativeLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginStart="62dp"
+                    android:layout_marginEnd="16dp"
+                    android:background="@color/divider_color" />
+
+                <!-- Community (Discord/Reddit/Telegram) -->
+                <RelativeLayout
+                    android:id="@+id/settings_community_holder"
+                    style="@style/SettingsHolderTextViewStyle"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/about_github_label" />
+                    android:background="?attr/selectableItemBackground"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="12dp">
 
-                <org.fossify.commons.views.MyTextView
-                    android:id="@+id/settings_github_desc"
-                    style="@style/SettingsTextValueStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/settings_github_label"
-                    android:text="@string/about_github_val" />
+                    <ImageView
+                        android:id="@+id/icon_community"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_alignParentStart="true"
+                        android:layout_centerVertical="true"
+                        android:background="@drawable/settings_icon_pill"
+                        android:contentDescription="@null"
+                        android:padding="6dp"
+                        android:src="@drawable/ic_community_vector"
+                        app:tint="@color/primary_color" />
 
-            </RelativeLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="14dp"
+                        android:layout_toStartOf="@+id/chevron_community"
+                        android:layout_toEndOf="@id/icon_community"
+                        android:orientation="vertical">
 
-            <RelativeLayout
-                android:id="@+id/settings_support_holder"
-                style="@style/SettingsHolderTextViewStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                        <org.fossify.commons.views.MyTextView
+                            android:id="@+id/settings_community_label"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/about_community_label"
+                            android:textColor="@color/text_primary"
+                            android:textSize="15sp"
+                            android:textStyle="bold" />
 
-                <org.fossify.commons.views.MyTextView
-                    android:id="@+id/settings_support_label"
-                    style="@style/SettingsTextLabelStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/about_support_label" />
+                        <org.fossify.commons.views.MyTextView
+                            android:id="@+id/settings_community_desc"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:text="@string/about_community_val"
+                            android:textColor="@color/text_secondary"
+                            android:textSize="13sp" />
 
-                <org.fossify.commons.views.MyTextView
-                    android:id="@+id/settings_support_desc"
-                    style="@style/SettingsTextValueStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/settings_support_label"
-                    android:text="@string/about_support_val" />
+                    </LinearLayout>
 
-            </RelativeLayout>
+                    <ImageView
+                        android:id="@+id/chevron_community"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:alpha="0.4"
+                        android:contentDescription="@null"
+                        android:src="@drawable/ic_chevron_right_vector"
+                        app:tint="@color/text_primary" />
 
-            <RelativeLayout
-                android:id="@+id/settings_community_holder"
-                style="@style/SettingsHolderTextViewStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                </RelativeLayout>
 
-                <org.fossify.commons.views.MyTextView
-                    android:id="@+id/settings_community_label"
-                    style="@style/SettingsTextLabelStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/about_community_label" />
+            </LinearLayout>
 
-                <org.fossify.commons.views.MyTextView
-                    android:id="@+id/settings_community_desc"
-                    style="@style/SettingsTextValueStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/settings_community_label"
-                    android:text="@string/about_community_val" />
-
-            </RelativeLayout>
         </LinearLayout>
+
     </androidx.core.widget.NestedScrollView>
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
