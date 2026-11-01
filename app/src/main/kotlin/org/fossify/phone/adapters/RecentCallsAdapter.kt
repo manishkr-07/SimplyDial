@@ -468,7 +468,7 @@ class RecentCallsAdapter(
                 this.isSelected = isSelected
                 styleCallCard(this, isSelected)
                 val isSimple = activity.config.isSimpleMode
-                val isDark = textColor == -1 || activity.getProperBackgroundColor() == Color.BLACK || activity.getProperBackgroundColor().getContrastColor() == Color.WHITE
+                val isDark = org.fossify.phone.helpers.ThemeManager.isDarkThemeEnabled(activity)
                 val density = resources.displayMetrics.density
                 minimumHeight = ((if (isSimple) 82 else 70) * density).toInt()
                 val avatarSize = ((if (isSimple) 54 else 48) * density).toInt()
@@ -640,7 +640,7 @@ class RecentCallsAdapter(
                 itemRecentsType.setImageDrawable(drawable)
 
                 val isSimple = activity.config.isSimpleMode
-                val isDark = textColor == -1 || activity.getProperBackgroundColor() == Color.BLACK || activity.getProperBackgroundColor().getContrastColor() == Color.WHITE
+                val isDark = org.fossify.phone.helpers.ThemeManager.isDarkThemeEnabled(activity)
                 val density = resources.displayMetrics.density
                 itemRecentsCallButton.apply {
                     beVisibleIf(selectedKeys.isEmpty())
@@ -669,24 +669,21 @@ class RecentCallsAdapter(
                 overflowMenuIcon.applyColorFilter(activity.getProperTextColor().adjustAlpha(0.75f))
 
                 overflowMenuIcon.setOnClickListener {
-                    if (!activity.config.isSimpleMode && activity.config.showQuickActionsSheet) {
+                    if (!activity.config.isSimpleMode) {
                         org.fossify.phone.helpers.QuickActionsHelper.showRecentCallQuickActions(activity as SimpleActivity, call) {
                             refreshItemsListener?.refreshItems()
                         }
-                    } else {
-                        showPopupMenu(overflowMenuAnchor, call)
                     }
                 }
 
                 root.setOnLongClickListener {
-                    if (!activity.config.isSimpleMode && activity.config.showQuickActionsSheet) {
+                    if (!activity.config.isSimpleMode) {
                         org.fossify.phone.helpers.QuickActionsHelper.showRecentCallQuickActions(activity as SimpleActivity, call) {
                             refreshItemsListener?.refreshItems()
                         }
                         true
                     } else {
-                        showPopupMenu(overflowMenuAnchor, call)
-                        true
+                        false
                     }
                 }
             }
@@ -713,7 +710,7 @@ class RecentCallsAdapter(
         val density = cardView.resources.displayMetrics.density
         val isSimple = activity.config.isSimpleMode
         val radius = (if (isSimple) 20 else 16) * density
-        val isDark = textColor == -1 || activity.getProperBackgroundColor() == Color.BLACK || activity.getProperBackgroundColor().getContrastColor() == Color.WHITE
+        val isDark = org.fossify.phone.helpers.ThemeManager.isDarkThemeEnabled(activity)
 
         val bgColor = if (isSelected) {
             properPrimaryColor.adjustAlpha(0.18f)

@@ -47,6 +47,7 @@ object QuickActionsHelper {
         val binding = DialogContactQuickActionsBinding.inflate(LayoutInflater.from(activity))
         val dialog = BottomSheetDialog(activity)
         dialog.setContentView(binding.root)
+        dialog.window?.findViewById<android.view.View>(com.google.android.material.R.id.design_bottom_sheet)?.background = null
 
         val matchingContact = (activity as? MainActivity)?.cachedContacts?.find {
             (call.name.isNotEmpty() && it.name == call.name) || it.doesHavePhoneNumber(call.phoneNumber)

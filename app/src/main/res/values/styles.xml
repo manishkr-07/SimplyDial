@@ -40,6 +40,33 @@
         <item name="dividerHorizontal">@color/divider_color</item>
         <item name="dividerVertical">@color/divider_color</item>
         <item name="android:colorBackgroundFloating">@color/dialog_background</item>
+        
+        <!-- Modern 3-Dots Popup Menu Styling -->
+        <item name="actionOverflowMenuStyle">@style/Widget.SimplyDial.PopupMenu.Overflow</item>
+        <item name="popupMenuStyle">@style/Widget.SimplyDial.PopupMenu</item>
+        <item name="actionBarPopupTheme">@style/ThemeOverlay.SimplyDial.PopupMenu</item>
+    </style>
+
+    <style name="ThemeOverlay.SimplyDial.PopupMenu" parent="ThemeOverlay.MaterialComponents.Toolbar.Surface">
+        <item name="android:colorBackground">@color/elevated_surface_color</item>
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:popupBackground">@drawable/popup_menu_modern_bg</item>
+        <item name="actionOverflowMenuStyle">@style/Widget.SimplyDial.PopupMenu.Overflow</item>
+        <item name="popupMenuStyle">@style/Widget.SimplyDial.PopupMenu</item>
+    </style>
+
+    <style name="Widget.SimplyDial.PopupMenu" parent="Widget.MaterialComponents.PopupMenu">
+        <item name="android:popupBackground">@drawable/popup_menu_modern_bg</item>
+        
+        <item name="android:overlapAnchor">false</item>
+        <item name="android:dropDownVerticalOffset">4dp</item>
+    </style>
+
+    <style name="Widget.SimplyDial.PopupMenu.Overflow" parent="Widget.MaterialComponents.PopupMenu.Overflow">
+        <item name="android:popupBackground">@drawable/popup_menu_modern_bg</item>
+        
+        <item name="android:overlapAnchor">false</item>
+        <item name="android:dropDownVerticalOffset">4dp</item>
     </style>
 
     <style name="DialpadButtonStyle">

@@ -231,8 +231,7 @@ class MainActivity : SimpleActivity() {
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-        // Force light mode even if configuration changes to dark mode
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+        ThemeManager.applyTheme(this)
         refreshItems()
     }
 
@@ -269,6 +268,12 @@ class MainActivity : SimpleActivity() {
             getToolbar().inflateMenu(R.menu.menu)
             toggleHideOnScroll(false)
             setupMenu()
+            try {
+                val menu = getToolbar().menu
+                val method = menu.javaClass.getDeclaredMethod("setOptionalIconsVisible", Boolean::class.javaPrimitiveType)
+                method.isAccessible = true
+                method.invoke(menu, true)
+            } catch (_: Exception) {}
 
             onSearchClosedListener = {
                 getAllFragments().forEach {

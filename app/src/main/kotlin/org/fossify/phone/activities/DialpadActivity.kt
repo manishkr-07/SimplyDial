@@ -712,7 +712,7 @@ class DialpadActivity : SimpleActivity() {
         val isSimple = config.isSimpleMode
         val properPrimaryColor = getProperPrimaryColor()
         val properTextColor = getProperTextColor()
-        val isDarkTheme = properTextColor == -1 || getProperBackgroundColor() == Color.BLACK || getProperBackgroundColor().getContrastColor() == Color.WHITE
+        val isDarkTheme = org.fossify.phone.helpers.ThemeManager.isDarkThemeEnabled(this)
         val density = resources.displayMetrics.density
         val keyCornerRadius = (if (isSimple) 18f else 22f) * density
         val strokeWidth = ((if (isSimple) 2 else 1) * density).toInt()
@@ -819,6 +819,7 @@ class DialpadActivity : SimpleActivity() {
 
     private fun styleActionButtons() {
         val isSimple = config.isSimpleMode
+        val isDark = org.fossify.phone.helpers.ThemeManager.isDarkThemeEnabled(this)
         val properPrimaryColor = getProperPrimaryColor()
         val properTextColor = getProperTextColor()
         val contrastColor = properPrimaryColor.getContrastColor()
@@ -851,17 +852,9 @@ class DialpadActivity : SimpleActivity() {
                 dialpadVoiceButton.beVisible()
                 val voiceBg = GradientDrawable().apply {
                     shape = GradientDrawable.OVAL
-                    val bgColor = if (properTextColor == -1 || getProperBackgroundColor() == Color.BLACK) {
-                        Color.parseColor("#1C1D21")
-                    } else {
-                        Color.parseColor("#F1F5F9")
-                    }
+                    val bgColor = if (isDark) Color.parseColor("#1C1D21") else Color.parseColor("#F1F5F9")
                     setColor(bgColor)
-                    val strokeCol = if (properTextColor == -1 || getProperBackgroundColor() == Color.BLACK) {
-                        properPrimaryColor.adjustAlpha(0.35f)
-                    } else {
-                        Color.parseColor("#CBD5E1")
-                    }
+                    val strokeCol = if (isDark) properPrimaryColor.adjustAlpha(0.35f) else Color.parseColor("#CBD5E1")
                     setStroke((1.5f * density).toInt(), strokeCol)
                 }
                 dialpadVoiceButton.background = RippleDrawable(
@@ -881,17 +874,9 @@ class DialpadActivity : SimpleActivity() {
                 dialpadVideoCallButton.beVisible()
                 val videoBg = GradientDrawable().apply {
                     shape = GradientDrawable.OVAL
-                    val bgColor = if (properTextColor == -1 || getProperBackgroundColor() == Color.BLACK) {
-                        Color.parseColor("#1C1D21")
-                    } else {
-                        Color.parseColor("#F1F5F9")
-                    }
+                    val bgColor = if (isDark) Color.parseColor("#1C1D21") else Color.parseColor("#F1F5F9")
                     setColor(bgColor)
-                    val strokeCol = if (properTextColor == -1 || getProperBackgroundColor() == Color.BLACK) {
-                        properPrimaryColor.adjustAlpha(0.35f)
-                    } else {
-                        Color.parseColor("#CBD5E1")
-                    }
+                    val strokeCol = if (isDark) properPrimaryColor.adjustAlpha(0.35f) else Color.parseColor("#CBD5E1")
                     setStroke((1.5f * density).toInt(), strokeCol)
                 }
                 dialpadVideoCallButton.background = RippleDrawable(

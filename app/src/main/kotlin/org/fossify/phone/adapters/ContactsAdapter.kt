@@ -415,7 +415,7 @@ class ContactsAdapter(
             }
 
             val isSimple = activity.config.isSimpleMode
-            val isDark = textColor == -1 || activity.getProperBackgroundColor() == Color.BLACK || activity.getProperBackgroundColor().getContrastColor() == Color.WHITE
+            val isDark = org.fossify.phone.helpers.ThemeManager.isDarkThemeEnabled(activity)
             val density = root.resources.displayMetrics.density
             if (viewType != VIEW_TYPE_GRID) {
                 itemContactFrame.minimumHeight = ((if (isSimple) 82 else 68) * density).toInt()
@@ -578,6 +578,7 @@ class ContactsAdapter(
         val dialog = BottomSheetDialog(activity)
         val sheetBinding = DialogContactQuickActionsBinding.inflate(activity.layoutInflater)
         dialog.setContentView(sheetBinding.root)
+        dialog.window?.findViewById<android.view.View>(com.google.android.material.R.id.design_bottom_sheet)?.background = null
 
         val primaryNumber = contact.getPrimaryNumber() ?: contact.phoneNumbers.firstOrNull()?.normalizedNumber ?: ""
 
@@ -1001,7 +1002,7 @@ class ContactsAdapter(
         val density = cardView.resources.displayMetrics.density
         val isSimple = activity.config.isSimpleMode
         val radius = (if (isSimple) 20 else 16) * density
-        val isDark = textColor == -1 || activity.getProperBackgroundColor() == Color.BLACK || activity.getProperBackgroundColor().getContrastColor() == Color.WHITE
+        val isDark = org.fossify.phone.helpers.ThemeManager.isDarkThemeEnabled(activity)
 
         val bgColor = if (isSelected) {
             properPrimaryColor.adjustAlpha(0.18f)
