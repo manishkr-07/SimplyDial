@@ -120,12 +120,66 @@
         android:textStyle="bold"
         android:visibility="gone" />
 
+    <!-- Today's Call Analytics Pill -->
+    <LinearLayout
+        android:id="@+id/recents_analytics_card"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/filter_scroll_view"
+        android:layout_marginHorizontal="12dp"
+        android:layout_marginBottom="6dp"
+        android:background="@drawable/settings_header_banner_bg"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="14dp"
+        android:paddingVertical="8dp"
+        android:visibility="gone">
+
+        <ImageView
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:layout_marginEnd="8dp"
+            android:src="@drawable/ic_today_vector"
+            app:tint="@color/primary_color" />
+
+        <TextView
+            android:id="@+id/recents_analytics_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textColor="@color/text_primary"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <!-- Top Frequent Contacts Quick-Dial Carousel -->
+    <HorizontalScrollView
+        android:id="@+id/frequent_contacts_scroll_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/recents_analytics_card"
+        android:clipToPadding="false"
+        android:fillViewport="true"
+        android:overScrollMode="never"
+        android:paddingHorizontal="12dp"
+        android:paddingBottom="6dp"
+        android:scrollbars="none"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:id="@+id/frequent_contacts_holder"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal" />
+    </HorizontalScrollView>
+
     <!-- Recents RecyclerView -->
     <org.fossify.commons.views.MyRecyclerView
         android:id="@+id/recents_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/filter_scroll_view"
+        android:layout_below="@+id/frequent_contacts_scroll_view"
         android:clipToPadding="false"
         android:paddingBottom="@dimen/recyclerview_fab_padding"
         android:scrollbars="none"

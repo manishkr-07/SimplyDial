@@ -23,6 +23,13 @@ import org.fossify.phone.extensions.startCallWithConfirmationCheck
 import org.fossify.phone.extensions.startContactDetailsIntent
 import org.fossify.phone.helpers.RecentsHelper
 import org.fossify.phone.helpers.VisibleContactsEnricher
+import org.fossify.phone.extensions.addAnimatedGradientRing
+import org.fossify.phone.extensions.launchSendSMSIntent
+import android.view.Gravity
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.TextView
+import androidx.core.content.ContextCompat
 import org.fossify.phone.interfaces.RefreshItemsListener
 import org.fossify.phone.metrics.Perf
 import org.fossify.phone.models.CallLogItem
@@ -83,6 +90,7 @@ class RecentsFragment(
 
         contactsEnricher = VisibleContactsEnricher(context)
         setupFilterChips()
+        setupSwipeActions()
         setupScrollEnrichment()
         
         // Trigger initial load if this is the default visible tab
@@ -197,8 +205,11 @@ class RecentsFragment(
             } else {
                 binding.filterMissed.text = context.getString(R.string.filter_missed)
             }
+            updateAnalyticsAndFrequentContacts()
         } else {
             binding.filterScrollView.beGone()
+            binding.recentsAnalyticsCard.beGone()
+            binding.frequentContactsScrollView.beGone()
         }
         // Hide progress indicator immediately when we have items to show
         if (recents.isNotEmpty()) {
@@ -679,5 +690,194 @@ class RecentsFragment(
         isFragmentVisible = false
         try { binding.recentsList.adapter = null } catch (_: Exception) {}
         recentsAdapter = null
+    }
+
+    private var swipeHelperAttached = false
+
+    private fun setupSwipeActions() {
+        if (swipeHelperAttached) return
+        val rv = binding.recentsList
+
+        val callback = object : androidx.recyclerview.widget.ItemTouchHelper.SimpleCallback(
+            0,
+            androidx.recyclerview.widget.ItemTouchHelper.RIGHT or androidx.recyclerview.widget.ItemTouchHelper.LEFT
+        ) {
+            private val callBgColor = ContextCompat.getColor(context, R.color.color_outgoing_call)
+            private val smsBgColor = ContextCompat.getColor(context, R.color.color_primary)
+            private val callIcon = ContextCompat.getDrawable(context, R.drawable.ic_phone_vector)
+            private val smsIcon = ContextCompat.getDrawable(context, R.drawable.ic_message_vector)
+
+            override fun onMove(
+                recyclerView: androidx.recyclerview.widget.RecyclerView,
+                viewHolder: androidx.recyclerview.widget.RecyclerView.ViewHolder,
+                target: androidx.recyclerview.widget.RecyclerView.ViewHolder
+            ) = false
+
+            override fun getSwipeDirs(
+                recyclerView: androidx.recyclerview.widget.RecyclerView,
+                viewHolder: androidx.recyclerview.widget.RecyclerView.ViewHolder
+            ): Int {
+                if (context.config.isSimpleMode) return 0
+                val position = viewHolder.adapterPosition
+                val item = recentsAdapter?.currentList?.getOrNull(position)
+                return if (item is RecentCall) super.getSwipeDirs(recyclerView, viewHolder) else 0
+            }
+
+            override fun onSwiped(viewHolder: androidx.recyclerview.widget.RecyclerView.ViewHolder, direction: Int) {
+                val position = viewHolder.adapterPosition
+                val item = recentsAdapter?.currentList?.getOrNull(position) as? RecentCall
+                recentsAdapter?.notifyItemChanged(position)
+
+                if (item != null) {
+                    viewHolder.itemView.performHapticFeedback(android.view.HapticFeedbackConstants.KEYBOARD_TAP)
+                    if (direction == androidx.recyclerview.widget.ItemTouchHelper.RIGHT) {
+                        activity?.startCallWithConfirmationCheck(item.phoneNumber, item.name)
+                    } else if (direction == androidx.recyclerview.widget.ItemTouchHelper.LEFT) {
+                        (activity as? org.fossify.phone.activities.SimpleActivity)?.launchSendSMSIntent(item.phoneNumber)
+                    }
+                }
+            }
+
+            override fun onChildDraw(
+                c: android.graphics.Canvas,
+                recyclerView: androidx.recyclerview.widget.RecyclerView,
+                viewHolder: androidx.recyclerview.widget.RecyclerView.ViewHolder,
+                dX: Float,
+                dY: Float,
+                actionState: Int,
+                isCurrentlyActive: Boolean
+            ) {
+                val itemView = viewHolder.itemView
+                if (dX > 0) {
+                    val bg = android.graphics.drawable.ColorDrawable(callBgColor)
+                    bg.setBounds(itemView.left, itemView.top, itemView.left + dX.toInt(), itemView.bottom)
+                    bg.draw(c)
+
+                    callIcon?.let { icon ->
+                        val iconMargin = (itemView.height - icon.intrinsicHeight) / 2
+                        val iconTop = itemView.top + iconMargin
+                        val iconBottom = iconTop + icon.intrinsicHeight
+                        val iconLeft = itemView.left + iconMargin
+                        val iconRight = iconLeft + icon.intrinsicWidth
+                        icon.setBounds(iconLeft, iconTop, iconRight, iconBottom)
+                        icon.setTint(android.graphics.Color.WHITE)
+                        icon.draw(c)
+                    }
+                } else if (dX < 0) {
+                    val bg = android.graphics.drawable.ColorDrawable(smsBgColor)
+                    bg.setBounds(itemView.right + dX.toInt(), itemView.top, itemView.right, itemView.bottom)
+                    bg.draw(c)
+
+                    smsIcon?.let { icon ->
+                        val iconMargin = (itemView.height - icon.intrinsicHeight) / 2
+                        val iconTop = itemView.top + iconMargin
+                        val iconBottom = iconTop + icon.intrinsicHeight
+                        val iconRight = itemView.right - iconMargin
+                        val iconLeft = iconRight - icon.intrinsicWidth
+                        icon.setBounds(iconLeft, iconTop, iconRight, iconBottom)
+                        icon.setTint(android.graphics.Color.WHITE)
+                        icon.draw(c)
+                    }
+                }
+                super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
+            }
+        }
+
+        androidx.recyclerview.widget.ItemTouchHelper(callback).attachToRecyclerView(rv)
+        swipeHelperAttached = true
+    }
+
+    private fun updateAnalyticsAndFrequentContacts() {
+        val recentCalls = allRecentCalls.filterIsInstance<RecentCall>()
+        if (recentCalls.isEmpty()) {
+            binding.recentsAnalyticsCard.beGone()
+            binding.frequentContactsScrollView.beGone()
+            return
+        }
+
+        // 1. Today's Call Analytics
+        val calendar = java.util.Calendar.getInstance()
+        calendar.set(java.util.Calendar.HOUR_OF_DAY, 0)
+        calendar.set(java.util.Calendar.MINUTE, 0)
+        calendar.set(java.util.Calendar.SECOND, 0)
+        calendar.set(java.util.Calendar.MILLISECOND, 0)
+        val todayStartTS = (calendar.timeInMillis / 1000).toInt()
+
+        val todayCalls = recentCalls.filter { it.startTS >= todayStartTS }
+        if (todayCalls.isNotEmpty()) {
+            val totalSeconds = todayCalls.sumOf { it.duration.toLong() }
+            val formattedTime = (activity as? org.fossify.phone.activities.SimpleActivity)?.formatSecondsToShortTimeString(totalSeconds.toInt()) ?: "${totalSeconds / 60}m"
+            val missedToday = todayCalls.count { it.type == Calls.MISSED_TYPE || it.type == Calls.REJECTED_TYPE }
+            val missedPart = if (missedToday > 0) " • $missedToday missed" else ""
+            binding.recentsAnalyticsText.text = "Today: ${todayCalls.size} calls • $formattedTime talk time$missedPart"
+            binding.recentsAnalyticsCard.beVisible()
+        } else {
+            binding.recentsAnalyticsCard.beGone()
+        }
+
+        // 2. Top Frequent Contacts Carousel
+        val frequentCalls = recentCalls
+            .groupBy { if (it.name.isNotEmpty()) it.name else it.phoneNumber }
+            .entries
+            .sortedByDescending { it.value.size }
+            .take(6)
+
+        if (frequentCalls.size >= 2) {
+            binding.frequentContactsHolder.removeAllViews()
+            val density = resources.displayMetrics.density
+            val itemWidth = (72 * density).toInt()
+
+            frequentCalls.forEach { entry ->
+                val call = entry.value.first()
+                val container = LinearLayout(context).apply {
+                    orientation = LinearLayout.VERTICAL
+                    gravity = Gravity.CENTER
+                    layoutParams = LinearLayout.LayoutParams(itemWidth, LinearLayout.LayoutParams.WRAP_CONTENT).apply {
+                        marginEnd = (4 * density).toInt()
+                    }
+                    isClickable = true
+                    isFocusable = true
+                    setBackgroundResource(R.drawable.contact_action_pill_bg)
+                    val pad = (6 * density).toInt()
+                    setPadding(pad, pad, pad, pad)
+                    setOnClickListener {
+                        it.performHapticFeedback(android.view.HapticFeedbackConstants.KEYBOARD_TAP)
+                        (activity as? org.fossify.phone.activities.SimpleActivity)?.let { act ->
+                            org.fossify.phone.helpers.QuickActionsHelper.showRecentCallQuickActions(act, call) {
+                                refreshItems(invalidate = false)
+                            }
+                        }
+                    }
+                }
+
+                val avatar = ImageView(context).apply {
+                    val avatarSize = (44 * density).toInt()
+                    layoutParams = LinearLayout.LayoutParams(avatarSize, avatarSize)
+                    scaleType = ImageView.ScaleType.CENTER_CROP
+                    org.fossify.commons.helpers.SimpleContactsHelper(context).loadContactImage(call.photoUri, this, call.name)
+                    addAnimatedGradientRing()
+                }
+
+                val nameView = TextView(context).apply {
+                    layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT).apply {
+                        topMargin = (4 * density).toInt()
+                    }
+                    val displayName = (if (call.name.isNotEmpty()) call.name else call.phoneNumber).split(" ").firstOrNull() ?: call.name
+                    text = displayName
+                    textSize = 11f
+                    maxLines = 1
+                    ellipsize = android.text.TextUtils.TruncateAt.END
+                    setTextColor(context.getColor(R.color.text_primary))
+                    gravity = Gravity.CENTER
+                }
+
+                container.addView(avatar)
+                container.addView(nameView)
+                binding.frequentContactsHolder.addView(container)
+            }
+            binding.frequentContactsScrollView.beVisible()
+        } else {
+            binding.frequentContactsScrollView.beGone()
+        }
     }
 }

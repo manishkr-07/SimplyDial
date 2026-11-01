@@ -8,10 +8,13 @@ import android.provider.CallLog
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
+import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import org.fossify.commons.dialogs.ConfirmationDialog
 import org.fossify.commons.extensions.*
@@ -25,10 +28,12 @@ import org.fossify.phone.databinding.DialogContactQuickActionsBinding
 import org.fossify.phone.dialogs.ShowGroupedCallsDialog
 import org.fossify.phone.dialogs.VideoCallOptionsDialog
 import org.fossify.phone.extensions.addAnimatedGradientRing
+import org.fossify.phone.extensions.config
 import org.fossify.phone.extensions.launchSendSMSIntent
 import org.fossify.phone.extensions.startCallWithConfirmationCheck
 import org.fossify.phone.extensions.startContactDetailsIntent
 import org.fossify.phone.models.RecentCall
+import java.io.File
 
 object QuickActionsHelper {
 
@@ -65,6 +70,38 @@ object QuickActionsHelper {
             val timeText = call.startTS.formatDateOrTime(activity, false, false, false)
             val durationText = if (call.duration > 0) " • ${activity.formatSecondsToShortTimeString(call.duration)}" else ""
             contactSheetNumber.text = "${call.phoneNumber} • $callTypeText • $timeText$durationText"
+
+            // Note / Reminder Binding
+            val currentNote = activity.config.getContactNote(call.phoneNumber)
+            if (currentNote.isNotEmpty()) {
+                contactNoteHolder.beVisible()
+                contactNoteText.text = "📝 $currentNote"
+                contactActionNote.text = "📝 Edit Note"
+            } else {
+                contactNoteHolder.beGone()
+                contactActionNote.text = "📝 Add Note"
+            }
+
+            contactNoteClear.setOnClickListener {
+                activity.config.setContactNote(call.phoneNumber, "")
+                contactNoteHolder.beGone()
+                contactActionNote.text = "📝 Add Note"
+                onRefresh?.invoke()
+            }
+
+            contactActionNote.setOnClickListener {
+                showNoteDialog(activity, call.name.ifEmpty { call.phoneNumber }, call.phoneNumber) { newNote ->
+                    if (newNote.isNotEmpty()) {
+                        contactNoteHolder.beVisible()
+                        contactNoteText.text = "📝 $newNote"
+                        contactActionNote.text = "📝 Edit Note"
+                    } else {
+                        contactNoteHolder.beGone()
+                        contactActionNote.text = "📝 Add Note"
+                    }
+                    onRefresh?.invoke()
+                }
+            }
 
             // Call
             contactActionCall.setOnClickListener {
@@ -122,7 +159,7 @@ object QuickActionsHelper {
                 openWhatsApp(activity, call.phoneNumber)
             }
 
-            // Share Contact
+            // Share Contact Text
             contactActionShare.setOnClickListener {
                 dialog.dismiss()
                 val shareText = if (call.name.isNotEmpty()) "${call.name}: ${call.phoneNumber}" else call.phoneNumber
@@ -131,6 +168,12 @@ object QuickActionsHelper {
                     putExtra(Intent.EXTRA_TEXT, shareText)
                 }
                 activity.startActivity(Intent.createChooser(shareIntent, "Share Contact"))
+            }
+
+            // Share vCard (.vcf)
+            contactActionVcard.setOnClickListener {
+                dialog.dismiss()
+                shareVCard(activity, call.name.ifEmpty { call.phoneNumber }, call.phoneNumber)
             }
 
             // Additional phone numbers if contact matched
@@ -210,6 +253,47 @@ object QuickActionsHelper {
         }
 
         dialog.show()
+    }
+
+    private fun showNoteDialog(activity: SimpleActivity, name: String, number: String, onSaved: (String) -> Unit) {
+        val input = EditText(activity).apply {
+            hint = "e.g. Call back about project"
+            setText(activity.config.getContactNote(number))
+            setSelection(text.length)
+            val pad = (16 * activity.resources.displayMetrics.density).toInt()
+            setPadding(pad, pad, pad, pad)
+            setTextColor(activity.getProperTextColor())
+            setHintTextColor(activity.getProperTextColor().adjustAlpha(0.5f))
+        }
+
+        AlertDialog.Builder(activity)
+            .setTitle("Note for $name")
+            .setView(input)
+            .setPositiveButton("Save") { _, _ ->
+                val newNote = input.text.toString().trim()
+                activity.config.setContactNote(number, newNote)
+                onSaved(newNote)
+            }
+            .setNegativeButton(android.R.string.cancel, null)
+            .show()
+    }
+
+    fun shareVCard(activity: Activity, name: String, number: String) {
+        try {
+            val vcf = "BEGIN:VCARD\nVERSION:2.1\nN:;$name;;;\nFN:$name\nTEL;CELL:$number\nEND:VCARD"
+            val safeName = name.replace(Regex("[^a-zA-Z0-9]"), "_")
+            val file = File(activity.cacheDir, "$safeName.vcf")
+            file.writeText(vcf)
+            val uri = FileProvider.getUriForFile(activity, "${activity.packageName}.provider", file)
+            val intent = Intent(Intent.ACTION_SEND).apply {
+                type = "text/x-vcard"
+                putExtra(Intent.EXTRA_STREAM, uri)
+                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            }
+            activity.startActivity(Intent.createChooser(intent, "Share Contact via vCard"))
+        } catch (e: Exception) {
+            activity.toast("Could not generate vCard")
+        }
     }
 
     private fun openWhatsApp(activity: Activity, rawNumber: String) {

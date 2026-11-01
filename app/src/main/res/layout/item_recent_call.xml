@@ -151,6 +151,25 @@
         app:layout_constraintTop_toTopOf="@id/item_recents_date_time"
         tools:text="Mobile" />
 
+    <!-- Fast Call Note / Reminder -->
+    <TextView
+        android:id="@+id/item_recents_note"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="14dp"
+        android:layout_marginEnd="6dp"
+        android:layout_marginTop="2dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textColor="@color/accent_color_cyan"
+        android:textSize="12sp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toStartOf="@+id/item_recents_call_button"
+        app:layout_constraintStart_toEndOf="@+id/item_recents_image"
+        app:layout_constraintTop_toBottomOf="@id/item_recents_date_time"
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:text="📝 Follow up on Monday" />
+
     <!-- Direct Quick Call Button -->
     <ImageView
         android:id="@+id/item_recents_call_button"

@@ -569,6 +569,14 @@ class RecentCallsAdapter(
                     itemRecentsSimId.text = call.simID.toString()
                 }
 
+                val note = activity.config.getContactNote(call.phoneNumber)
+                if (!activity.config.isSimpleMode && note.isNotEmpty()) {
+                    itemRecentsNote.text = "📝 $note"
+                    itemRecentsNote.beVisible()
+                } else {
+                    itemRecentsNote.beGone()
+                }
+
                 SimpleContactsHelper(root.context).loadContactImage(call.photoUri, itemRecentsImage, call.name)
                 // Add animated gradient ring around profile photo
                 itemRecentsImage.addAnimatedGradientRing()

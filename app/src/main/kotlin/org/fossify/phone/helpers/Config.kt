@@ -193,4 +193,21 @@ class Config(context: Context) : BaseConfig(context) {
     var showQuickActionsSheet: Boolean
         get() = prefs.getBoolean(SHOW_QUICK_ACTIONS_SHEET, !isSimpleMode)
         set(value) = prefs.edit().putBoolean(SHOW_QUICK_ACTIONS_SHEET, value).apply()
+
+    fun getContactNote(number: String): String {
+        val cleanNumber = number.filter { it.isDigit() }
+        if (cleanNumber.isEmpty()) return ""
+        return prefs.getString("contact_note_$cleanNumber", "") ?: ""
+    }
+
+    fun setContactNote(number: String, note: String) {
+        val cleanNumber = number.filter { it.isDigit() }
+        if (cleanNumber.isEmpty()) return
+        val key = "contact_note_$cleanNumber"
+        if (note.isBlank()) {
+            prefs.edit().remove(key).apply()
+        } else {
+            prefs.edit().putString(key, note.trim()).apply()
+        }
+    }
 }

@@ -92,4 +92,5 @@
     <color name="call_muted">#FF9800</color>
     <color name="call_recording">#F44336</color>
     <color name="call_dialing">#2196F3</color>
+    <color name="accent_color_cyan">#00BCD4</color>
 </resources>

@@ -691,6 +691,61 @@ class ContactsAdapter(
                 activity.startActivity(Intent.createChooser(shareIntent, "Share Contact"))
             }
 
+            // Action: Share vCard (.vcf)
+            contactActionVcard.setOnClickListener {
+                dialog.dismiss()
+                org.fossify.phone.helpers.QuickActionsHelper.shareVCard(activity, contact.getNameToDisplay(), primaryNumber)
+            }
+
+            // Note / Reminder Binding
+            val currentNote = activity.config.getContactNote(primaryNumber)
+            if (currentNote.isNotEmpty()) {
+                contactNoteHolder.beVisible()
+                contactNoteText.text = "📝 $currentNote"
+                contactActionNote.text = "📝 Edit Note"
+            } else {
+                contactNoteHolder.beGone()
+                contactActionNote.text = "📝 Add Note"
+            }
+
+            contactNoteClear.setOnClickListener {
+                activity.config.setContactNote(primaryNumber, "")
+                contactNoteHolder.beGone()
+                contactActionNote.text = "📝 Add Note"
+                notifyDataSetChanged()
+            }
+
+            contactActionNote.setOnClickListener {
+                val input = android.widget.EditText(activity).apply {
+                    hint = "e.g. Call back about project"
+                    setText(activity.config.getContactNote(primaryNumber))
+                    setSelection(text.length)
+                    val pad = (16 * activity.resources.displayMetrics.density).toInt()
+                    setPadding(pad, pad, pad, pad)
+                    setTextColor(activity.getProperTextColor())
+                    setHintTextColor(activity.getProperTextColor().adjustAlpha(0.5f))
+                }
+
+                androidx.appcompat.app.AlertDialog.Builder(activity)
+                    .setTitle("Note for ${contact.getNameToDisplay()}")
+                    .setView(input)
+                    .setPositiveButton("Save") { _, _ ->
+                        val newNote = input.text.toString().trim()
+                        activity.config.setContactNote(primaryNumber, newNote)
+                        if (newNote.isNotEmpty()) {
+                            contactNoteHolder.beVisible()
+                            contactNoteText.text = "📝 $newNote"
+                            contactActionNote.text = "📝 Edit Note"
+                        } else {
+                            contactNoteHolder.beGone()
+                            contactActionNote.text = "📝 Add Note"
+                        }
+                        notifyDataSetChanged()
+                    }
+                    .setNegativeButton(android.R.string.cancel, null)
+                    .show()
+            }
+
             // Block / Unblock Check
             activity.isContactBlocked(contact) { isBlocked ->
                 activity.runOnUiThread {
