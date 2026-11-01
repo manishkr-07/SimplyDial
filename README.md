@@ -112,6 +112,7 @@ Designed from the ground up to eliminate dialing anxiety, accidental calls, and 
 ---
 
 ### ⚡ 8. Performance & Contact Navigation
+- **Intelligent Contact & Favorites Deduplication**: Automatically consolidates duplicate contacts from multi-account sync (SIM, Google, WhatsApp, Device) into single unified cards across Contacts, Favorites, and Dialpad search without losing phone numbers or photos.
 - **Shimmer Skeleton Loading**: Fluid placeholder animations while the contact directory loads.
 - **Fast Alphabet Slider (`HorizontalAlphabetSlider`)**: Quick alphabetical scrubbing for large contact books.
 - **Lightweight Models**: Memory-efficient data structures with background cache enrichment.
