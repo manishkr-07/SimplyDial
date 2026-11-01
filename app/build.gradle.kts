@@ -120,6 +120,12 @@ android {
         )
     }
 
+    packaging {
+        jniLibs {
+            useLegacyPackaging = false
+        }
+    }
+
     namespace = project.property("APP_ID").toString()
 
     lint {

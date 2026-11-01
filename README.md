@@ -11,10 +11,12 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/Platform-Android%208.0%2B%20(API%2026%2B)-3DDC84?logo=android&logoColor=white" alt="Android API 26+">
-  <img src="https://img.shields.io/badge/Language-Kotlin%202.2-7F52FF?logo=kotlin&logoColor=white" alt="Kotlin 2.2">
+  <img src="https://img.shields.io/badge/Gradle-9.8.2-02303A?logo=gradle&logoColor=white" alt="Gradle 9.8.2">
+  <img src="https://img.shields.io/badge/AGP-9.5.0-34A853?logo=android&logoColor=white" alt="AGP 9.5.0">
+  <img src="https://img.shields.io/badge/TargetSDK-36-blue?logo=android&logoColor=white" alt="Target SDK 36">
   <img src="https://img.shields.io/badge/License-GPLv3-blue.svg" alt="License: GPLv3">
   <img src="https://img.shields.io/badge/Video%20Call-Jitsi%20Meet-17A0DB?logo=jitsi&logoColor=white" alt="Jitsi Meet">
-  <img src="https://img.shields.io/badge/AI%20Voice-Google%20Gemini%201.5%20Flash-4285F4?logo=google&logoColor=white" alt="Gemini AI">
+  <img src="https://img.shields.io/badge/AI%20Voice-Google%20Gemini%203.8%20Flash-4285F4?logo=google&logoColor=white" alt="Gemini AI">
   <img src="https://img.shields.io/badge/Privacy-100%25%20On--Device-green" alt="100% On-Device Privacy">
   <a href="https://discord.gg/hQebWS8qZ"><img src="https://img.shields.io/badge/Discord-Join%20Chat-5865F2?logo=discord&logoColor=white" alt="Discord"></a>
   <a href="https://www.reddit.com/r/SimplyDial07/"><img src="https://img.shields.io/badge/Reddit-r%2FSimplyDial07-FF4500?logo=reddit&logoColor=white" alt="Reddit"></a>
@@ -27,7 +29,7 @@
 
 **SimplyDial** is a next-generation, feature-packed Android dialer and calling application designed to make mobile communication seamless, transparent, and accessible for everyone. 
 
-It combines **intuitive senior-friendly accessible controls (EaseUI)** to prevent accidental dials and simplify messaging, an ultra-crisp **Black Diamond AMOLED Dark Theme** for maximum battery life, **studio-grade compliant call recording**, **integrated Jitsi Meet video conferences**, and **conversational AI voice dialing powered by Google Gemini 1.5 Flash**.
+It combines **intuitive senior-friendly accessible controls (EaseUI)** to prevent accidental dials and simplify messaging, an ultra-crisp **Black Diamond AMOLED Dark Theme** for maximum battery life, **studio-grade compliant call recording**, **integrated Jitsi Meet video conferences**, and **conversational AI voice dialing powered by Google Gemini 3.8 Flash**.
 
 ---
 
@@ -61,10 +63,10 @@ Designed from the ground up to eliminate dialing anxiety, accidental calls, and 
 - **Rejoin Interception**: If the user accidentally navigates away from the video conference screen, an interactive prompt lets them rejoin instantly without dropping the session.
 - **SMS Room Invitation**: Automatically formats and sends an SMS invite link so the remote party can join from any smartphone or browser.
 
-### 🧠 5. AI Voice Dialing (Gemini 1.5 Flash + Offline Fallback)
+### 🧠 5. AI Voice Dialing (Gemini 3.8 Flash + Offline Fallback)
 - **Conversational Speech Recognition**: Speak commands naturally (e.g., *"Call Mom"*, *"Dial Dad on mobile"*).
-- **Google Gemini 1.5 Flash Engine**: Natural language understanding extracts the intended contact and phone number accurately.
-- **Offline Fuzzy Matcher**: If no network is available or if an API key is not configured, the app seamlessly falls back to a fast local contact resolver (`ContactResolver`).
+- **Google Gemini 3.8 Flash Engine**: High-performance model with structured JSON output enforcement (`response_schema`), exponential backoff retries, and jitter handling.
+- **Offline Fuzzy Matcher**: If no network is available or if an API key is not configured, the app seamlessly falls back to a fast local contact resolver (`ContactResolver`) using Levenshtein distance matching.
 
 ### 📞 6. Advanced Call Waiting & Alert Interception
 - **Busy-Call Interception**: Visual notifications and alerts when another caller attempts to reach you during an active conversation.
@@ -90,11 +92,13 @@ Designed from the ground up to eliminate dialing anxiety, accidental calls, and 
 
 ## 🛠️ Tech Stack & Architecture
 
-- **Language**: [Kotlin](https://kotlinlang.org/) (Coroutines, Flow, Serialization)
+- **Language & Compiler**: [Kotlin](https://kotlinlang.org/) (Coroutines, Flow, Serialization) compiled natively via AGP 9
+- **Build System**: Gradle 9.8.2 & Android Gradle Plugin (AGP) 9.5.0
+- **SDK Target**: Android 16 (API 36 compileSdk & targetSdk)
 - **UI & Layouts**: Android XML Layouts, Custom Views, Glassmorphic Overlays, Shimmer Skeletons
 - **Video Conferencing**: [Jitsi Meet](https://jitsi.org/)
-- **AI / LLM Integration**: [Google Gemini 1.5 Flash](https://ai.google.dev/) via official REST API
-- **Networking**: OkHttp 4.11
+- **AI / LLM Integration**: [Google Gemini 3.8 Flash](https://ai.google.dev/) via official REST API with structured JSON schema
+- **Networking**: OkHttp with connection timeouts & exponential backoff
 - **Audio Capture**: Android `MediaRecorder` with prioritized audio sources and `ToneGenerator`
 - **Architecture Pattern**: MVVM with Helper/Manager abstraction layers
 
@@ -103,9 +107,9 @@ Designed from the ground up to eliminate dialing anxiety, accidental calls, and 
 ## 🚀 Getting Started & Building
 
 ### Prerequisites
-- **JDK 17** (Eclipse Adoptium or Android Studio JBR)
-- **Android SDK** (Target SDK `34`, Minimum SDK `26`)
-- **Gradle 8.13** (bundled via `./gradlew` wrapper)
+- **JDK 21 LTS** (Eclipse Adoptium or Android Studio JBR)
+- **Android SDK** (Target SDK `36`, Compile SDK `36`, Minimum SDK `26`)
+- **Gradle 9.8.2** (bundled via `./gradlew` wrapper)
 
 ### Setup Instructions
 
