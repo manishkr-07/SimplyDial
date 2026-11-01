@@ -152,6 +152,7 @@ class DialpadActivity : SimpleActivity() {
                 dialpad0Holder.visibility = View.INVISIBLE
             }
 
+            val buttonAlpha = if (config.isSimpleMode) 255 else LOWER_ALPHA_INT
             arrayOf(
                 dialpad0Holder,
                 dialpad1Holder,
@@ -169,7 +170,7 @@ class DialpadActivity : SimpleActivity() {
             ).forEach {
                 it.background =
                     ResourcesCompat.getDrawable(resources, R.drawable.pill_background, theme)
-                it.background?.alpha = LOWER_ALPHA_INT
+                it.background?.alpha = buttonAlpha
             }
         }
 
@@ -238,6 +239,9 @@ class DialpadActivity : SimpleActivity() {
             dialpadInput.onTextChangeListener { dialpadValueChanged(it) }
             dialpadInput.requestFocus()
             dialpadInput.disableKeyboard()
+            if (config.isSimpleMode) {
+                dialpadInput.setTextSize(TypedValue.COMPLEX_UNIT_SP, 36f)
+            }
         }
 
         ContactsHelper(this).getContacts(showOnlyContactsWithNumbers = true) { allContacts ->

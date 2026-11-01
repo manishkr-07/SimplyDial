@@ -156,6 +156,8 @@ class MainActivity : SimpleActivity() {
         val properPrimaryColor = getProperPrimaryColor()
         val dialpadIcon = resources.getColoredDrawableWithColor(R.drawable.ic_dialpad_vector, properPrimaryColor.getContrastColor())
         binding.mainDialpadButton.setImageDrawable(dialpadIcon)
+        val fabPx = ((if (config.isSimpleMode) 64 else 56) * resources.displayMetrics.density).toInt()
+        binding.mainDialpadButton.customSize = fabPx
 
         updateTextColors(binding.mainHolder)
         setupTabColors()

@@ -178,4 +178,11 @@ class Config(context: Context) : BaseConfig(context) {
     var enableMessagesJoystick: Boolean
         get() = prefs.getBoolean(ENABLE_MESSAGES_JOYSTICK, true)
         set(enableMessagesJoystick) = prefs.edit().putBoolean(ENABLE_MESSAGES_JOYSTICK, enableMessagesJoystick).apply()
+
+    var interfaceMode: Int
+        get() = prefs.getInt(APP_INTERFACE_MODE, INTERFACE_MODE_MODERN)
+        set(interfaceMode) = prefs.edit().putInt(APP_INTERFACE_MODE, interfaceMode).apply()
+
+    val isSimpleMode: Boolean
+        get() = interfaceMode == INTERFACE_MODE_SIMPLE
 }

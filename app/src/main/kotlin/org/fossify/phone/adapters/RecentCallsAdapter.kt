@@ -498,7 +498,8 @@ class RecentCallsAdapter(
 
                 itemRecentsName.apply {
                     text = nameToShow
-                    setTextColor(textColor)
+                    val nameColor = if (activity.config.isSimpleMode && call.type == Calls.MISSED_TYPE) missedCallColor else textColor
+                    setTextColor(nameColor)
                     setTextSize(TypedValue.COMPLEX_UNIT_PX, currentFontSize)
                 }
 

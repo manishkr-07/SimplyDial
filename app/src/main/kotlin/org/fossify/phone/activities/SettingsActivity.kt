@@ -35,7 +35,10 @@ import org.fossify.phone.R
 import org.fossify.phone.databinding.ActivitySettingsBinding
 import org.fossify.phone.dialogs.ExportCallHistoryDialog
 import org.fossify.phone.dialogs.LanguageBottomSheetDialog
+import org.fossify.phone.dialogs.InterfaceModeBottomSheetDialog
 import org.fossify.phone.dialogs.ManageVisibleTabsDialog
+import org.fossify.phone.helpers.INTERFACE_MODE_SIMPLE
+import org.fossify.phone.helpers.INTERFACE_MODE_MODERN
 import org.fossify.phone.dialogs.VoiceDialLanguageDialog
 import org.fossify.phone.extensions.applyLanguageConfiguration
 import org.fossify.phone.extensions.canLaunchAccountsConfiguration
@@ -106,6 +109,7 @@ class SettingsActivity : SimpleActivity() {
         setupManageBlockedNumbers()
         setupManageSpeedDial()
         setupChangeDateTimeFormat()
+        setupInterfaceMode()
         setupFontSize()
         setupDarkTheme()
         setupManageShownTabs()
@@ -237,6 +241,25 @@ class SettingsActivity : SimpleActivity() {
     private fun setupChangeDateTimeFormat() {
         binding.settingsChangeDateTimeFormatHolder.setOnClickListener {
             ChangeDateTimeFormatDialog(this) {}
+        }
+    }
+
+    private fun setupInterfaceMode() {
+        binding.apply {
+            settingsInterfaceModeValue.text = getInterfaceModeText()
+            settingsInterfaceModeHolder.setOnClickListener {
+                InterfaceModeBottomSheetDialog.show(supportFragmentManager) {
+                    settingsInterfaceModeValue.text = getInterfaceModeText()
+                }
+            }
+        }
+    }
+
+    private fun getInterfaceModeText(): String {
+        return if (config.isSimpleMode) {
+            "${getString(R.string.interface_mode_simple_title)} • ${getString(R.string.interface_mode_simple_tag)}"
+        } else {
+            "${getString(R.string.interface_mode_modern_title)} • ${getString(R.string.interface_mode_modern_tag)}"
         }
     }
 

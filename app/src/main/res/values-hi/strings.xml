@@ -85,4 +85,18 @@
     <string name="choose_voice_language">वॉइस कमांड के लिए भाषा चुनें</string>
     <string name="voice_dial_language">वॉइस डायल भाषा</string>
     <string name="change_voice_dial_language">वॉइस पहचान भाषा बदलें</string>
+    <!-- Interface Mode (Simple vs Modern & Advanced) -->
+    <string name="interface_mode">इंटरफ़ेस मोड</string>
+    <string name="interface_mode_desc">बुजुर्गों के लिए सरल मोड या आधुनिक एडवांस्ड चुनें</string>
+    <string name="interface_mode_simple">सरल मोड (बुजुर्गों के अनुकूल)</string>
+    <string name="interface_mode_simple_title">सरल मोड</string>
+    <string name="interface_mode_simple_tag">वरिष्ठ और आसान पहुंच</string>
+    <string name="interface_mode_simple_desc">अतिरिक्त बड़े टेक्स्ट, बिना किसी जटिल मेनू के 1-टैप डायरेक्ट कॉलिंग, कीपैड वाइब्रेशन और बीप। वरिष्ठ नागरिकों और आसान उपयोग के लिए विशेष रूप से डिज़ाइन किया गया।</string>
+    <string name="interface_mode_modern">आधुनिक और एडवांस्ड मोड</string>
+    <string name="interface_mode_modern_title">आधुनिक और एडवांस्ड</string>
+    <string name="interface_mode_modern_tag">नई पीढ़ी और पावर यूज़र</string>
+    <string name="interface_mode_modern_desc">संतुलित आधुनिक डिज़ाइन, त्वरित एसएमएस और वीडियो कॉल शॉर्टकट, मल्टी-सिम बैज और विस्तृत कॉल विवरण।</string>
+    <string name="restart_app_to_apply_mode_title">सिम्पलीडायल पुनरारंभ करें</string>
+    <string name="restart_app_to_apply_mode_msg">%s पर स्विच करने के लिए सभी लेआउट और सुविधाओं को लागू करने हेतु सिम्पलीडायल को पुनः आरंभ करना होगा। क्या आप अभी पुनः आरंभ करना चाहते हैं?</string>
+    <string name="restart_now">अभी रीस्टार्ट करें</string>
 </resources>

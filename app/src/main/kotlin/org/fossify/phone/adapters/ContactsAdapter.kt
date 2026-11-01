@@ -450,7 +450,11 @@ class ContactsAdapter(
                     val phoneObj = contact.phoneNumbers.firstOrNull { it.normalizedNumber == primaryNum || it.value == primaryNum }
                     val label = phoneObj?.let { activity.getPhoneNumberTypeText(it.type, it.label) }
                     text = if (!label.isNullOrEmpty()) "$label • $primaryNum" else primaryNum
-                    setTextColor(textColor.adjustAlpha(0.7f))
+                    val alphaVal = if (activity.config.isSimpleMode) 0.95f else 0.7f
+                    setTextColor(textColor.adjustAlpha(alphaVal))
+                    if (activity.config.isSimpleMode) {
+                        setTextSize(TypedValue.COMPLEX_UNIT_PX, fontSize * 0.82f)
+                    }
                     beVisible()
                 } else {
                     beGone()

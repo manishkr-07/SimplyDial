@@ -42,6 +42,11 @@ const val DECLINE_CALL = PATH + "DECLINE_CALL"
 
 const val DIALPAD_TONE_LENGTH_MS = 150L // The length of DTMF tones in milliseconds
 
+// App Interface Mode (Simple Senior-Friendly vs Modern Advanced)
+const val APP_INTERFACE_MODE = "app_interface_mode"
+const val INTERFACE_MODE_SIMPLE = 0
+const val INTERFACE_MODE_MODERN = 1
+
 // Theme Settings (Independent of System Dark Mode)
 const val IS_DARK_THEME_ENABLED = "is_dark_theme_enabled"
 const val THEME_MODE = "theme_mode"

@@ -154,7 +154,12 @@ override fun setupFragment() {
                     recyclerView = binding.fragmentList,
                     refreshItemsListener = this,
                     itemClick = {
-                        (binding.fragmentList.adapter as? ContactsAdapter)?.showContactQuickActions(it as Contact)
+                        val contact = it as Contact
+                        if (context.config.isSimpleMode) {
+                            (activity as? SimpleActivity)?.startCallWithConfirmationCheck(contact)
+                        } else {
+                            (binding.fragmentList.adapter as? ContactsAdapter)?.showContactQuickActions(contact)
+                        }
                     },
                     profileIconClick = {
                         if (context.config.enableProfilePictureClick) {

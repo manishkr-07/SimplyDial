@@ -244,4 +244,18 @@
     <string name="about_discord_url">https://discord.gg/hQebWS8qZ</string>
     <string name="about_telegram_url">https://t.me/SimplyDial</string>
     <string name="about_support_email">manis781701@zohomail.in</string>
+    <!-- Interface Mode (Simple vs Modern & Advanced) -->
+    <string name="interface_mode">Interface Mode</string>
+    <string name="interface_mode_desc">Choose between Senior Simple Mode or Modern Advanced</string>
+    <string name="interface_mode_simple">Simple (Senior-Friendly)</string>
+    <string name="interface_mode_simple_title">Simple Mode</string>
+    <string name="interface_mode_simple_tag">SENIOR &amp; EASY ACCESS</string>
+    <string name="interface_mode_simple_desc">Extra-large high-contrast text, direct 1-tap calling without extra menus, prominent keypad vibration &amp; audible beeps, and full-screen incoming calls. Specially crafted for older adults and effortless calling.</string>
+    <string name="interface_mode_modern">Modern &amp; Advanced</string>
+    <string name="interface_mode_modern_title">Modern &amp; Advanced</string>
+    <string name="interface_mode_modern_tag">POWER USER &amp; NEW GEN</string>
+    <string name="interface_mode_modern_desc">Balanced modern typography, interactive Material 3 action sheets, quick SMS &amp; video calling shortcuts, multi-SIM badges, and rich call metrics. Crafted for modern power users.</string>
+    <string name="restart_app_to_apply_mode_title">Restart SimplyDial</string>
+    <string name="restart_app_to_apply_mode_msg">Switching to %s requires restarting SimplyDial to reconfigure layouts, font sizing, and interaction behavior. Would you like to restart now?</string>
+    <string name="restart_now">Restart Now</string>
 </resources>
