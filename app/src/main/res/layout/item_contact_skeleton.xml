@@ -3,9 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/shimmer"
     android:layout_width="match_parent"
-    android:layout_height="72dp"
-    android:paddingStart="16dp"
-    android:paddingEnd="16dp"
+    android:layout_height="68dp"
+    android:layout_marginHorizontal="10dp"
+    android:layout_marginVertical="3dp"
+    android:background="@drawable/contact_item_glass_background"
+    android:paddingStart="12dp"
+    android:paddingEnd="12dp"
     android:paddingTop="8dp"
     android:paddingBottom="8dp"
     app:shimmer_auto_start="false"
@@ -28,42 +31,42 @@
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="14dp"
             android:layout_weight="1"
             android:orientation="vertical">
 
-            <!-- First line ~60% width using horizontal weights -->
+            <!-- First line ~55% width -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
                 <View
                     android:layout_width="0dp"
-                    android:layout_height="12dp"
-                    android:layout_weight="0.6"
+                    android:layout_height="14dp"
+                    android:layout_weight="0.55"
                     android:background="@drawable/skeleton_rounded" />
                 <View
                     android:layout_width="0dp"
-                    android:layout_height="12dp"
-                    android:layout_weight="0.4"
+                    android:layout_height="14dp"
+                    android:layout_weight="0.45"
                     android:background="@android:color/transparent" />
             </LinearLayout>
 
-            <!-- Second line ~40% width using horizontal weights -->
+            <!-- Second line ~35% width -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginTop="8dp">
+                android:layout_marginTop="6dp">
                 <View
                     android:layout_width="0dp"
-                    android:layout_height="10dp"
-                    android:layout_weight="0.4"
+                    android:layout_height="11dp"
+                    android:layout_weight="0.35"
                     android:background="@drawable/skeleton_rounded" />
                 <View
                     android:layout_width="0dp"
-                    android:layout_height="10dp"
-                    android:layout_weight="0.6"
+                    android:layout_height="11dp"
+                    android:layout_weight="0.65"
                     android:background="@android:color/transparent" />
             </LinearLayout>
         </LinearLayout>

@@ -9,7 +9,9 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import org.fossify.commons.databinding.ItemContactWithoutNumberBinding
+import org.fossify.commons.extensions.adjustAlpha
+import org.fossify.commons.extensions.beGone
+import org.fossify.commons.extensions.beVisible
 import org.fossify.commons.extensions.getTextSize
 import org.fossify.commons.extensions.getProperTextColor
 import org.fossify.commons.helpers.SimpleContactsHelper
@@ -17,7 +19,9 @@ import org.fossify.commons.views.MyRecyclerView
 import org.fossify.phone.R
 import org.fossify.phone.activities.SimpleActivity
 import org.fossify.phone.databinding.ItemContactSkeletonBinding
+import org.fossify.phone.databinding.ItemContactWithoutNumberBinding
 import org.fossify.phone.extensions.config
+import org.fossify.phone.extensions.startCallWithConfirmationCheck
 import org.fossify.phone.models.LightContact
 
 sealed class LightContactItem {
@@ -76,48 +80,56 @@ class LightContactsAdapter(
     }
 
     inner class ItemVH(private val binding: ItemContactWithoutNumberBinding) : RecyclerView.ViewHolder(binding.root) {
-        private val nameView: TextView = binding.itemContactName
-        private val imageView: ImageView = binding.itemContactImage
-
         fun bind(item: LightContact) {
-            binding.itemContactFrame.apply {
-                setBackgroundResource(R.drawable.contact_item_glass_background)
-                val marginInDp = 8
-                val marginInPx = (marginInDp * resources.displayMetrics.density).toInt()
-                val params = layoutParams as? ViewGroup.MarginLayoutParams
-                params?.setMargins(marginInPx, marginInPx / 2, marginInPx, marginInPx / 2)
-                layoutParams = params
-                setPadding(marginInPx, marginInPx, marginInPx, marginInPx)
-                elevation = 4f
-            }
             val textColor = activity.getProperTextColor()
-            nameView.text = item.name
-            nameView.setTextColor(textColor)
-            nameView.setTextSize(TypedValue.COMPLEX_UNIT_PX, fontSize)
+            binding.apply {
+                itemContactName.text = item.name
+                itemContactName.setTextColor(textColor)
+                itemContactName.setTextSize(TypedValue.COMPLEX_UNIT_PX, fontSize)
 
-            if (!activity.isDestroyed) {
-                SimpleContactsHelper(binding.root.context).loadContactImage(item.photoUri ?: "", imageView, item.name)
-            }
+                if (item.number.isNotEmpty()) {
+                    itemContactNumber.text = item.number
+                    itemContactNumber.setTextColor(textColor.adjustAlpha(0.7f))
+                    itemContactNumber.beVisible()
+                } else {
+                    itemContactNumber.beGone()
+                }
 
-            binding.root.setOnClickListener { itemClick(item) }
-            if (profileIconClick != null && activity.config.enableProfilePictureClick) {
-                imageView.setOnClickListener { profileIconClick.invoke(item) }
-            } else {
-                imageView.setOnClickListener(null)
+                if (!activity.isDestroyed) {
+                    SimpleContactsHelper(root.context).loadContactImage(item.photoUri ?: "", itemContactImage, item.name)
+                }
+
+                itemContactCallButton.setOnClickListener {
+                    activity.startCallWithConfirmationCheck(item.number, item.name)
+                }
+
+                itemContactActionButton.setOnClickListener {
+                    itemClick(item)
+                }
+
+                root.setOnClickListener {
+                    itemClick(item)
+                }
+
+                if (profileIconClick != null && activity.config.enableProfilePictureClick) {
+                    itemContactImage.setOnClickListener { profileIconClick.invoke(item) }
+                } else {
+                    itemContactImage.setOnClickListener(null)
+                }
             }
         }
     }
 
     inner class SkeletonVH(private val binding: ItemContactSkeletonBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind() {
-            // Shimmer starts automatically from XML
+            // Shimmer runs automatically
         }
     }
 
     override fun onViewRecycled(holder: RecyclerView.ViewHolder) {
         super.onViewRecycled(holder)
         if (!activity.isDestroyed && !activity.isFinishing && holder is ItemVH) {
-            Glide.with(activity).clear(holder.itemView)
+            Glide.with(activity).clear(holder.itemView.findViewById<ImageView>(R.id.item_contact_image))
         }
     }
 }
