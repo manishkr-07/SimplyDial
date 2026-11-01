@@ -41,16 +41,16 @@
             android:id="@+id/fragment_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_toStartOf="@+id/horizontal_alphabet_slider"
             android:clipChildren="false"
             android:clipToPadding="false"
+            android:paddingEnd="36dp"
             android:paddingBottom="@dimen/recyclerview_fab_padding"
             android:scrollbars="none"
             app:layoutManager="org.fossify.commons.views.MyLinearLayoutManager" />
 
         <org.fossify.phone.views.HorizontalAlphabetSlider
             android:id="@+id/horizontal_alphabet_slider"
-            android:layout_width="80dp"
+            android:layout_width="36dp"
             android:layout_height="match_parent"
             android:layout_alignParentEnd="true"
             android:paddingTop="@dimen/big_margin"

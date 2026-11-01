@@ -10,6 +10,7 @@ import org.fossify.commons.extensions.*
 import org.fossify.commons.helpers.*
 import org.fossify.commons.models.contacts.Contact
 import org.fossify.phone.R
+import org.fossify.phone.activities.MainActivity
 import org.fossify.phone.activities.SimpleActivity
 import org.fossify.phone.extensions.getAvailableSIMCardLabels
 import org.fossify.phone.models.RecentCall
@@ -51,6 +52,13 @@ class RecentsHelper(private val context: Context) {
         val privateCursor = context.getMyContactsCursor(favoritesOnly = false, withPhoneNumbersOnly = true)
         if (!context.hasPermission(PERMISSION_READ_CALL_LOG)) {
             callback(ArrayList())
+            return
+        }
+
+        // Use MainActivity cached contacts directly if available to skip redundant query
+        val mainCached = (context as? MainActivity)?.cachedContacts
+        if (!mainCached.isNullOrEmpty()) {
+            processRecentCalls(mainCached, privateCursor, previousRecents, callback)
             return
         }
 

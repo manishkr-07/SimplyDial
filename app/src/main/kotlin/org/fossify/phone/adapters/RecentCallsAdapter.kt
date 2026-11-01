@@ -462,10 +462,9 @@ class RecentCallsAdapter(
                 val marginInDp = 8
                 val marginInPx = (marginInDp * resources.displayMetrics.density).toInt()
                 
-                // Add extra top margin for first item to show below filter bar
                 val position = absoluteAdapterPosition
                 val topMargin = if (position == 0 || (position == 1 && currentList.getOrNull(0) is CallLogItem.Date)) {
-                    (marginInPx * 3) // Extra space below filter bar
+                    marginInPx
                 } else {
                     marginInPx / 2
                 }

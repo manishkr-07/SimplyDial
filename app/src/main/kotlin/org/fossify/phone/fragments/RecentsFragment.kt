@@ -95,6 +95,10 @@ class RecentsFragment(
         binding.recentsPlaceholder.setTextColor(textColor)
         binding.recentsPlaceholder2.setTextColor(properPrimaryColor)
 
+        listOf(binding.filterAll, binding.filterMissed, binding.filterIncoming, binding.filterOutgoing).forEach {
+            it.setTextColor(textColor)
+        }
+
         recentsAdapter?.apply {
             updateTextColor(textColor)
             initDrawables()

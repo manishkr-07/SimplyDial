@@ -22,6 +22,7 @@ import org.fossify.commons.models.contacts.Contact
 import org.fossify.commons.views.MyGridLayoutManager
 import org.fossify.commons.views.MyLinearLayoutManager
 import org.fossify.phone.R
+import org.fossify.phone.activities.MainActivity
 import org.fossify.phone.activities.SimpleActivity
 import org.fossify.phone.adapters.ContactsAdapter
 import org.fossify.phone.databinding.FragmentFavoritesBinding
@@ -66,6 +67,12 @@ class FavoritesFragment(context: Context, attributeSet: AttributeSet) : MyViewPa
     }
 
     override fun refreshItems(invalidate: Boolean, callback: (() -> Unit)?) {
+        val mainCached = (activity as? MainActivity)?.cachedContacts
+        if (!invalidate && !mainCached.isNullOrEmpty()) {
+            filterAndDisplayFavorites(ArrayList(mainCached), callback)
+            return
+        }
+
         ContactsHelper(context).getContacts(showOnlyContactsWithNumbers = true) { contacts ->
             allContacts = contacts
 
@@ -79,18 +86,27 @@ class FavoritesFragment(context: Context, attributeSet: AttributeSet) : MyViewPa
                     allContacts.sort()
                 }
             }
-            val favorites = contacts.filter { it.starred == 1 } as ArrayList<Contact>
+            filterAndDisplayFavorites(allContacts, callback)
+        }
+    }
 
-            allContacts = if (activity!!.config.isCustomOrderSelected) {
-                sortByCustomOrder(favorites)
-            } else {
-                favorites
-            }
+    fun refreshFromCached(contacts: ArrayList<Contact>) {
+        if (activity == null || activity!!.isDestroyed || activity!!.isFinishing) return
+        filterAndDisplayFavorites(ArrayList(contacts), null)
+    }
 
-            activity?.runOnUiThread {
-                gotContacts(allContacts)
-                callback?.invoke()
-            }
+    private fun filterAndDisplayFavorites(contacts: ArrayList<Contact>, callback: (() -> Unit)?) {
+        val favorites = contacts.filter { it.starred == 1 } as ArrayList<Contact>
+
+        allContacts = if (activity != null && activity!!.config.isCustomOrderSelected) {
+            sortByCustomOrder(favorites)
+        } else {
+            favorites
+        }
+
+        activity?.runOnUiThread {
+            gotContacts(allContacts)
+            callback?.invoke()
         }
     }
 

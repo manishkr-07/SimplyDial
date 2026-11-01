@@ -36,10 +36,10 @@
             android:elevation="@dimen/medium_margin"
             android:padding="@dimen/activity_margin"
             android:src="@drawable/ic_dialpad_vector"
-            app:backgroundTint="@color/color_primary"
+            app:backgroundTint="?attr/colorPrimary"
             app:layout_constraintBottom_toTopOf="@+id/main_tabs_holder"
             app:layout_constraintEnd_toEndOf="parent"
-            app:rippleColor="@color/pressed_item_foreground" />
+            app:rippleColor="@color/ripple_color" />
 
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/main_tabs_holder"
@@ -47,7 +47,10 @@
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="parent"
             app:tabIndicator="@null"
-            app:tabMinWidth="150dp"
+            app:tabMinWidth="0dp"
+            app:tabMaxWidth="0dp"
+            app:tabGravity="fill"
+            app:tabMode="fixed"
             app:tabRippleColor="@null" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

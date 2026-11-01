@@ -518,7 +518,6 @@ onSearchTextChangedListener = { text ->
     }
 
     fun refreshFragments() {
-        cacheContacts()
         getContactsFragment()?.refreshItems()
         getFavoritesFragment()?.refreshItems()
         // Don't auto-refresh recents - it loads lazily when tab becomes visible
@@ -626,7 +625,10 @@ onSearchTextChangedListener = { text ->
         }
     }
 
-    fun cacheContacts() {
+    fun cacheContacts(forceReload: Boolean = false) {
+        if (!forceReload && cachedContacts.isNotEmpty()) {
+            return
+        }
         // Cache contacts in background to avoid blocking UI
         ensureBackgroundThread {
             val privateCursor = getMyContactsCursor(favoritesOnly = false, withPhoneNumbersOnly = true)

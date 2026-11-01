@@ -80,6 +80,16 @@ class LightContactsAdapter(
         private val imageView: ImageView = binding.itemContactImage
 
         fun bind(item: LightContact) {
+            binding.itemContactFrame.apply {
+                setBackgroundResource(R.drawable.contact_item_glass_background)
+                val marginInDp = 8
+                val marginInPx = (marginInDp * resources.displayMetrics.density).toInt()
+                val params = layoutParams as? ViewGroup.MarginLayoutParams
+                params?.setMargins(marginInPx, marginInPx / 2, marginInPx, marginInPx / 2)
+                layoutParams = params
+                setPadding(marginInPx, marginInPx, marginInPx, marginInPx)
+                elevation = 4f
+            }
             val textColor = activity.getProperTextColor()
             nameView.text = item.name
             nameView.setTextColor(textColor)

@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Rectangular button: No rounded corners (center buttons) -->
+<!-- Rectangular button: Center buttons -->
 <ripple xmlns:android="http://schemas.android.com/apk/res/android"
-    android:color="#20000000">
+    android:color="@color/ripple_color">
     <item>
         <shape android:shape="rectangle">
-            <solid android:color="#FFFFFF" />
+            <solid android:color="@color/elevated_surface_color" />
             <stroke
-                android:width="2dp"
-                android:color="#000000" />
+                android:width="1dp"
+                android:color="@color/divider_color" />
             <corners
                 android:radius="24dp" />
         </shape>

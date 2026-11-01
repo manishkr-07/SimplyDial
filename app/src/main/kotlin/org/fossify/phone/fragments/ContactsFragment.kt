@@ -90,7 +90,14 @@ override fun setupFragment() {
         }
     }
 
-override fun refreshItems(invalidate: Boolean, callback: (() -> Unit)?) {
+    override fun refreshItems(invalidate: Boolean, callback: (() -> Unit)?) {
+        // If contacts are already loaded and not forced to invalidate, update UI instantly without re-querying
+        if (!invalidate && allContacts.isNotEmpty()) {
+            gotContacts(allContacts)
+            callback?.invoke()
+            return
+        }
+
         // Start ultra-fast lightweight load for instant UI
         loadLightContactsAsync()
 
@@ -105,7 +112,14 @@ override fun refreshItems(invalidate: Boolean, callback: (() -> Unit)?) {
                     allContacts.sort()
                 }
             }
-            (activity as MainActivity).cacheContacts()
+
+            // Sync with MainActivity cache directly without triggering a redundant query
+            (activity as? MainActivity)?.let { main ->
+                main.runOnUiThread {
+                    main.cachedContacts.clear()
+                    main.cachedContacts.addAll(allContacts)
+                }
+            }
 
             activity?.runOnUiThread {
                 gotContacts(contacts)
@@ -114,7 +128,7 @@ override fun refreshItems(invalidate: Boolean, callback: (() -> Unit)?) {
         }
     }
 
-private fun gotContacts(contacts: ArrayList<Contact>) {
+    private fun gotContacts(contacts: ArrayList<Contact>) {
         setupLetterFastScroller(contacts)
         if (contacts.isEmpty()) {
             binding.apply {
@@ -129,25 +143,30 @@ private fun gotContacts(contacts: ArrayList<Contact>) {
                 fragmentList.beVisible()
             }
 
-            // Switch to full adapter with DiffUtil once heavy load completes
-            val newAdapter = ContactsAdapter(
-                activity = activity as SimpleActivity,
-                contacts = contacts,
-                recyclerView = binding.fragmentList,
-                refreshItemsListener = this,
-                itemClick = {
-                    activity?.startCallWithConfirmationCheck(it as Contact)
-                },
-                profileIconClick = {
-                    if (context.config.enableProfilePictureClick) {
-                        activity?.startContactDetailsIntent(it as Contact)
+            // Reuse existing adapter with DiffUtil instead of recreating viewholders
+            val currentAdapter = binding.fragmentList.adapter as? ContactsAdapter
+            if (currentAdapter != null) {
+                currentAdapter.updateItems(contacts)
+            } else {
+                val newAdapter = ContactsAdapter(
+                    activity = activity as SimpleActivity,
+                    contacts = contacts,
+                    recyclerView = binding.fragmentList,
+                    refreshItemsListener = this,
+                    itemClick = {
+                        activity?.startCallWithConfirmationCheck(it as Contact)
+                    },
+                    profileIconClick = {
+                        if (context.config.enableProfilePictureClick) {
+                            activity?.startContactDetailsIntent(it as Contact)
+                        }
                     }
-                }
-            )
-            binding.fragmentList.adapter = newAdapter
-            lightAdapter = null
+                )
+                binding.fragmentList.adapter = newAdapter
+                lightAdapter = null
+            }
         }
-    }
+    } 
 
     private fun setupLetterFastScroller(contacts: ArrayList<Contact>) {
         binding.horizontalAlphabetSlider.beVisible()

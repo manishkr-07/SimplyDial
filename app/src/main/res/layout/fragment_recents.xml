@@ -5,11 +5,64 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <LinearLayout
+        android:id="@+id/filter_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:orientation="horizontal"
+        android:paddingStart="@dimen/activity_margin"
+        android:paddingEnd="@dimen/activity_margin"
+        android:paddingTop="@dimen/small_margin"
+        android:paddingBottom="@dimen/small_margin"
+        android:gravity="center_vertical"
+        android:background="?attr/colorSurface"
+        android:elevation="4dp">
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/filter_all"
+            style="@style/Widget.MaterialComponents.Chip.Choice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/filter_all"
+            android:checkable="true"
+            android:checked="true"
+            android:layout_marginEnd="@dimen/small_margin" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/filter_missed"
+            style="@style/Widget.MaterialComponents.Chip.Choice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/filter_missed"
+            android:checkable="true"
+            android:layout_marginEnd="@dimen/small_margin" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/filter_incoming"
+            style="@style/Widget.MaterialComponents.Chip.Choice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/filter_incoming"
+            android:checkable="true"
+            android:layout_marginEnd="@dimen/small_margin" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/filter_outgoing"
+            style="@style/Widget.MaterialComponents.Chip.Choice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/filter_outgoing"
+            android:checkable="true" />
+
+    </LinearLayout>
+
     <org.fossify.commons.views.MyTextView
         android:id="@+id/recents_placeholder"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/filter_bar"
+        android:layout_centerInParent="true"
         android:alpha="0.8"
         android:gravity="center"
         android:paddingStart="@dimen/activity_margin"
@@ -33,61 +86,11 @@
         android:textSize="@dimen/bigger_text_size"
         android:visibility="gone" />
 
-<LinearLayout
-    android:id="@+id/filter_bar"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:paddingStart="@dimen/activity_margin"
-    android:paddingEnd="@dimen/activity_margin"
-    android:paddingTop="@dimen/small_margin"
-    android:paddingBottom="@dimen/small_margin"
-    android:gravity="center_vertical"
-    android:background="?attr/colorSurface"
-    android:elevation="4dp">
-
-    <com.google.android.material.chip.Chip
-        android:id="@+id/filter_all"
-        style="@style/Widget.MaterialComponents.Chip.Choice"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/filter_all"
-        android:checkable="true"
-        android:checked="true"
-        android:layout_marginEnd="@dimen/small_margin" />
-
-    <com.google.android.material.chip.Chip
-        android:id="@+id/filter_missed"
-        style="@style/Widget.MaterialComponents.Chip.Choice"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/filter_missed"
-        android:checkable="true"
-        android:layout_marginEnd="@dimen/small_margin" />
-
-    <com.google.android.material.chip.Chip
-        android:id="@+id/filter_incoming"
-        style="@style/Widget.MaterialComponents.Chip.Choice"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/filter_incoming"
-        android:checkable="true"
-        android:layout_marginEnd="@dimen/small_margin" />
-
-    <com.google.android.material.chip.Chip
-        android:id="@+id/filter_outgoing"
-        style="@style/Widget.MaterialComponents.Chip.Choice"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/filter_outgoing"
-        android:checkable="true" />
-
-</LinearLayout>
-
-<org.fossify.commons.views.MyRecyclerView
+    <org.fossify.commons.views.MyRecyclerView
         android:id="@+id/recents_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_below="@+id/filter_bar"
         android:clipToPadding="false"
         android:paddingBottom="@dimen/recyclerview_fab_padding"
         android:scrollbars="none"
@@ -100,4 +103,5 @@
         android:layout_centerInParent="true"
         android:indeterminate="true"
         app:trackCornerRadius="@dimen/small_margin" />
+
 </org.fossify.phone.fragments.RecentsFragment>

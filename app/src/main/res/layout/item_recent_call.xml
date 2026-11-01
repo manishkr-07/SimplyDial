@@ -5,6 +5,7 @@
     android:id="@+id/item_recents_holder"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="?attr/selectableItemBackground"
     android:clickable="true"
     android:focusable="true"
     android:paddingTop="@dimen/medium_margin"
@@ -128,7 +129,7 @@
     <TextView
         android:id="@+id/item_recents_location"
         android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/item_recents_name"
         android:layout_marginStart="@dimen/normal_margin"
         android:layout_marginEnd="@dimen/small_margin"

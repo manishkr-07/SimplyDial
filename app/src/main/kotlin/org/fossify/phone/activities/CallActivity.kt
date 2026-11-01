@@ -117,9 +117,14 @@ class CallActivity : SimpleActivity() {
         // Register for EventBus
         EventBus.getDefault().register(this)
 
-        // Force light theme for call screen
-        binding.callHolder.setBackgroundColor(0xFFFFFFFF.toInt())
+        // Apply theme-appropriate background and text colors
+        val properBg = getProperBackgroundColor()
+        binding.callHolder.setBackgroundColor(properBg)
         updateTextColors(binding.callHolder)
+        updateNavigationBarColor(properBg)
+        if (isDynamicTheme()) {
+            updateStatusbarColor(properBg)
+        }
         initButtons()
         audioManager.mode = AudioManager.MODE_IN_CALL
         addLockScreenFlags()
@@ -147,9 +152,13 @@ class CallActivity : SimpleActivity() {
             updateCallContactInfo(CallManager.getPrimaryCall())
         }
         updateState()
-        // Force light navigation and status bar
-        updateNavigationBarColor(0xFFFFFFFF.toInt())
-        updateStatusbarColor(0xFFFFFFFF.toInt())
+        val properBg = getProperBackgroundColor()
+        binding.callHolder.setBackgroundColor(properBg)
+        updateTextColors(binding.callHolder)
+        updateNavigationBarColor(properBg)
+        if (isDynamicTheme()) {
+            updateStatusbarColor(properBg)
+        }
     }
 
     override fun onDestroy() {
@@ -197,7 +206,7 @@ class CallActivity : SimpleActivity() {
         }
         
         swipeCallButtons.onDeclineCall = {
-            endCall()
+            declineCall()
         }
 
         if (config.disableSwipeToAnswer) {
@@ -214,9 +223,10 @@ class CallActivity : SimpleActivity() {
             callAccept.beVisible()
             callAcceptLabel.beVisible()
             
-            // Position message button below status text and above click buttons
+            // Position message button inside incoming_call_holder above click buttons
             val messageButtonParams = joystickMessageButton.layoutParams as androidx.constraintlayout.widget.ConstraintLayout.LayoutParams
-            messageButtonParams.topToBottom = callStatusLabel.id
+            messageButtonParams.topToTop = androidx.constraintlayout.widget.ConstraintLayout.LayoutParams.PARENT_ID
+            messageButtonParams.topToBottom = androidx.constraintlayout.widget.ConstraintLayout.LayoutParams.UNSET
             messageButtonParams.bottomToTop = callDecline.id
             messageButtonParams.topMargin = resources.getDimensionPixelSize(org.fossify.commons.R.dimen.activity_margin)
             messageButtonParams.bottomMargin = resources.getDimensionPixelSize(org.fossify.commons.R.dimen.activity_margin)
@@ -224,7 +234,7 @@ class CallActivity : SimpleActivity() {
             joystickMessageButton.layoutParams = messageButtonParams
             
             callDecline.setOnClickListener {
-                endCall()
+                declineCall()
             }
 
             callAccept.setOnClickListener {
@@ -244,9 +254,10 @@ class CallActivity : SimpleActivity() {
             callAccept.beGone()
             callAcceptLabel.beGone()
             
-            // Position message button below status text and above swipe buttons
+            // Position message button inside incoming_call_holder above swipe buttons
             val messageButtonParams = joystickMessageButton.layoutParams as androidx.constraintlayout.widget.ConstraintLayout.LayoutParams
-            messageButtonParams.topToBottom = callStatusLabel.id
+            messageButtonParams.topToTop = androidx.constraintlayout.widget.ConstraintLayout.LayoutParams.PARENT_ID
+            messageButtonParams.topToBottom = androidx.constraintlayout.widget.ConstraintLayout.LayoutParams.UNSET
             messageButtonParams.bottomToTop = swipeCallButtons.id
             messageButtonParams.topMargin = resources.getDimensionPixelSize(org.fossify.commons.R.dimen.activity_margin)
             messageButtonParams.bottomMargin = resources.getDimensionPixelSize(org.fossify.commons.R.dimen.activity_margin)
@@ -354,18 +365,16 @@ class CallActivity : SimpleActivity() {
             }
         )
 
+        val textColor = getProperTextColor()
         arrayOf(dialpadClose, callSimImage, dialpadClearChar).forEach {
-            it.applyColorFilter(getProperTextColor())
+            it.applyColorFilter(textColor)
         }
 
-        val bgColor = getProperBackgroundColor()
-        val inactiveColor = getInactiveButtonColor()
         arrayOf(
             callToggleMicrophone, callToggleSpeaker, callDialpad,
-            callToggleHold, callAdd, callSwap, callMerge, callManage, callVideoCall
+            callToggleHold, callAdd, callSwap, callMerge, callManage, callVideoCall, callRecord
         ).forEach {
-            it.applyColorFilter(bgColor.getContrastColor())
-            it.background.applyColorFilter(inactiveColor)
+            it.applyColorFilter(textColor)
         }
 
         arrayOf(
@@ -902,46 +911,57 @@ class CallActivity : SimpleActivity() {
         CallManager.acceptRingingOrPrimary()
     }
 
+    private fun setupCallButtons() = with(binding) {
+        val buttons = listOf(
+            callToggleMicrophone to ButtonPosition.TOP_LEFT,
+            callToggleSpeaker to ButtonPosition.TOP_CENTER,
+            callDialpad to ButtonPosition.TOP_RIGHT,
+            callRecord to ButtonPosition.MIDDLE_LEFT,
+            callToggleHold to ButtonPosition.MIDDLE_CENTER,
+            callAdd to ButtonPosition.MIDDLE_RIGHT,
+            callManage to ButtonPosition.BOTTOM_LEFT,
+            callSwap to ButtonPosition.BOTTOM_CENTER,
+            callMerge to ButtonPosition.BOTTOM_RIGHT,
+            callVideoCall to ButtonPosition.BOTTOM_CENTER
+        )
+
+        val isOnHold = CallManager.getState() == android.telecom.Call.STATE_HOLDING
+        val properTextColor = getProperTextColor()
+        buttons.forEach { (btn, pos) ->
+            btn.addRotatingBorder(getCornerRadiusForPosition(pos))
+            val isSelected = when (btn) {
+                callToggleHold -> isOnHold
+                callToggleMicrophone -> isMicrophoneOff
+                callToggleSpeaker -> isSpeakerOn
+                callRecord -> isRecording
+                else -> false
+            }
+            btn.updateCallButtonState(isSelected, pos)
+            if (isSelected) {
+                btn.setColorFilter(0xFFFFFFFF.toInt())
+            } else {
+                btn.setColorFilter(properTextColor)
+            }
+        }
+
+        holdStatusLabel.beInvisibleIf(!isOnHold)
+    }
+
     private fun initOutgoingCallUI() {
         enableProximitySensor()
         binding.incomingCallHolder.beGone()
         binding.ongoingCallHolder.beVisible()
         binding.callEnd.beVisible()
-        
-        // Add rotating borders to all call action buttons with position-based corner rounding
-        with(binding) {
-            callToggleMicrophone.addRotatingBorder(getCornerRadiusForPosition(ButtonPosition.TOP_LEFT))
-            callToggleSpeaker.addRotatingBorder(getCornerRadiusForPosition(ButtonPosition.TOP_CENTER))
-            callDialpad.addRotatingBorder(getCornerRadiusForPosition(ButtonPosition.TOP_RIGHT))
-            callRecord.addRotatingBorder(getCornerRadiusForPosition(ButtonPosition.MIDDLE_LEFT))
-            callToggleHold.addRotatingBorder(getCornerRadiusForPosition(ButtonPosition.MIDDLE_CENTER))
-            callAdd.addRotatingBorder(getCornerRadiusForPosition(ButtonPosition.MIDDLE_RIGHT))
-            callManage.addRotatingBorder(getCornerRadiusForPosition(ButtonPosition.BOTTOM_LEFT))
-            callSwap.addRotatingBorder(getCornerRadiusForPosition(ButtonPosition.BOTTOM_CENTER))
-            callMerge.addRotatingBorder(getCornerRadiusForPosition(ButtonPosition.BOTTOM_RIGHT))
-            
-            // Initialize button states with position-based backgrounds, preserve hold state if call is on hold
-            val isOnHold = CallManager.getState() == android.telecom.Call.STATE_HOLDING
-            callToggleMicrophone.updateCallButtonState(false, ButtonPosition.TOP_LEFT)
-            callToggleSpeaker.updateCallButtonState(false, ButtonPosition.TOP_CENTER)
-            callDialpad.updateCallButtonState(false, ButtonPosition.TOP_RIGHT)
-            callRecord.updateCallButtonState(false, ButtonPosition.MIDDLE_LEFT)
-            callToggleHold.updateCallButtonState(isOnHold, ButtonPosition.MIDDLE_CENTER)  // Preserve actual hold state
-            callAdd.updateCallButtonState(false, ButtonPosition.MIDDLE_RIGHT)
-            callManage.updateCallButtonState(false, ButtonPosition.BOTTOM_LEFT)
-            callSwap.updateCallButtonState(false, ButtonPosition.BOTTOM_CENTER)
-            callMerge.updateCallButtonState(false, ButtonPosition.BOTTOM_RIGHT)
-            
-            // Update hold status label visibility
-            holdStatusLabel.beInvisibleIf(!isOnHold)
-        }
+        binding.controlsSingleCall.beVisible()
+
+        setupCallButtons()
     }
 
     private fun callRinging() {
         binding.incomingCallHolder.beVisible()
+        binding.ongoingCallHolder.beGone()
+        binding.callEnd.beGone()
         if (CallManager.isCallWaiting()) {
-            binding.ongoingCallHolder.beGone()
-            binding.callEnd.beGone()
             binding.callStatusLabel.text = getString(R.string.incoming_call_while_on_call)
         }
     }
@@ -953,30 +973,8 @@ class CallActivity : SimpleActivity() {
         binding.callEnd.beVisible()
         callDurationHandler.removeCallbacks(updateCallDurationTask)
         callDurationHandler.post(updateCallDurationTask)
-        
-        // Add rotating borders to all call action buttons with position-based corner rounding
-        with(binding) {
-            callToggleMicrophone.addRotatingBorder(getCornerRadiusForPosition(ButtonPosition.TOP_LEFT))
-            callToggleSpeaker.addRotatingBorder(getCornerRadiusForPosition(ButtonPosition.TOP_CENTER))
-            callDialpad.addRotatingBorder(getCornerRadiusForPosition(ButtonPosition.TOP_RIGHT))
-            callRecord.addRotatingBorder(getCornerRadiusForPosition(ButtonPosition.MIDDLE_LEFT))
-            callToggleHold.addRotatingBorder(getCornerRadiusForPosition(ButtonPosition.MIDDLE_CENTER))
-            callAdd.addRotatingBorder(getCornerRadiusForPosition(ButtonPosition.MIDDLE_RIGHT))
-            callManage.addRotatingBorder(getCornerRadiusForPosition(ButtonPosition.BOTTOM_LEFT))
-            callSwap.addRotatingBorder(getCornerRadiusForPosition(ButtonPosition.BOTTOM_CENTER))
-            callMerge.addRotatingBorder(getCornerRadiusForPosition(ButtonPosition.BOTTOM_RIGHT))
-            
-            // Initialize with unselected state and position-based backgrounds
-            callToggleMicrophone.updateCallButtonState(false, ButtonPosition.TOP_LEFT)
-            callToggleSpeaker.updateCallButtonState(false, ButtonPosition.TOP_CENTER)
-            callDialpad.updateCallButtonState(false, ButtonPosition.TOP_RIGHT)
-            callRecord.updateCallButtonState(false, ButtonPosition.MIDDLE_LEFT)
-            callToggleHold.updateCallButtonState(false, ButtonPosition.MIDDLE_CENTER)
-            callAdd.updateCallButtonState(false, ButtonPosition.MIDDLE_RIGHT)
-            callManage.updateCallButtonState(false, ButtonPosition.BOTTOM_LEFT)
-            callSwap.updateCallButtonState(false, ButtonPosition.BOTTOM_CENTER)
-            callMerge.updateCallButtonState(false, ButtonPosition.BOTTOM_RIGHT)
-        }
+
+        setupCallButtons()
     }
 
     private fun showPhoneAccountPicker() {
@@ -1134,6 +1132,7 @@ class CallActivity : SimpleActivity() {
             R.id.call_manage -> ButtonPosition.BOTTOM_LEFT
             R.id.call_swap -> ButtonPosition.BOTTOM_CENTER
             R.id.call_merge -> ButtonPosition.BOTTOM_RIGHT
+            R.id.call_video_call -> ButtonPosition.BOTTOM_CENTER
             else -> ButtonPosition.MIDDLE_CENTER
         }
     }
@@ -1147,8 +1146,8 @@ class CallActivity : SimpleActivity() {
             // Selected state: red-orange gradient background with rotating border, white icon for visibility
             view.setColorFilter(0xFFFFFFFF.toInt())
         } else {
-            // Unselected state: transparent with rotating border, black icon
-            view.setColorFilter(0xFF000000.toInt())
+            // Unselected state: elevated surface with rotating border, contrasting theme icon
+            view.setColorFilter(getProperTextColor())
         }
     }
 

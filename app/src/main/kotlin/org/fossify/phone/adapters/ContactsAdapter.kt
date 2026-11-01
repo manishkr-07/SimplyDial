@@ -394,9 +394,8 @@ class ContactsAdapter(
                 val marginInDp = 8
                 val marginInPx = (marginInDp * resources.displayMetrics.density).toInt()
                 
-                // Add extra top margin for first item to show below search bar
                 val topMargin = if (holder.bindingAdapterPosition == 0) {
-                    (marginInPx * 3) // Extra space below search/filter bar
+                    marginInPx
                 } else {
                     marginInPx / 2
                 }
