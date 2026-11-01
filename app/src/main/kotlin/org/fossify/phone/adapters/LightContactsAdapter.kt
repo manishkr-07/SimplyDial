@@ -1,6 +1,7 @@
 package org.fossify.phone.adapters
 
 import android.view.LayoutInflater
+import androidx.core.content.ContextCompat
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
@@ -10,6 +11,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import org.fossify.commons.extensions.adjustAlpha
+import org.fossify.commons.extensions.applyColorFilter
 import org.fossify.commons.extensions.beGone
 import org.fossify.commons.extensions.beVisible
 import org.fossify.commons.extensions.getTextSize
@@ -103,12 +105,21 @@ class LightContactsAdapter(
                     activity.startCallWithConfirmationCheck(item.number, item.name)
                 }
 
-                itemContactActionButton.setOnClickListener {
-                    itemClick(item)
+                itemContactActionButton.apply {
+                    setImageDrawable(ContextCompat.getDrawable(activity, R.drawable.ic_three_dots_vector))
+                    applyColorFilter(textColor.adjustAlpha(0.75f))
+                    setOnClickListener {
+                        itemClick(item)
+                    }
                 }
 
                 root.setOnClickListener {
                     itemClick(item)
+                }
+
+                root.setOnLongClickListener {
+                    itemClick(item)
+                    true
                 }
 
                 if (profileIconClick != null && activity.config.enableProfilePictureClick) {

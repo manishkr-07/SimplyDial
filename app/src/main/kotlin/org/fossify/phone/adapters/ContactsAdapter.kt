@@ -469,15 +469,28 @@ class ContactsAdapter(
                 }
             }
 
-            // Quick Options / Sheet trigger
+            // Quick Options / Sheet trigger (3 dots)
             itemContactActionButton?.apply {
                 beVisibleIf(selectedKeys.isEmpty())
+                setImageDrawable(ContextCompat.getDrawable(activity, R.drawable.ic_three_dots_vector))
+                applyColorFilter(activity.getProperTextColor().adjustAlpha(0.75f))
                 setOnClickListener {
                     if (!actModeCallback.isSelectable) {
                         showContactQuickActions(contact)
                     } else {
                         holder.viewClicked(contact)
                     }
+                }
+            }
+
+            // Long-press works the EXACT SAME as tapping 3-dots
+            root.setOnLongClickListener {
+                if (!actModeCallback.isSelectable) {
+                    showContactQuickActions(contact)
+                    true
+                } else {
+                    holder.viewLongClicked()
+                    true
                 }
             }
 
@@ -913,7 +926,7 @@ class ContactsAdapter(
         override val dragHandleIcon = binding.dragHandleIcon
         override val itemContactNumber: TextView? = null
         override val itemContactCallButton: ImageView? = null
-        override val itemContactActionButton: ImageView? = null
+        override val itemContactActionButton = binding.itemContactActionButton
 
         override fun getRoot(): View = binding.root
     }

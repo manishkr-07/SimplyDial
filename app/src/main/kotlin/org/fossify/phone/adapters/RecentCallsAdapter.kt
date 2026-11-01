@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.provider.CallLog.Calls
+import androidx.core.content.ContextCompat
 import android.text.SpannableString
 import android.text.TextUtils
 import android.util.TypedValue
@@ -620,13 +621,16 @@ class RecentCallsAdapter(
                 itemRecentsType.setImageDrawable(drawable)
 
                 overflowMenuIcon.beVisibleIf(showOverflowMenu)
-                overflowMenuIcon.drawable.apply {
-                    mutate()
-                    setTint(activity.getProperTextColor())
-                }
+                overflowMenuIcon.setImageDrawable(ContextCompat.getDrawable(activity, R.drawable.ic_three_dots_vector))
+                overflowMenuIcon.applyColorFilter(activity.getProperTextColor().adjustAlpha(0.75f))
 
                 overflowMenuIcon.setOnClickListener {
                     showPopupMenu(overflowMenuAnchor, call)
+                }
+
+                root.setOnLongClickListener {
+                    showPopupMenu(overflowMenuAnchor, call)
+                    true
                 }
             }
         }
