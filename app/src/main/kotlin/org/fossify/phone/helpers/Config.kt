@@ -246,7 +246,6 @@ class Config(context: Context) : BaseConfig(context) {
 
     fun syncModePreferences(mode: Int = interfaceMode) {
         val features = getModeFeatures(mode)
-        showCallConfirmation = features.showCallConfirmation
         prefs.edit()
             .putBoolean(DIRECT_ONE_TAP_CALLING, features.directOneTapCalling)
             .putBoolean(SHOW_CALL_CONFIRMATION, features.showCallConfirmation)
@@ -265,10 +264,10 @@ class Config(context: Context) : BaseConfig(context) {
 
     // Property accessors automatically scoped to the active interfaceMode:
 
-    var isCallConfirmationEnabled: Boolean
+    override var showCallConfirmation: Boolean
         get() = getModeBoolean(SHOW_CALL_CONFIRMATION, interfaceMode, isSimpleMode)
         set(value) {
-            showCallConfirmation = value
+            super.showCallConfirmation = value
             setModeBoolean(SHOW_CALL_CONFIRMATION, interfaceMode, value)
         }
 
