@@ -163,7 +163,10 @@ class Config(context: Context) : BaseConfig(context) {
         var openDialPadAtLaunch: Boolean,
         var hideDialpadNumbers: Boolean,
         var enableMessagesJoystick: Boolean,
-        var groupSubsequentCalls: Boolean
+        var groupSubsequentCalls: Boolean,
+        var announceCallerName: Boolean,
+        var smartDualSIM: Boolean,
+        var showEmergencySOSTile: Boolean
     )
 
     fun getModePrefKey(baseKey: String, mode: Int = interfaceMode): String {
@@ -204,7 +207,10 @@ class Config(context: Context) : BaseConfig(context) {
             openDialPadAtLaunch = getModeBoolean(OPEN_DIAL_PAD_AT_LAUNCH, mode, false),
             hideDialpadNumbers = getModeBoolean(HIDE_DIALPAD_NUMBERS, mode, false),
             enableMessagesJoystick = getModeBoolean(ENABLE_MESSAGES_JOYSTICK, mode, !isSimple),
-            groupSubsequentCalls = getModeBoolean(GROUP_SUBSEQUENT_CALLS, mode, true)
+            groupSubsequentCalls = getModeBoolean(GROUP_SUBSEQUENT_CALLS, mode, true),
+            announceCallerName = getModeBoolean(ANNOUNCE_CALLER_NAME, mode, isSimple),
+            smartDualSIM = getModeBoolean(SMART_DUAL_SIM, mode, true),
+            showEmergencySOSTile = getModeBoolean(SHOW_EMERGENCY_SOS_TILE, mode, isSimple)
         )
     }
 
@@ -221,6 +227,9 @@ class Config(context: Context) : BaseConfig(context) {
         setModeBoolean(HIDE_DIALPAD_NUMBERS, mode, features.hideDialpadNumbers)
         setModeBoolean(ENABLE_MESSAGES_JOYSTICK, mode, features.enableMessagesJoystick)
         setModeBoolean(GROUP_SUBSEQUENT_CALLS, mode, features.groupSubsequentCalls)
+        setModeBoolean(ANNOUNCE_CALLER_NAME, mode, features.announceCallerName)
+        setModeBoolean(SMART_DUAL_SIM, mode, features.smartDualSIM)
+        setModeBoolean(SHOW_EMERGENCY_SOS_TILE, mode, features.showEmergencySOSTile)
         if (mode == interfaceMode) {
             syncModePreferences(mode)
         }
@@ -240,12 +249,16 @@ class Config(context: Context) : BaseConfig(context) {
             openDialPadAtLaunch = false,
             hideDialpadNumbers = false,
             enableMessagesJoystick = !isSimple,
-            groupSubsequentCalls = true
+            groupSubsequentCalls = true,
+            announceCallerName = isSimple,
+            smartDualSIM = true,
+            showEmergencySOSTile = isSimple
         )
     }
 
     fun syncModePreferences(mode: Int = interfaceMode) {
         val features = getModeFeatures(mode)
+        showCallConfirmation = features.showCallConfirmation
         prefs.edit()
             .putBoolean(DIRECT_ONE_TAP_CALLING, features.directOneTapCalling)
             .putBoolean(SHOW_CALL_CONFIRMATION, features.showCallConfirmation)
@@ -259,15 +272,18 @@ class Config(context: Context) : BaseConfig(context) {
             .putBoolean(HIDE_DIALPAD_NUMBERS, features.hideDialpadNumbers)
             .putBoolean(ENABLE_MESSAGES_JOYSTICK, features.enableMessagesJoystick)
             .putBoolean(GROUP_SUBSEQUENT_CALLS, features.groupSubsequentCalls)
+            .putBoolean(ANNOUNCE_CALLER_NAME, features.announceCallerName)
+            .putBoolean(SMART_DUAL_SIM, features.smartDualSIM)
+            .putBoolean(SHOW_EMERGENCY_SOS_TILE, features.showEmergencySOSTile)
             .apply()
     }
 
     // Property accessors automatically scoped to the active interfaceMode:
 
-    override var showCallConfirmation: Boolean
+    var isCallConfirmationEnabled: Boolean
         get() = getModeBoolean(SHOW_CALL_CONFIRMATION, interfaceMode, isSimpleMode)
         set(value) {
-            super.showCallConfirmation = value
+            showCallConfirmation = value
             setModeBoolean(SHOW_CALL_CONFIRMATION, interfaceMode, value)
         }
 
@@ -314,6 +330,26 @@ class Config(context: Context) : BaseConfig(context) {
     var groupSubsequentCalls: Boolean
         get() = getModeBoolean(GROUP_SUBSEQUENT_CALLS, interfaceMode, true)
         set(value) = setModeBoolean(GROUP_SUBSEQUENT_CALLS, interfaceMode, value)
+
+    var announceCallerName: Boolean
+        get() = getModeBoolean(ANNOUNCE_CALLER_NAME, interfaceMode, isSimpleMode)
+        set(value) = setModeBoolean(ANNOUNCE_CALLER_NAME, interfaceMode, value)
+
+    var smartDualSIM: Boolean
+        get() = getModeBoolean(SMART_DUAL_SIM, interfaceMode, true)
+        set(value) = setModeBoolean(SMART_DUAL_SIM, interfaceMode, value)
+
+    var showEmergencySOSTile: Boolean
+        get() = getModeBoolean(SHOW_EMERGENCY_SOS_TILE, interfaceMode, isSimpleMode)
+        set(value) = setModeBoolean(SHOW_EMERGENCY_SOS_TILE, interfaceMode, value)
+
+    var emergencySOSNumber: String
+        get() = prefs.getString(EMERGENCY_SOS_NUMBER, "112") ?: "112"
+        set(value) = prefs.edit().putString(EMERGENCY_SOS_NUMBER, value.trim()).apply()
+
+    var emergencySOSContact: String
+        get() = prefs.getString(EMERGENCY_SOS_CONTACT, "") ?: ""
+        set(value) = prefs.edit().putString(EMERGENCY_SOS_CONTACT, value.trim()).apply()
 
     fun getContactNote(number: String): String {
         val cleanNumber = number.filter { it.isDigit() }

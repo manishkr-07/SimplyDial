@@ -79,6 +79,9 @@ class CustomizeInterfaceBottomSheetDialog : BaseBottomSheetDialogFragment() {
             switchHideDialpadNumbers.trackTintList = trackColor
             switchMessagesJoystick.trackTintList = trackColor
             switchGroupSubsequentCalls.trackTintList = trackColor
+            switchAnnounceCallerName.trackTintList = trackColor
+            switchShowEmergencySosTile.trackTintList = trackColor
+            switchSmartDualSim.trackTintList = trackColor
 
             btnApplySave.backgroundTintList = ColorStateList.valueOf(properPrimaryColor)
             btnApplySave.setTextColor(properPrimaryColor.getContrastColor())
@@ -179,6 +182,9 @@ class CustomizeInterfaceBottomSheetDialog : BaseBottomSheetDialogFragment() {
             switchHideDialpadNumbers.isChecked = features.hideDialpadNumbers
             switchMessagesJoystick.isChecked = features.enableMessagesJoystick
             switchGroupSubsequentCalls.isChecked = features.groupSubsequentCalls
+            switchAnnounceCallerName.isChecked = features.announceCallerName
+            switchShowEmergencySosTile.isChecked = features.showEmergencySOSTile
+            switchSmartDualSim.isChecked = features.smartDualSIM
         }
     }
 
@@ -197,6 +203,9 @@ class CustomizeInterfaceBottomSheetDialog : BaseBottomSheetDialogFragment() {
             features.hideDialpadNumbers = switchHideDialpadNumbers.isChecked
             features.enableMessagesJoystick = switchMessagesJoystick.isChecked
             features.groupSubsequentCalls = switchGroupSubsequentCalls.isChecked
+            features.announceCallerName = switchAnnounceCallerName.isChecked
+            features.showEmergencySOSTile = switchShowEmergencySosTile.isChecked
+            features.smartDualSIM = switchSmartDualSim.isChecked
         }
     }
 
@@ -214,6 +223,9 @@ class CustomizeInterfaceBottomSheetDialog : BaseBottomSheetDialogFragment() {
             holderHideDialpadNumbers.setOnClickListener { switchHideDialpadNumbers.toggle() }
             holderMessagesJoystick.setOnClickListener { switchMessagesJoystick.toggle() }
             holderGroupSubsequentCalls.setOnClickListener { switchGroupSubsequentCalls.toggle() }
+            holderAnnounceCallerName.setOnClickListener { switchAnnounceCallerName.toggle() }
+            holderShowEmergencySosTile.setOnClickListener { switchShowEmergencySosTile.toggle() }
+            holderSmartDualSim.setOnClickListener { switchSmartDualSim.toggle() }
 
             btnResetDefaults.setOnClickListener {
                 it.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)

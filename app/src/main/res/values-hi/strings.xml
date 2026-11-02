@@ -124,6 +124,8 @@
     <string name="large_answer_buttons_desc">स्वाइप के बजाय बड़े हरे \'स्वीकार\' और लाल \'अस्वीकार\' बटन दिखाएं।</string>
     <string name="fullscreen_call_title">फ़ुलस्क्रीन इनकमिंग कॉल</string>
     <string name="fullscreen_call_desc">हमेशा इनकमिंग कॉल को फ़ुल स्क्रीन में दिखाएं ताकि कोई कॉल न छूटे।</string>
+    <string name="announce_caller_name_title">कॉलर का नाम बोलकर बताएं (TTS)</string>
+    <string name="announce_caller_name_desc">इनकमिंग कॉल आने पर स्क्रीन देखे बिना जानने के लिए कॉलर का नाम बोलकर सुनाएं।</string>
 
     <string name="category_dialpad_keypad">डायलपैड और कीपैड अनुभव</string>
     <string name="dialpad_vibration_title">डायलपैड कीपैड कंपन</string>
@@ -134,12 +136,25 @@
     <string name="open_dialpad_at_launch_desc">सिम्पलीडायल शुरू होते ही सीधे डायलपैड स्क्रीन दिखाएं।</string>
     <string name="hide_dialpad_letters_title">सरल डायलपैड (केवल अंक)</string>
     <string name="hide_dialpad_letters_desc">साफ़ व बड़े अंकों के लिए कीपैड अक्षरों को छुपाएं।</string>
+    <string name="show_emergency_sos_tile_title">आपातकालीन SOS डायल टाइल</string>
+    <string name="show_emergency_sos_tile_desc">आपातकालीन सेवाओं व परिवार को तुरंत कॉल करने के लिए 1-टैप SOS बटन दिखाएं।</string>
 
     <string name="category_recents_messaging">हालिया कॉल और मैसेजिंग शॉर्टकट</string>
     <string name="messages_joystick_title">फ्लोटिंग मैसेज जॉयस्टिक</string>
     <string name="messages_joystick_desc">तेज़ एसएमएस भेजने के लिए स्क्रीन पर फ्लोटिंग बटन दिखाएं।</string>
     <string name="group_subsequent_calls_title">बार-बार आने वाली कॉल्स को समूहित करें</string>
     <string name="group_subsequent_calls_desc">एक ही नंबर से लगातार आई कॉलों को एक प्रविष्टि में जोड़ें।</string>
+    <string name="smart_dual_sim_title">स्मार्ट डुअल-सिम नियम</string>
+    <string name="smart_dual_sim_desc">कॉल इतिहास से पसंदीदा सिम का स्वतः उपयोग करें ताकि हर बार पूछना न पड़े।</string>
+
+    <string name="emergency_sos_title">आपातकालीन SOS</string>
+    <string name="emergency_sos_desc">आपातकालीन सेवाओं या अपने परिवार के संपर्क को तुरंत कॉल करें।</string>
+    <string name="call_emergency_services">आपातकालीन सेवाओं को कॉल करें</string>
+    <string name="call_trusted_contact">विश्वसनीय संपर्क को कॉल करें</string>
+    <string name="setup_emergency_contact">आपातकालीन संपर्क सेट करें</string>
+    <string name="emergency_services">आपातकालीन सेवाएं</string>
+    <string name="ringer_mode_normal">रिंगर सामान्य पर सेट</string>
+    <string name="ringer_mode_vibrate">रिंगर कंपन पर सेट</string>
 
     <string name="reset_to_mode_defaults">मोड डिफ़ॉल्ट पर रीसेट करें</string>
     <string name="apply_and_save">लागू करें और सहेजें</string>

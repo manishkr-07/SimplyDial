@@ -283,6 +283,8 @@
     <string name="large_answer_buttons_desc">Show prominent Green Accept and Red Decline buttons instead of swipe gestures.</string>
     <string name="fullscreen_call_title">Fullscreen Incoming Calls</string>
     <string name="fullscreen_call_desc">Always display incoming calls full screen so calls are never missed in notifications.</string>
+    <string name="announce_caller_name_title">Spoken Caller Name (TTS)</string>
+    <string name="announce_caller_name_desc">Announce caller name aloud on incoming calls so you know who is calling without looking.</string>
 
     <string name="category_dialpad_keypad">Dialpad &amp; Keypad Experience</string>
     <string name="dialpad_vibration_title">Dialpad Keypad Vibrations</string>
@@ -293,12 +295,25 @@
     <string name="open_dialpad_at_launch_desc">Automatically display the dialpad screen whenever SimplyDial starts.</string>
     <string name="hide_dialpad_letters_title">Minimal Dialpad (Digits Only)</string>
     <string name="hide_dialpad_letters_desc">Hide small alphabet letters under keypad numbers for maximum uncluttered clarity.</string>
+    <string name="show_emergency_sos_tile_title">Emergency SOS Dial Tile</string>
+    <string name="show_emergency_sos_tile_desc">Display high-visibility 1-tap SOS button for immediate emergency services and family contact.</string>
 
     <string name="category_recents_messaging">Recents &amp; Messaging Shortcuts</string>
     <string name="messages_joystick_title">Floating Quick-Message JoyStick</string>
     <string name="messages_joystick_desc">Display floating shortcut button on dialer screens for quick SMS composition.</string>
     <string name="group_subsequent_calls_title">Group Repeated Recent Calls</string>
     <string name="group_subsequent_calls_desc">Combine consecutive calls from the same number into a single recent entry.</string>
+    <string name="smart_dual_sim_title">Smart Dual-SIM Rules</string>
+    <string name="smart_dual_sim_desc">Automatically route calls via the preferred SIM used in call history without asking every time.</string>
+
+    <string name="emergency_sos_title">Emergency SOS</string>
+    <string name="emergency_sos_desc">Quick-dial emergency services or your trusted family contact immediately.</string>
+    <string name="call_emergency_services">Call Emergency Services</string>
+    <string name="call_trusted_contact">Call Trusted Contact</string>
+    <string name="setup_emergency_contact">Setup Emergency Contact</string>
+    <string name="emergency_services">Emergency Services</string>
+    <string name="ringer_mode_normal">Ringer set to Normal</string>
+    <string name="ringer_mode_vibrate">Ringer set to Vibrate</string>
 
     <string name="reset_to_mode_defaults">Reset to Mode Defaults</string>
     <string name="apply_and_save">Apply &amp; Save</string>

@@ -105,6 +105,22 @@
                 app:chipIcon="@drawable/ic_plus_vector"
                 app:chipMinHeight="32dp"
                 app:ensureMinTouchTargetSize="false" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/dialpad_emergency_sos_chip"
+                style="@style/Widget.MaterialComponents.Chip.Action"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="@string/emergency_sos_title"
+                android:textColor="@android:color/white"
+                android:textSize="12sp"
+                app:chipBackgroundColor="@color/call_reject"
+                app:chipCornerRadius="16dp"
+                app:chipIcon="@drawable/ic_sos_vector"
+                app:chipIconTint="@android:color/white"
+                app:chipMinHeight="32dp"
+                app:ensureMinTouchTargetSize="false" />
         </LinearLayout>
 
         <TextView

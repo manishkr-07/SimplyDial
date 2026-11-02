@@ -162,6 +162,9 @@ fun SimpleActivity.getHandleToUse(
                 config.getCustomSIM(phoneNumber) != null -> {
                     callback(config.getCustomSIM(phoneNumber))
                 }
+                config.smartDualSIM && org.fossify.phone.helpers.SmartSIMManager.getSmartSIMHandle(this, phoneNumber) != null -> {
+                    callback(org.fossify.phone.helpers.SmartSIMManager.getSmartSIMHandle(this, phoneNumber))
+                }
 
                 defaultHandle != null -> callback(defaultHandle)
                 else -> showSelectSimDialog(phoneNumber, callback)

@@ -163,6 +163,7 @@ class CallActivity : SimpleActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
+        org.fossify.phone.helpers.CallerNameAnnouncer.stop()
         CallManager.removeListener(callCallback)
         disableProximitySensor()
 
@@ -176,6 +177,13 @@ class CallActivity : SimpleActivity() {
         }
         stopRecordingTimer()
         recordingManager.release()
+    }
+
+    override fun onKeyDown(keyCode: Int, event: android.view.KeyEvent?): Boolean {
+        if (keyCode == android.view.KeyEvent.KEYCODE_VOLUME_DOWN || keyCode == android.view.KeyEvent.KEYCODE_VOLUME_UP) {
+            org.fossify.phone.helpers.CallerNameAnnouncer.stop()
+        }
+        return super.onKeyDown(keyCode, event)
         EventBus.getDefault().unregister(this)
     }
 
@@ -626,7 +634,8 @@ class CallActivity : SimpleActivity() {
             if (isSpeakerOn) {
                 disableProximitySensor()
             } else {
-                enableProximitySensor()
+                org.fossify.phone.helpers.CallerNameAnnouncer.stop()
+        enableProximitySensor()
             }
         }
     }
@@ -878,6 +887,9 @@ class CallActivity : SimpleActivity() {
                 }
                 // Add animated gradient ring around caller avatar
                 binding.callerAvatar.addAnimatedGradientRing()
+                if (call.getStateCompat() == android.telecom.Call.STATE_RINGING) {
+                    org.fossify.phone.helpers.CallerNameAnnouncer.announce(this, contact.name, isUnknown = contact.name.isEmpty())
+                }
             }
         }
     }
@@ -950,6 +962,7 @@ class CallActivity : SimpleActivity() {
     }
 
     private fun initOutgoingCallUI() {
+        org.fossify.phone.helpers.CallerNameAnnouncer.stop()
         enableProximitySensor()
         binding.incomingCallHolder.beGone()
         binding.ongoingCallHolder.beVisible()
@@ -969,6 +982,7 @@ class CallActivity : SimpleActivity() {
     }
 
     private fun callStarted() {
+        org.fossify.phone.helpers.CallerNameAnnouncer.stop()
         enableProximitySensor()
         binding.incomingCallHolder.beGone()
         binding.ongoingCallHolder.beVisible()
@@ -993,6 +1007,7 @@ class CallActivity : SimpleActivity() {
             stopRecording()
         }
         
+        org.fossify.phone.helpers.CallerNameAnnouncer.stop()
         CallManager.reject()
         disableProximitySensor()
         audioRouteChooserDialog?.dismissAllowingStateLoss()

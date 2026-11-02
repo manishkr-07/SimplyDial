@@ -4,6 +4,49 @@ All notable changes to **SimplyDial** will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+---
+
+## [1.8.5] - 2026-11-02 - Senior Care, TTS Caller Announcement, Smart Dual-SIM & SOS
+
+### 🗣️ Feature — Spoken Caller Name Announcement (TTS Engine)
+- **Voice Caller Announcement**:
+  - Implemented `CallerNameAnnouncer` utilizing Android's `TextToSpeech` engine to announce incoming caller names or numbers aloud when an incoming call arrives.
+  - Periodic announcement loop (every 3.5s) ensuring elder users and hands-free callers immediately know who is calling before picking up.
+  - Multilingual support with automatic locale detection (supports Hindi and English pronunciation).
+  - Strict privacy and etiquette controls: automatically mutes when the device is set to Silent or Vibrate mode.
+  - Instant audio interrupt: announcements immediately stop when pressing the physical volume rocker, accepting the call, or declining.
+  - Added Android 11+ `<queries>` declaration for `android.intent.action.TTS_SERVICE` to ensure zero permission issues.
+  - Distinctly toggleable per interface mode via "Customize Interface Features".
+
+### 📶 Feature — Smart Dual-SIM Rules Engine
+- **Intelligent SIM Memory**:
+  - Implemented `SmartSIMManager` to eliminate repetitive and frustrating SIM selection prompts on dual-SIM devices.
+  - Automatically queries the device's call history (`CallLog.Calls`) to detect which SIM slot was previously used for any specific contact or phone number.
+  - Caches and remembers the preferred SIM, automatically pre-routing outgoing calls through the appropriate SIM card.
+  - Fully integrated into `Activity.getHandleToUse` with fallback to manual prompt if no historical call record exists or if the SIM card was removed.
+  - Distinctly configurable per interface mode.
+
+### 🚨 Feature — One-Tap Emergency SOS Floating Pill & Dialog
+- **Instant Emergency Access**:
+  - Added a high-visibility, accessible Emergency SOS floating pill directly above the Dialpad.
+  - Opens `EmergencySOSDialog` with one tap, offering immediate one-touch dialing for universal emergency services (112, 911, etc.) or a designated trusted family emergency contact.
+  - Built-in emergency contact setup and configuration flow directly from the dialog.
+  - Designed specifically for elder care, senior safety, and urgent crisis situations.
+  - Distinctly toggleable per interface mode.
+
+### 🔢 Feature — Dialpad Quick-Action Telecom Shortcuts
+- **Telecom Long-Press Key Shortcuts**:
+  - Long-press `#`: Instantly toggles the phone between Normal sound and Vibrate mode with clear Toast and haptic feedback.
+  - Long-press `*`: Inserts a standard 2-second telecom pause (`,`) for automated phone tree, IVR, and PIN extension dialing.
+  - Long-press `0`: Inserts the `+` international country calling prefix.
+  - Fully compatible with 1-9 speed dial shortcuts without collision.
+
+### 🎛️ Architecture — 15-Feature Mode-Scoped Customization
+- **Total Preference Isolation**:
+  - Expanded mode-scoped preference architecture to all 15 interface features.
+  - All features are isolated with `_simple` and `_modern` preference keys—enabling or disabling features in Simpler Mode has zero effect on Modern Mode.
+  - Interactive segmented mode tabs (`[Simpler Mode]` | `[Modern & Advanced]`) with live `ACTIVE` mode badges and per-mode default reset.
+
 
 ---
 

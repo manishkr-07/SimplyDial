@@ -2,6 +2,8 @@ package org.fossify.phone.activities
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.media.AudioManager
+import org.fossify.commons.extensions.toast
 import android.content.Intent
 import org.fossify.commons.extensions.beGone
 import org.fossify.commons.extensions.beVisible
@@ -212,8 +214,8 @@ class DialpadActivity : SimpleActivity() {
             setupCharClick(dialpad9Holder, '9')
             setupCharClick(dialpad0Holder, '0')
             setupCharClick(dialpadPlusHolder, '+', longClickable = false)
-            setupCharClick(dialpadAsteriskHolder, '*', longClickable = false)
-            setupCharClick(dialpadHashtagHolder, '#', longClickable = false)
+            setupCharClick(dialpadAsteriskHolder, '*', longClickable = true)
+            setupCharClick(dialpadHashtagHolder, '#', longClickable = true)
         }
 
         binding.apply {
@@ -222,6 +224,9 @@ class DialpadActivity : SimpleActivity() {
             dialpadCallButton.setOnClickListener { initCall(dialpadInput.value) }
             dialpadCallButton.setOnLongClickListener { initCallWithSimSelector() }
             dialpadVideoCallButton.setOnClickListener { initVideoCall(dialpadInput.value) }
+            dialpadEmergencySosChip.setOnClickListener {
+                org.fossify.phone.dialogs.EmergencySOSDialog.show(supportFragmentManager)
+            }
 
             // Tactile micro-scale touch feedback
             val touchScaleListener = View.OnTouchListener { v, event ->
@@ -633,7 +638,27 @@ class DialpadActivity : SimpleActivity() {
             clearChar(view)
             dialpadPressed('+', view)
         } else {
-            val result = speedDial(char.digitToInt())
+            val result = if (char == '*') {
+                clearChar(view)
+                dialpadPressed(',', view)
+                false
+            } else if (char == '#') {
+                clearChar(view)
+                try {
+                    val audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
+                    if (audioManager.ringerMode == AudioManager.RINGER_MODE_NORMAL) {
+                        audioManager.ringerMode = AudioManager.RINGER_MODE_VIBRATE
+                        toast(R.string.ringer_mode_vibrate)
+                    } else {
+                        audioManager.ringerMode = AudioManager.RINGER_MODE_NORMAL
+                        toast(R.string.ringer_mode_normal)
+                    }
+                } catch (_: Exception) {}
+                false
+            } else {
+                val digit = char.digitToIntOrNull()
+                if (digit != null) speedDial(digit) else false
+            }
             if (result) {
                 stopDialpadTone(char)
                 clearChar(view)
@@ -899,8 +924,13 @@ class DialpadActivity : SimpleActivity() {
     }
 
     private fun updateSmartBar(text: String) {
+        val showSos = config.showEmergencySOSTile && text.isEmpty()
+        binding.dialpadEmergencySosChip.beVisibleIf(showSos)
+
         if (config.isSimpleMode) {
-            binding.dialpadSmartBar.beGone()
+            binding.dialpadPasteChip.beGone()
+            binding.dialpadAddContactChip.beGone()
+            binding.dialpadSmartBar.beVisibleIf(showSos)
             return
         }
 
@@ -916,13 +946,15 @@ class DialpadActivity : SimpleActivity() {
                 binding.dialpadSmartBar.beVisible()
             } else {
                 binding.dialpadAddContactChip.beGone()
-                binding.dialpadSmartBar.beGone()
+                binding.dialpadSmartBar.beVisibleIf(showSos)
             }
         }
     }
+
     private fun checkClipboardForNumber() {
+        val showSos = config.showEmergencySOSTile && binding.dialpadInput.value.isEmpty()
         if (config.isSimpleMode) {
-            binding.dialpadSmartBar.beGone()
+            binding.dialpadSmartBar.beVisibleIf(showSos)
             return
         }
 
@@ -935,11 +967,15 @@ class DialpadActivity : SimpleActivity() {
                 if (digitsOnly.length >= 3 && binding.dialpadInput.value.isEmpty()) {
                     val displayText = if (clipText.length > 15) "${clipText.take(15)}..." else clipText
                     binding.dialpadPasteChip.text = "Paste: $displayText"
+                    binding.dialpadPasteChip.beVisible()
                     binding.dialpadPasteChip.setOnClickListener {
                         it.performHapticFeedback(android.view.HapticFeedbackConstants.KEYBOARD_TAP)
                         binding.dialpadInput.setText(digitsOnly)
                         binding.dialpadInput.setSelection(digitsOnly.length)
-                        binding.dialpadSmartBar.beGone()
+                        binding.dialpadPasteChip.beGone()
+                        if (!config.showEmergencySOSTile) {
+                            binding.dialpadSmartBar.beGone()
+                        }
                     }
                     binding.dialpadSmartBar.beVisible()
                     return
@@ -947,6 +983,7 @@ class DialpadActivity : SimpleActivity() {
             }
         } catch (_: Exception) {}
 
-        binding.dialpadSmartBar.beGone()
+        binding.dialpadPasteChip.beGone()
+        binding.dialpadSmartBar.beVisibleIf(showSos)
     }
 }

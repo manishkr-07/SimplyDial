@@ -51,6 +51,11 @@ const val INTERFACE_MODE_MODERN = 1
 const val DIRECT_ONE_TAP_CALLING = "direct_one_tap_calling"
 const val SHOW_QUICK_ACTIONS_SHEET = "show_quick_actions_sheet"
 const val SHOW_CALL_CONFIRMATION = "show_call_confirmation"
+const val ANNOUNCE_CALLER_NAME = "announce_caller_name"
+const val SMART_DUAL_SIM = "smart_dual_sim"
+const val SHOW_EMERGENCY_SOS_TILE = "show_emergency_sos_tile"
+const val EMERGENCY_SOS_CONTACT = "emergency_sos_contact"
+const val EMERGENCY_SOS_NUMBER = "emergency_sos_number"
 
 // Theme Settings (Independent of System Dark Mode)
 const val IS_DARK_THEME_ENABLED = "is_dark_theme_enabled"
