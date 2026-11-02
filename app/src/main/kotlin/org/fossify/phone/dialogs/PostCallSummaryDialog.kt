@@ -87,6 +87,35 @@ class PostCallSummaryDialog : BottomSheetDialogFragment() {
             (activity as? org.fossify.phone.activities.SimpleActivity)?.startCallIntent(phoneNumber)
         }
 
+
+        // Remind Action
+        binding.postCallRemindBtn.setOnClickListener {
+            cancelCountdown()
+            val options = arrayOf(
+                getString(R.string.reminder_15_min),
+                getString(R.string.reminder_1_hour),
+                getString(R.string.reminder_tomorrow)
+            )
+            androidx.appcompat.app.AlertDialog.Builder(requireContext())
+                .setTitle(R.string.remind_to_call_back)
+                .setItems(options) { _, which ->
+                    val delay = when (which) {
+                        0 -> 15
+                        1 -> 60
+                        else -> -1
+                    }
+                    val scheduledTime = org.fossify.phone.helpers.CallReminderHelper.scheduleReminder(
+                        requireContext(),
+                        callerName,
+                        phoneNumber,
+                        delay
+                    )
+                    requireContext().toast(getString(R.string.reminder_scheduled, scheduledTime))
+                }
+                .setNegativeButton(R.string.cancel, null)
+                .show()
+        }
+
         // Done button
         binding.postCallDoneBtn.setOnClickListener {
             val newNote = binding.postCallNoteInput.text.toString().trim()

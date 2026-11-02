@@ -162,6 +162,7 @@ class MainActivity : SimpleActivity() {
         }
 
         updateMenuColors()
+        org.fossify.phone.helpers.CaregiverQuickCallNotifier.updateNotification(this)
         val properPrimaryColor = getProperPrimaryColor()
         val dialpadIcon = resources.getColoredDrawableWithColor(R.drawable.ic_dialpad_vector, properPrimaryColor.getContrastColor())
         binding.mainDialpadButton.setImageDrawable(dialpadIcon)
@@ -215,6 +216,10 @@ class MainActivity : SimpleActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, resultData: Intent?) {
         super.onActivityResult(requestCode, resultCode, resultData)
         // we don't really care about the result, the app can work without being the default Dialer too
+        if (requestCode == 8822 && resultCode == Activity.RESULT_OK) {
+            org.fossify.phone.fragments.RecentsFragment.isBiometricUnlocked = true
+            recreate()
+        }
         if (requestCode == REQUEST_CODE_SET_DEFAULT_DIALER) {
             checkContactPermissions()
         } else if (requestCode == REQUEST_CODE_SET_DEFAULT_CALLER_ID && resultCode != Activity.RESULT_OK) {

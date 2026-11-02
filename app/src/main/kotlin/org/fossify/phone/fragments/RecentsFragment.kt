@@ -1,5 +1,7 @@
 package org.fossify.phone.fragments
 
+import android.app.Activity
+import android.app.KeyguardManager
 import android.content.Context
 import android.content.res.ColorStateList
 import android.view.View
@@ -64,6 +66,7 @@ class RecentsFragment(
     private var enrichmentScheduled = false
 
     companion object {
+        var isBiometricUnlocked = false
         private const val FILTER_ALL = 0
         private const val FILTER_MISSED = 1
         private const val FILTER_INCOMING = 2
@@ -122,6 +125,28 @@ class RecentsFragment(
     }
 
     override fun refreshItems(invalidate: Boolean, callback: (() -> Unit)?) {
+        if (context.config.biometricLockEnabled && !isBiometricUnlocked) {
+            val keyguardManager = context.getSystemService(Context.KEYGUARD_SERVICE) as? KeyguardManager
+            if (keyguardManager != null && keyguardManager.isDeviceSecure) {
+                binding.recentsPlaceholder.text = "🔒 ${context.getString(R.string.biometric_lock_title)}\n\n${context.getString(R.string.biometric_lock_prompt_subtitle)}"
+                binding.recentsPlaceholder.beVisible()
+                binding.recentsList.beGone()
+                binding.recentsPlaceholder.setOnClickListener {
+                    val intent = keyguardManager.createConfirmDeviceCredentialIntent(
+                        context.getString(R.string.biometric_lock_prompt_title),
+                        context.getString(R.string.biometric_lock_prompt_subtitle)
+                    )
+                    if (intent != null) {
+                        (context as? Activity)?.startActivityForResult(intent, 8822)
+                    } else {
+                        isBiometricUnlocked = true
+                        refreshItems(invalidate, callback)
+                    }
+                }
+                callback?.invoke()
+                return
+            }
+        }
         if (invalidate) {
             allRecentCalls = emptyList()
             hasLoadedData = false

@@ -47,6 +47,8 @@ import org.fossify.phone.extensions.config
 import org.fossify.phone.extensions.launchAccountsConfiguration
 import org.fossify.phone.helpers.LANGUAGE_ENGLISH
 import org.fossify.phone.helpers.LANGUAGE_HINDI
+import org.fossify.phone.helpers.HAPTIC_PROFILE_HEAVY
+import org.fossify.phone.helpers.HAPTIC_PROFILE_CRISP
 import org.fossify.phone.helpers.RecentsHelper
 import org.fossify.phone.helpers.BackupManager
 import java.text.SimpleDateFormat
@@ -143,6 +145,8 @@ class SettingsActivity : SimpleActivity() {
         setupDialpadVibrations()
         setupDialpadNumbers()
         setupDialpadBeeps()
+        setupHapticFeedbackProfile()
+        setupBiometricLock()
         setupShowCallConfirmation()
         setupDisableProximitySensor()
         setupDisableSwipeToAnswer()
@@ -627,6 +631,35 @@ class SettingsActivity : SimpleActivity() {
             }
         } catch (e: Exception) {
             showErrorToast(e)
+        }
+    }
+
+
+    private fun setupHapticFeedbackProfile() {
+        binding.apply {
+            val current = config.hapticFeedbackProfile
+            settingsHapticProfileValue.text = if (current == HAPTIC_PROFILE_HEAVY) getString(R.string.haptic_heavy) else getString(R.string.haptic_crisp)
+            settingsHapticProfileHolder.setOnClickListener {
+                val items = arrayListOf(
+                    RadioItem(1, getString(R.string.haptic_heavy), current == HAPTIC_PROFILE_HEAVY),
+                    RadioItem(2, getString(R.string.haptic_crisp), current == HAPTIC_PROFILE_CRISP)
+                )
+                RadioGroupDialog(this@SettingsActivity, items) { selected ->
+                    val newProfile = if (selected as Int == 1) HAPTIC_PROFILE_HEAVY else HAPTIC_PROFILE_CRISP
+                    config.hapticFeedbackProfile = newProfile
+                    settingsHapticProfileValue.text = if (newProfile == HAPTIC_PROFILE_HEAVY) getString(R.string.haptic_heavy) else getString(R.string.haptic_crisp)
+                }
+            }
+        }
+    }
+
+    private fun setupBiometricLock() {
+        binding.apply {
+            settingsBiometricLock.isChecked = config.biometricLockEnabled
+            settingsBiometricLockHolder.setOnClickListener {
+                settingsBiometricLock.toggle()
+                config.biometricLockEnabled = settingsBiometricLock.isChecked
+            }
         }
     }
 

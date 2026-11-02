@@ -246,6 +246,10 @@ class CallActivity : SimpleActivity() {
             callDecline.setOnClickListener {
                 declineCall()
             }
+            callDecline.setOnLongClickListener {
+                showQuickDeclineSmsDialog()
+                true
+            }
 
             callAccept.setOnClickListener {
                 acceptCall()
@@ -1233,6 +1237,14 @@ class CallActivity : SimpleActivity() {
     private fun clearInput(): Boolean {
         binding.dialpadInput.setText("");
         return true;
+    }
+
+
+    private fun showQuickDeclineSmsDialog() {
+        val callerInfo = callContact?.name?.ifEmpty { callContact?.number } ?: getString(R.string.unknown_caller)
+        org.fossify.phone.dialogs.QuickDeclineSmsDialog.show(supportFragmentManager, callerInfo) { message ->
+            sendQuickReplyMessage(message)
+        }
     }
 
     private fun sendQuickReplyMessage(message: String) {

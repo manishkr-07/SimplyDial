@@ -64,5 +64,13 @@ object CommunicationHelper {
             }
         }
     }
-}
 
+    fun getWhatsAppIntent(rawNumber: String): Intent {
+        val cleanNumber = cleanPhoneNumber(rawNumber)
+        return Intent(Intent.ACTION_VIEW).apply {
+            data = Uri.parse("https://api.whatsapp.com/send?phone=$cleanNumber")
+            `package` = "com.whatsapp"
+        }
+    }
+
+}

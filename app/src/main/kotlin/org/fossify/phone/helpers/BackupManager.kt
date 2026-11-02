@@ -48,6 +48,8 @@ object BackupManager {
         for ((key, value) in allPrefs) {
             if (key.startsWith("contact_note_") && value is String && value.isNotEmpty()) {
                 notes[key.removePrefix("contact_note_")] = value
+            } else if (key.startsWith("contact_tag_") && value is String && value.isNotEmpty()) {
+                notes[key] = value
             }
         }
 
@@ -70,7 +72,9 @@ object BackupManager {
             SMART_DUAL_SIM,
             SHOW_EMERGENCY_SOS_TILE,
             SHOW_POST_CALL_SUMMARY,
-            SPAM_SHIELD_ENABLED
+            SPAM_SHIELD_ENABLED,
+            CAREGIVER_QUICK_CALL_ENABLED,
+            BIOMETRIC_LOCK_ENABLED
         )
 
         for (baseKey in baseKeys) {

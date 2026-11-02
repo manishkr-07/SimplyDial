@@ -1,6 +1,13 @@
 package org.fossify.phone.dialogs
 
 import android.os.Bundle
+import android.Manifest
+import android.content.Context
+import android.content.pm.PackageManager
+import android.location.LocationManager
+import android.os.BatteryManager
+import android.telephony.SmsManager
+import androidx.core.content.ContextCompat
 import android.view.HapticFeedbackConstants
 import android.view.ViewGroup
 import android.widget.EditText
@@ -67,6 +74,19 @@ class EmergencySOSDialog : BaseBottomSheetDialogFragment() {
                 activity.startCallWithConfirmationCheck(emergencyNumber, getString(R.string.emergency_services))
             }
 
+
+            btnSendSosSmsLocation.setOnClickListener {
+                it.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
+                val targetContact = trustedContact.ifBlank { emergencyNumber }
+                if (targetContact.isBlank()) {
+                    activity.toast(R.string.sos_no_contact)
+                    showConfigureDialog()
+                    return@setOnClickListener
+                }
+                sendSosLocationSms(activity, targetContact)
+                dismissAllowingStateLoss()
+            }
+
             btnSetupEmergencyContact.setOnClickListener {
                 it.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
                 showConfigureDialog()
@@ -110,5 +130,43 @@ class EmergencySOSDialog : BaseBottomSheetDialogFragment() {
             }
         }
     }
-}
 
+    private fun sendSosLocationSms(activity: SimpleActivity, recipientNumber: String) {
+        val batteryManager = activity.getSystemService(Context.BATTERY_SERVICE) as? BatteryManager
+        val batteryLevel = batteryManager?.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY) ?: -1
+        val batteryStr = if (batteryLevel >= 0) "$batteryLevel%" else "Unknown"
+
+        var locationUrl: String? = null
+        try {
+            val locationManager = activity.getSystemService(Context.LOCATION_SERVICE) as? LocationManager
+            if (locationManager != null) {
+                val hasFine = ContextCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                val hasCoarse = ContextCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                if (hasFine || hasCoarse) {
+                    val loc = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+                        ?: locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
+                    if (loc != null) {
+                        locationUrl = "https://maps.google.com/?q=${loc.latitude},${loc.longitude}"
+                    }
+                }
+            }
+        } catch (_: Exception) {
+            // gracefully fallback
+        }
+
+        val message = if (locationUrl != null) {
+            "EMERGENCY SOS! I need immediate help. Battery: $batteryStr. My location: $locationUrl"
+        } else {
+            "EMERGENCY SOS! I need immediate help. Battery: $batteryStr. (Location unavailable)"
+        }
+
+        try {
+            val smsManager = SmsManager.getDefault()
+            smsManager.sendTextMessage(recipientNumber, null, message, null, null)
+            activity.toast(R.string.sos_sent_success)
+        } catch (e: Exception) {
+            activity.toast("Failed to send SOS SMS: ${e.message}")
+        }
+    }
+
+}

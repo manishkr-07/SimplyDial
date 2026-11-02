@@ -106,6 +106,38 @@ object QuickActionsHelper {
             }
 
             // Call
+
+            // Relationship Tag Binding
+            val currentTag = activity.config.getContactTag(call.phoneNumber)
+            contactActionTag.text = if (currentTag.isNotEmpty()) "🏷️ $currentTag" else "🏷️ Assign Tag"
+            contactActionTag.setOnClickListener {
+                val tags = arrayOf(
+                    "👨‍👩‍👧 ${activity.getString(R.string.tag_family)}",
+                    "🩺 ${activity.getString(R.string.tag_doctor)}",
+                    "💼 ${activity.getString(R.string.tag_work)}",
+                    "🤝 ${activity.getString(R.string.tag_friend)}",
+                    "🚨 ${activity.getString(R.string.tag_emergency)}",
+                    "❌ Clear Tag"
+                )
+                AlertDialog.Builder(activity)
+                    .setTitle(R.string.assign_tag)
+                    .setItems(tags) { _, which ->
+                        val selected = when (which) {
+                            0 -> activity.getString(R.string.tag_family)
+                            1 -> activity.getString(R.string.tag_doctor)
+                            2 -> activity.getString(R.string.tag_work)
+                            3 -> activity.getString(R.string.tag_friend)
+                            4 -> activity.getString(R.string.tag_emergency)
+                            else -> ""
+                        }
+                        activity.config.setContactTag(call.phoneNumber, selected)
+                        contactActionTag.text = if (selected.isNotEmpty()) "🏷️ $selected" else "🏷️ Assign Tag"
+                        onRefresh?.invoke()
+                    }
+                    .setNegativeButton(R.string.cancel, null)
+                    .show()
+            }
+
             contactActionCall.setOnClickListener {
                 dialog.dismiss()
                 activity.startCallWithConfirmationCheck(call.phoneNumber, call.name)

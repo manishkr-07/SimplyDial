@@ -168,7 +168,8 @@ class Config(context: Context) : BaseConfig(context) {
         var smartDualSIM: Boolean,
         var showEmergencySOSTile: Boolean,
         var showPostCallSummary: Boolean,
-        var spamShieldEnabled: Boolean
+        var spamShieldEnabled: Boolean,
+        var caregiverQuickCallEnabled: Boolean
     )
 
     fun getModePrefKey(baseKey: String, mode: Int = interfaceMode): String {
@@ -214,7 +215,8 @@ class Config(context: Context) : BaseConfig(context) {
             smartDualSIM = getModeBoolean(SMART_DUAL_SIM, mode, true),
             showEmergencySOSTile = getModeBoolean(SHOW_EMERGENCY_SOS_TILE, mode, isSimple),
             showPostCallSummary = getModeBoolean(SHOW_POST_CALL_SUMMARY, mode, true),
-            spamShieldEnabled = getModeBoolean(SPAM_SHIELD_ENABLED, mode, true)
+            spamShieldEnabled = getModeBoolean(SPAM_SHIELD_ENABLED, mode, true),
+            caregiverQuickCallEnabled = getModeBoolean(CAREGIVER_QUICK_CALL_ENABLED, mode, mode == INTERFACE_MODE_SIMPLE)
         )
     }
 
@@ -260,7 +262,8 @@ class Config(context: Context) : BaseConfig(context) {
             smartDualSIM = true,
             showEmergencySOSTile = isSimple,
             showPostCallSummary = true,
-            spamShieldEnabled = true
+            spamShieldEnabled = true,
+            caregiverQuickCallEnabled = (mode == INTERFACE_MODE_SIMPLE)
         )
     }
 
@@ -285,6 +288,7 @@ class Config(context: Context) : BaseConfig(context) {
             .putBoolean(SHOW_EMERGENCY_SOS_TILE, features.showEmergencySOSTile)
             .putBoolean(SHOW_POST_CALL_SUMMARY, features.showPostCallSummary)
             .putBoolean(SPAM_SHIELD_ENABLED, features.spamShieldEnabled)
+            .putBoolean(CAREGIVER_QUICK_CALL_ENABLED, features.caregiverQuickCallEnabled)
             .apply()
     }
 
@@ -399,4 +403,35 @@ class Config(context: Context) : BaseConfig(context) {
             prefs.edit().putString(key, note.trim()).apply()
         }
     }
+
+    var caregiverQuickCallEnabled: Boolean
+        get() = getModeBoolean(CAREGIVER_QUICK_CALL_ENABLED, interfaceMode, isSimpleMode)
+        set(value) = setModeBoolean(CAREGIVER_QUICK_CALL_ENABLED, interfaceMode, value)
+
+    var biometricLockEnabled: Boolean
+        get() = prefs.getBoolean(BIOMETRIC_LOCK_ENABLED, false)
+        set(value) = prefs.edit().putBoolean(BIOMETRIC_LOCK_ENABLED, value).apply()
+
+    var hapticFeedbackProfile: String
+        get() = prefs.getString(HAPTIC_FEEDBACK_PROFILE, if (isSimpleMode) HAPTIC_PROFILE_HEAVY else HAPTIC_PROFILE_CRISP)
+            ?: if (isSimpleMode) HAPTIC_PROFILE_HEAVY else HAPTIC_PROFILE_CRISP
+        set(value) = prefs.edit().putString(HAPTIC_FEEDBACK_PROFILE, value).apply()
+
+    fun getContactTag(number: String): String {
+        val cleanNumber = number.filter { it.isDigit() }
+        if (cleanNumber.isEmpty()) return ""
+        return prefs.getString("contact_tag_$cleanNumber", "") ?: ""
+    }
+
+    fun setContactTag(number: String, tag: String) {
+        val cleanNumber = number.filter { it.isDigit() }
+        if (cleanNumber.isEmpty()) return
+        val key = "contact_tag_$cleanNumber"
+        if (tag.isBlank()) {
+            prefs.edit().remove(key).apply()
+        } else {
+            prefs.edit().putString(key, tag.trim()).apply()
+        }
+    }
+
 }

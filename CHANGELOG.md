@@ -6,6 +6,49 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ---
 
+## [2.1.0] - 2026-11-02 - Caregiver Quick-Call, Emergency GPS SOS, Quick Decline SMS, Call Reminders, Biometric Lock & Haptic Profiles
+
+### 🆘 Feature — Auto-GPS Location & Battery in Emergency SOS SMS
+- **Emergency Location Broadcast**:
+  - Automatically queries the device's fine/coarse GPS coordinates and battery percentage when triggering Emergency SOS.
+  - Sends a direct SMS with Google Maps link (`https://maps.google.com/?q=lat,lng`) to designated family contacts.
+  - Graceful fallback: sends emergency notification with battery percentage even if location permissions or GPS are unavailable.
+
+### ✉️ Feature — 1-Tap Quick Decline SMS ("Quick Replies")
+- **Instant Message on Call Rejection**:
+  - Long-press or 1-tap quick decline drawer (`QuickDeclineSmsDialog`) on incoming call screen.
+  - Bilingual presets for English & Hindi:
+    - *"I am in a meeting, will call you back."* / *"मैं अभी बैठक में हूँ, बाद में बात करता हूँ।"*
+    - *"Driving right now, please message."* / *"मैं गाड़ी चला रहा हूँ, कृपया संदेश भेजें।"*
+    - *"Can't talk now. What's up?"*
+  - Custom quick reply composer for instant typing and sending.
+
+### ⏰ Feature — Post-Call Follow-Up Reminder ("Remind Me to Call Back")
+- **Intelligent Scheduled Callback Alarm**:
+  - 1-tap chip in `PostCallSummaryDialog`: choose 15 minutes, 1 hour, or tomorrow morning (9:00 AM).
+  - Background `CallReminderReceiver` schedules exact alarm and triggers a rich notification with instant **"Call Back"** and **"WhatsApp"** action buttons.
+
+### 👨‍👩‍👧 Feature — Caregiver / Family Persistent Quick-Call Notification
+- **Lock Screen & Notification Shade Quick Calling**:
+  - Displays persistent, low-priority family call buttons in the notification drawer:
+    - 📞 Call Trusted Family Contact
+    - 📞 Call Speed Dial #1
+    - 🚨 Emergency SOS (112)
+  - Mode-scoped toggle (Feature 18) in "Customize Interface Features" (default ON in Simpler Mode).
+
+### 🔒 Feature — Biometric & Device PIN Privacy Lock
+- **Secure Call Logs & Notes**:
+  - Native Android `KeyguardManager` integration: requires fingerprint, face unlock, or device PIN to access Call History and private contact notes.
+  - Accessible via Settings: preserves privacy when devices are shared within families.
+
+### 📳 Feature — Tactile Haptic Feedback Profiles & Relationship Tags
+- **Tactile Profile Selector**:
+  - Choose between **"Reassuring Heavy Buzz"** (long-press haptic feel tailored for elders) and **"Crisp Tactile Click"** (modern subtle tap).
+- **Contact Relationship Tags**:
+  - Assign relationship chips (👨‍👩‍👧 Family, 🩺 Doctor, 💼 Work, 🤝 Friend, 🚨 Emergency) directly from contact quick action sheets.
+
+---
+
 ## [2.0.0] - 2026-11-02 - Offline Spam Shield, Home Widgets Suite & Data Backup/Restore
 
 ### 🛡️ Feature — Offline Spam & Robocall Shield (`SpamShieldManager`)

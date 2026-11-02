@@ -207,4 +207,49 @@
     <string name="invalid_backup_file">अमान्य बैकअप फ़ाइल</string>
     <string name="speed_dial_widget_name">सिम्पली डायल: स्पीड डायल (पसंदीदा)</string>
     <string name="dialpad_widget_name">सिम्पली डायल: त्वरित डायलपैड</string>
+
+    <!-- v2.1.0 & v2.2.0 Extensions -->
+    <string name="send_sos_location_sms">स्थान के साथ आपातकालीन संदेश भेजें</string>
+    <string name="sos_sent_success">आपातकालीन संदेश और स्थान भेज दिया गया!</string>
+    <string name="sos_no_contact">कृपया पहले एक विश्वसनीय आपातकालीन संपर्क नंबर सेट करें</string>
+
+    <string name="quick_reply">त्वरित उत्तर</string>
+    <string name="quick_decline_title">संदेश के साथ अस्वीकार करें</string>
+    <string name="quick_reply_1">मैं अभी बैठक में हूँ, बाद में बात करता हूँ।</string>
+    <string name="quick_reply_2">मैं गाड़ी चला रहा हूँ, कृपया संदेश भेजें।</string>
+    <string name="quick_reply_3">अभी बात नहीं कर सकता। क्या बात है?</string>
+    <string name="quick_reply_custom">कस्टम संदेश लिखें...</string>
+    <string name="message_sent">संदेश भेज दिया गया</string>
+
+    <string name="remind_to_call_back">कॉल बैक रिमाइंडर</string>
+    <string name="reminder_15_min">15 मिनट में</string>
+    <string name="reminder_1_hour">1 घंटे में</string>
+    <string name="reminder_tomorrow">कल सुबह (9 बजे)</string>
+    <string name="reminder_scheduled">%s के लिए कॉल रिमाइंडर सेट किया गया</string>
+    <string name="call_reminder_title">कॉल अनुस्मारक</string>
+    <string name="call_reminder_text">%1$s (%2$s) को कॉल करें</string>
+
+    <string name="caregiver_quick_call_title">परिवार त्वरित कॉल सूचना</string>
+    <string name="caregiver_quick_call_desc">सूचना शेड में परिवार के लिए 1-टैप कॉल बटन दिखाएं</string>
+    <string name="family_quick_call">परिवार त्वरित कॉल</string>
+    <string name="call_trusted">विश्वसनीय को कॉल करें</string>
+    <string name="call_speed_dial_1">स्पीड डायल 1</string>
+
+    <string name="biometric_lock_title">बायोमेट्रिक और पिन लॉक</string>
+    <string name="biometric_lock_desc">कॉल इतिहास और संपर्क नोट्स के लिए फ़िंगरप्रिंट या पिन आवश्यक करें</string>
+    <string name="biometric_lock_prompt_title">सिंपलीडायल अनलॉक करें</string>
+    <string name="biometric_lock_prompt_subtitle">कॉल लॉग और नोट्स तक पहुँचने के लिए पहचान की पुष्टि करें</string>
+
+    <string name="haptic_profile_title">हैप्टिक फ़ीडबैक प्रोफ़ाइल</string>
+    <string name="haptic_profile_desc">बुजुर्गों के लिए मजबूत कंपन या आधुनिक हल्का क्लिक चुनें</string>
+    <string name="haptic_heavy">मजबूत आश्वस्त कंपन (बुजुर्ग)</string>
+    <string name="haptic_crisp">हल्का आधुनिक क्लिक (मॉडर्न)</string>
+
+    <string name="tag_family">परिवार</string>
+    <string name="tag_doctor">डॉक्टर</string>
+    <string name="tag_work">काम</string>
+    <string name="tag_friend">मित्र</string>
+    <string name="tag_emergency">आपातकालीन</string>
+    <string name="assign_tag">टैग असाइन करें</string>
+
 </resources>

@@ -365,4 +365,49 @@
     <string name="invalid_backup_file">Invalid or corrupted backup file</string>
     <string name="speed_dial_widget_name">SimplyDial: Speed Dial (Favorites)</string>
     <string name="dialpad_widget_name">SimplyDial: Quick Dialpad</string>
+
+    <!-- v2.1.0 & v2.2.0 Extensions -->
+    <string name="send_sos_location_sms">Send SOS Alert with Location</string>
+    <string name="sos_sent_success">Emergency SOS alert sent with location!</string>
+    <string name="sos_no_contact">Please configure a trusted emergency contact number first</string>
+
+    <string name="quick_reply">Quick Reply</string>
+    <string name="quick_decline_title">Decline with Message</string>
+    <string name="quick_reply_1">I am in a meeting, will call you back.</string>
+    <string name="quick_reply_2">Driving right now, please message.</string>
+    <string name="quick_reply_3">"Can't talk now. What's up?"</string>
+    <string name="quick_reply_custom">Write custom message...</string>
+    <string name="message_sent">Message sent</string>
+
+    <string name="remind_to_call_back">Remind to Call Back</string>
+    <string name="reminder_15_min">In 15 minutes</string>
+    <string name="reminder_1_hour">In 1 hour</string>
+    <string name="reminder_tomorrow">Tomorrow morning (9 AM)</string>
+    <string name="reminder_scheduled">Call reminder scheduled for %s</string>
+    <string name="call_reminder_title">Call Reminder</string>
+    <string name="call_reminder_text">Follow up with %1$s (%2$s)</string>
+
+    <string name="caregiver_quick_call_title">Caregiver Quick Call Notification</string>
+    <string name="caregiver_quick_call_desc">Show persistent 1-tap call buttons for family in the notification shade</string>
+    <string name="family_quick_call">Family Quick Call</string>
+    <string name="call_trusted">Call Trusted</string>
+    <string name="call_speed_dial_1">Speed Dial 1</string>
+
+    <string name="biometric_lock_title">Biometric &amp; PIN Lock</string>
+    <string name="biometric_lock_desc">Require fingerprint or device PIN to access call history and contact notes</string>
+    <string name="biometric_lock_prompt_title">Unlock SimplyDial</string>
+    <string name="biometric_lock_prompt_subtitle">Confirm identity to access call logs &amp; notes</string>
+
+    <string name="haptic_profile_title">Haptic Feedback Profile</string>
+    <string name="haptic_profile_desc">Choose between heavy reassuring buzz for seniors or crisp subtle clicks</string>
+    <string name="haptic_heavy">Reassuring Heavy Buzz (Seniors)</string>
+    <string name="haptic_crisp">Crisp Tactile Click (Modern)</string>
+
+    <string name="tag_family">Family</string>
+    <string name="tag_doctor">Doctor</string>
+    <string name="tag_work">Work</string>
+    <string name="tag_friend">Friend</string>
+    <string name="tag_emergency">Emergency</string>
+    <string name="assign_tag">Assign Tag</string>
+
 </resources>

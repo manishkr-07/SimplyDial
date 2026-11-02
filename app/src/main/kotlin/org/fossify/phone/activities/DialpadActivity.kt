@@ -643,7 +643,12 @@ class DialpadActivity : SimpleActivity() {
 
     private fun maybePerformDialpadHapticFeedback(view: View?) {
         if (config.dialpadVibration) {
-            view?.performHapticFeedback()
+            val isHeavy = config.hapticFeedbackProfile == org.fossify.phone.helpers.HAPTIC_PROFILE_HEAVY || config.isSimpleMode
+            if (isHeavy) {
+                view?.performHapticFeedback(android.view.HapticFeedbackConstants.LONG_PRESS)
+            } else {
+                view?.performHapticFeedback(android.view.HapticFeedbackConstants.KEYBOARD_TAP)
+            }
         }
     }
 
