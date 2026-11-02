@@ -259,7 +259,7 @@ class DialpadActivity : SimpleActivity() {
             }
         }
 
-        ContactsHelper(this).getContacts(showOnlyContactsWithNumbers = true) { allContacts ->
+        org.fossify.phone.helpers.ContactsRepository.loadContacts(this) { allContacts ->
             gotContacts(allContacts)
         }
 

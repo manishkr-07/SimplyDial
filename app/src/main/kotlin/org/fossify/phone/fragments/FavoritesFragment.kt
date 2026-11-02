@@ -72,30 +72,15 @@ class FavoritesFragment(context: Context, attributeSet: AttributeSet) : MyViewPa
     }
 
     override fun refreshItems(invalidate: Boolean, callback: (() -> Unit)?) {
-        val mainCached = (activity as? MainActivity)?.cachedContacts
+        val mainCached = (activity as? MainActivity)?.cachedContacts ?: org.fossify.phone.helpers.ContactsRepository.getCachedContacts()
         if (!invalidate && !mainCached.isNullOrEmpty()) {
             filterAndDisplayFavorites(ArrayList(mainCached), callback)
             return
         }
 
-        ensureBackgroundThread {
-            val privateCursor = context?.getMyContactsCursor(favoritesOnly = true, withPhoneNumbersOnly = true)
-            ContactsHelper(context).getContacts(showOnlyContactsWithNumbers = true) { contacts ->
-                ensureBackgroundThread {
-                    allContacts = contacts
-
-                    if (SMT_PRIVATE !in context.baseConfig.ignoredContactSources) {
-                        val privateContacts = MyContactsContentProvider.getContacts(context, privateCursor).map {
-                            it.copy(starred = 1)
-                        }
-                        if (privateContacts.isNotEmpty()) {
-                            allContacts.addAll(privateContacts)
-                            allContacts.sort()
-                        }
-                    }
-                    filterAndDisplayFavorites(allContacts.deduplicate(), callback)
-                }
-            }
+        val ctx = context ?: return
+        org.fossify.phone.helpers.ContactsRepository.loadContacts(ctx, forceRefresh = invalidate) { contacts ->
+            filterAndDisplayFavorites(contacts, callback)
         }
     }
 

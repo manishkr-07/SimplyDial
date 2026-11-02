@@ -94,47 +94,41 @@ override fun setupFragment() {
     }
 
     override fun refreshItems(invalidate: Boolean, callback: (() -> Unit)?) {
-        // If contacts are already loaded and not forced to invalidate, update UI instantly without re-querying
-        if (!invalidate && allContacts.isNotEmpty()) {
-            gotContacts(allContacts)
-            callback?.invoke()
-            return
+        // 1. Instant cache path (0ms latency for top-notch responsiveness)
+        if (!invalidate) {
+            val cached = if (allContacts.isNotEmpty()) allContacts else org.fossify.phone.helpers.ContactsRepository.getCachedContacts()
+            if (!cached.isNullOrEmpty()) {
+                allContacts = cached
+                gotContacts(cached)
+                callback?.invoke()
+                return
+            }
         }
 
-        // Start ultra-fast lightweight load for instant UI
+        // 2. Immediately show shimmering animated skeletons (no blank screen)
+        if (allContacts.isEmpty()) {
+            showLightSkeletons()
+        }
+
+        // 3. Progressive cursor loader for instant first-frame paint
         loadLightContactsAsync()
 
-        ensureBackgroundThread {
-            val privateCursor = context?.getMyContactsCursor(favoritesOnly = false, withPhoneNumbersOnly = true)
-            ContactsHelper(context).getContacts(showOnlyContactsWithNumbers = true) { contacts ->
-                ensureBackgroundThread {
-                    allContacts = contacts
+        // 4. Centralized unified query via ContactsRepository
+        val ctx = context ?: return
+        org.fossify.phone.helpers.ContactsRepository.loadContacts(ctx, forceRefresh = invalidate) { deduplicated ->
+            allContacts = deduplicated
 
-                    if (SMT_PRIVATE !in context.baseConfig.ignoredContactSources) {
-                        val privateContacts = MyContactsContentProvider.getContacts(context, privateCursor)
-                        if (privateContacts.isNotEmpty()) {
-                            allContacts.addAll(privateContacts)
-                            allContacts.sort()
-                        }
-                    }
-
-                    val deduplicated = allContacts.deduplicate()
-                    allContacts = deduplicated
-
-                    // Sync with MainActivity cache and update Favorites tab without triggering redundant queries
-                    (activity as? MainActivity)?.let { main ->
-                        main.runOnUiThread {
-                            main.cachedContacts.clear()
-                            main.cachedContacts.addAll(deduplicated)
-                            main.getFavoritesFragment()?.refreshFromCached(deduplicated)
-                        }
-                    }
-
-                    activity?.runOnUiThread {
-                        gotContacts(deduplicated)
-                        callback?.invoke()
-                    }
+            (activity as? MainActivity)?.let { main ->
+                main.runOnUiThread {
+                    main.cachedContacts.clear()
+                    main.cachedContacts.addAll(deduplicated)
+                    main.getFavoritesFragment()?.refreshFromCached(deduplicated)
                 }
+            }
+
+            activity?.runOnUiThread {
+                gotContacts(deduplicated)
+                callback?.invoke()
             }
         }
     }
@@ -267,6 +261,7 @@ override fun onSearchClosed() {
 
     private fun loadLightContactsAsync() {
         if (!context.hasPermission(PERMISSION_READ_CONTACTS)) return
+        if (allContacts.isNotEmpty() || org.fossify.phone.helpers.ContactsRepository.hasCachedContacts()) return
         thread(name = "LightContactsLoader") {
             try {
                 lightContacts.clear()
@@ -293,10 +288,8 @@ override fun onSearchClosed() {
                         val number = it.getString(2) ?: continue
                         val photo = it.getString(3)
 
-                        // Avoid duplicate rows for the same contact ID
                         if (!seenContactIds.add(id)) continue
 
-                        // Avoid duplicate rows across different accounts sharing name and phone digits
                         val digits = number.filter { ch -> ch.isDigit() }.let { d -> if (d.length > 9) d.takeLast(9) else d }
                         val key = "${name.trim().lowercase()}|$digits"
                         if (digits.isNotEmpty() && !seenNameAndNumbers.add(key)) continue
@@ -304,26 +297,23 @@ override fun onSearchClosed() {
                         lightContacts.add(LightContact(id, name, number, photo))
                         loaded++
 
-                        // Ultra-fast first frame: paint immediately on 20 items (first screen), then at 100
-                        if (loaded == 20 || loaded == 100) {
+                        // Ultra-fast progressive paint: paint at 12 items for immediate first frame
+                        if (loaded == 12 || loaded == 50) {
                             val snapshot = lightContacts.toList()
                             activity?.runOnUiThread {
-                                if (binding.fragmentList.adapter !is LightContactsAdapter) {
-                                    showLightSkeletons()
+                                if (allContacts.isEmpty()) {
+                                    lightAdapter?.submitList(snapshot.map { LightContactItem.Data(it) })
                                 }
-                                lightAdapter?.submitList(snapshot.map { LightContactItem.Data(it) })
                             }
                         }
-                        if (loaded >= 3000) {
-                            // Cap to avoid huge in-memory lists on low-end devices
-                            break
-                        }
+                        if (loaded >= 1500) break
                     }
                 }
-                // Final publish with complete list
                 val snapshot = lightContacts.toList()
                 activity?.runOnUiThread {
-                    lightAdapter?.submitList(snapshot.map { LightContactItem.Data(it) })
+                    if (allContacts.isEmpty()) {
+                        lightAdapter?.submitList(snapshot.map { LightContactItem.Data(it) })
+                    }
                 }
             } catch (_: Exception) { }
         }

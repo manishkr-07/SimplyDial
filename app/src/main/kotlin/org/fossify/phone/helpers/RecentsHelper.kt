@@ -21,6 +21,17 @@ class RecentsHelper(private val context: Context) {
         private const val COMPARABLE_PHONE_NUMBER_LENGTH = 9
         const val QUERY_LIMIT = 100
         private const val CACHE_VALIDITY_MS = 300000L // 5 minute cache (increased from 1 minute)
+        private var cachedBlockedNumbers: ArrayList<org.fossify.commons.models.BlockedNumber>? = null
+        private var lastBlockedQueryTime = 0L
+
+        fun getCachedBlockedNumbers(context: Context): ArrayList<org.fossify.commons.models.BlockedNumber> {
+            val now = System.currentTimeMillis()
+            if (cachedBlockedNumbers == null || now - lastBlockedQueryTime > 30_000L) {
+                cachedBlockedNumbers = context.getBlockedNumbers()
+                lastBlockedQueryTime = now
+            }
+            return cachedBlockedNumbers ?: ArrayList()
+        }
     }
 
     private val contentUri = Calls.CONTENT_URI
@@ -55,10 +66,10 @@ class RecentsHelper(private val context: Context) {
             return
         }
 
-        // Use MainActivity cached contacts directly if available to skip redundant query
-        val mainCached = (context as? MainActivity)?.cachedContacts
-        if (!mainCached.isNullOrEmpty()) {
-            processRecentCalls(mainCached, privateCursor, previousRecents, callback)
+        // Use ContactsRepository or MainActivity cached contacts directly if available to skip redundant query
+        val repoCached = ContactsRepository.getCachedContacts() ?: (context as? MainActivity)?.cachedContacts
+        if (!repoCached.isNullOrEmpty()) {
+            processRecentCalls(repoCached, privateCursor, previousRecents, callback)
             return
         }
 
@@ -209,7 +220,7 @@ class RecentsHelper(private val context: Context) {
                 } while (cursor.moveToNext() && recentCalls.size < queryLimit)
             }
 
-            val blockedNumbers = context.getBlockedNumbers()
+            val blockedNumbers = getCachedBlockedNumbers(context)
             val filtered = recentCalls.filter { !context.isNumberBlocked(it.phoneNumber, blockedNumbers) }
             callback(filtered)
         }

@@ -349,6 +349,7 @@ onSearchTextChangedListener = { text ->
 
     private fun checkContactPermissions() {
         handlePermission(PERMISSION_READ_CONTACTS) {
+            org.fossify.phone.helpers.ContactsRepository.preload(applicationContext)
             initFragments()
         }
     }

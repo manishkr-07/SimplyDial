@@ -131,9 +131,12 @@ class LightContactsAdapter(
         }
     }
 
-    inner class SkeletonVH(private val binding: ItemContactSkeletonBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class SkeletonVH(val binding: ItemContactSkeletonBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind() {
-            // Shimmer runs automatically
+            binding.shimmer.startShimmer()
+        }
+        fun stopShimmer() {
+            binding.shimmer.stopShimmer()
         }
     }
 

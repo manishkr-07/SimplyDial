@@ -778,10 +778,10 @@ class RecentCallsAdapter(
 
     private inner class SkeletonViewHolder(val binding: ItemRecentCallSkeletonBinding) : ViewHolder(binding.root) {
         fun bind() {
-            // Shimmer auto-starts via XML; nothing to bind.
+            binding.shimmerContainer.startShimmer()
         }
         fun stopShimmer() {
-            (binding.root as? com.facebook.shimmer.ShimmerFrameLayout)?.stopShimmer()
+            binding.shimmerContainer.stopShimmer()
         }
     }
 
