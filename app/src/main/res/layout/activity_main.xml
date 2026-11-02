@@ -19,13 +19,59 @@
         android:layout_marginTop="?attr/actionBarSize"
         android:fillViewport="true"
         android:scrollbars="none">
+        <!-- In-Call Return To Call Banner -->
+        <LinearLayout
+            android:id="@+id/in_call_top_banner"
+            android:layout_width="match_parent"
+            android:layout_height="42dp"
+            android:background="@drawable/settings_header_banner_bg"
+            android:clickable="true"
+            android:elevation="6dp"
+            android:focusable="true"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingHorizontal="16dp"
+            android:visibility="gone"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <ImageView
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:src="@drawable/ic_call_accept"
+                app:tint="@color/primary_color" />
+
+            <TextView
+                android:id="@+id/in_call_banner_text"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="@string/ongoing_call"
+                android:textColor="@color/primary_color"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/in_call_banner_action"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tap to return ↗"
+                android:textColor="@color/primary_color"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
 
         <org.fossify.commons.views.MyViewPager
             android:id="@+id/view_pager"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             app:layout_constraintBottom_toTopOf="@+id/main_tabs_holder"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@+id/in_call_top_banner" />
 
         <org.fossify.commons.views.MyFloatingActionButton
             android:id="@+id/main_dialpad_button"

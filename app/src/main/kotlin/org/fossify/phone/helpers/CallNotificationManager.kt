@@ -49,9 +49,20 @@ class CallNotificationManager(private val context: Context) {
     }
 
     private fun setupNotificationForCall(call: Call?, notificationId: Int, forceLowPriority: Boolean, isCallWaitingNotification: Boolean) {
+        val initialCallState = call?.getStateCompat() ?: Call.STATE_DISCONNECTED
+        if (call == null || initialCallState == Call.STATE_DISCONNECTED || initialCallState == Call.STATE_DISCONNECTING || CallManager.getPhoneState() == NoCall) {
+            cancelNotification()
+            return
+        }
+
         getCallContact(context.applicationContext, call) { callContact ->
+            val currentState = call.getStateCompat()
+            if (currentState == Call.STATE_DISCONNECTED || currentState == Call.STATE_DISCONNECTING || CallManager.getPhoneState() == NoCall) {
+                cancelNotification()
+                return@getCallContact
+            }
             val callContactAvatar = callContactAvatarHelper.getCallContactAvatar(callContact)
-            val callState = call?.getStateCompat() ?: Call.STATE_DISCONNECTED
+            val callState = currentState
             val isHighPriority = context.powerManager.isInteractive && callState == Call.STATE_RINGING && !forceLowPriority
             val channelId = when {
                 isCallWaitingNotification && isHighPriority -> CALL_WAITING_CHANNEL_HIGH_PRIORITY
@@ -169,9 +180,11 @@ class CallNotificationManager(private val context: Context) {
             }
 
             val notification = builder.build()
-            val currentState = call?.getStateCompat()
-            if (currentState == callState) {
+            val stateAtNotify = call.getStateCompat()
+            if (stateAtNotify != Call.STATE_DISCONNECTED && stateAtNotify != Call.STATE_DISCONNECTING && CallManager.getPhoneState() != NoCall) {
                 notificationManager.notify(notificationId, notification)
+            } else {
+                cancelNotification()
             }
         }
     }

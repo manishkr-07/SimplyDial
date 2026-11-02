@@ -496,9 +496,9 @@
             android:contentDescription="@string/decline_call"
             android:padding="@dimen/medium_margin"
             android:src="@drawable/ic_call_end"
-            android:layout_marginBottom="48dp"
+            android:layout_marginBottom="8dp"
             android:visibility="visible"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/call_decline_label"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/call_accept"
             app:layout_constraintHorizontal_bias="0.5" />
@@ -507,13 +507,13 @@
             android:id="@+id/call_decline_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/normal_margin"
+            android:layout_marginBottom="28dp"
             android:text="@string/decline"
             android:textSize="@dimen/bigger_text_size"
             android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@+id/call_decline"
-            app:layout_constraintStart_toStartOf="@+id/call_decline"
-            app:layout_constraintTop_toBottomOf="@+id/call_decline" />
+            app:layout_constraintStart_toStartOf="@+id/call_decline" />
 
         <ImageView
             android:id="@+id/call_left_arrow"
@@ -575,9 +575,9 @@
             android:elevation="@dimen/medium_margin"
             android:padding="@dimen/medium_margin"
             android:src="@drawable/ic_call_accept"
-            android:layout_marginBottom="48dp"
+            android:layout_marginBottom="8dp"
             android:visibility="visible"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/call_accept_label"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/call_decline"
             app:layout_constraintHorizontal_bias="0.5" />
@@ -586,14 +586,14 @@
             android:id="@+id/call_accept_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/normal_margin"
+            android:layout_marginBottom="28dp"
             android:elevation="@dimen/medium_margin"
             android:text="@string/accept"
             android:textSize="@dimen/bigger_text_size"
             android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@+id/call_accept"
-            app:layout_constraintStart_toStartOf="@+id/call_accept"
-            app:layout_constraintTop_toBottomOf="@+id/call_accept" />
+            app:layout_constraintStart_toStartOf="@+id/call_accept" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -668,7 +668,7 @@
         android:id="@+id/call_end"
         android:layout_width="@dimen/call_end_button_size"
         android:layout_height="@dimen/call_end_button_size"
-        android:layout_marginBottom="@dimen/end_call_button_margin"
+        android:layout_marginBottom="40dp"
         android:background="@drawable/call_button_reject_red"
         android:contentDescription="@string/end_call"
         android:elevation="@dimen/big_margin"

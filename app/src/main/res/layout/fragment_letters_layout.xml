@@ -58,5 +58,18 @@
             android:paddingTop="@dimen/big_margin"
             android:paddingBottom="@dimen/recyclerview_fab_padding" />
 
+        <TextView
+            android:id="@+id/letter_fastscroll_popup"
+            android:layout_width="68dp"
+            android:layout_height="68dp"
+            android:layout_centerInParent="true"
+            android:background="@drawable/fastscroller_bubble"
+            android:elevation="12dp"
+            android:gravity="center"
+            android:textColor="#000000"
+            android:textSize="32sp"
+            android:textStyle="bold"
+            android:visibility="gone" />
+
     </RelativeLayout>
 </merge>

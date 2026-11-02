@@ -282,6 +282,7 @@ class DialpadActivity : SimpleActivity() {
 
     override fun onResume() {
         super.onResume()
+        org.fossify.phone.helpers.InCallBannerHelper.setupBanner(this, binding.inCallTopBanner, binding.inCallBannerText, binding.inCallBannerAction)
         updateTextColors(binding.dialpadHolder)
         binding.dialpadClearChar.applyColorFilter(getProperTextColor())
         binding.dialpadClearChar.beVisibleIf(binding.dialpadInput.value.isNotEmpty())

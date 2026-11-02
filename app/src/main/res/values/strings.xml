@@ -410,4 +410,7 @@
     <string name="tag_emergency">Emergency</string>
     <string name="assign_tag">Assign Tag</string>
 
+    <string name="show_recents_today_summary_title">Show Today Call Summary</string>
+    <string name="show_recents_today_summary_desc">Display total calls and talk time banner below search in call history</string>
+
 </resources>

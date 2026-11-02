@@ -252,4 +252,7 @@
     <string name="tag_emergency">आपातकालीन</string>
     <string name="assign_tag">टैग असाइन करें</string>
 
+    <string name="show_recents_today_summary_title">आज का कॉल सारांश दिखाएं</string>
+    <string name="show_recents_today_summary_desc">कॉल इतिहास में खोज बार के नीचे कुल कॉल और बात करने का समय दिखाएं</string>
+
 </resources>

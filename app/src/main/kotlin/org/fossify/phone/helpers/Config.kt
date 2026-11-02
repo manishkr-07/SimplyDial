@@ -169,7 +169,8 @@ class Config(context: Context) : BaseConfig(context) {
         var showEmergencySOSTile: Boolean,
         var showPostCallSummary: Boolean,
         var spamShieldEnabled: Boolean,
-        var caregiverQuickCallEnabled: Boolean
+        var caregiverQuickCallEnabled: Boolean,
+        var showRecentsTodaySummary: Boolean
     )
 
     fun getModePrefKey(baseKey: String, mode: Int = interfaceMode): String {
@@ -216,7 +217,8 @@ class Config(context: Context) : BaseConfig(context) {
             showEmergencySOSTile = getModeBoolean(SHOW_EMERGENCY_SOS_TILE, mode, isSimple),
             showPostCallSummary = getModeBoolean(SHOW_POST_CALL_SUMMARY, mode, true),
             spamShieldEnabled = getModeBoolean(SPAM_SHIELD_ENABLED, mode, true),
-            caregiverQuickCallEnabled = getModeBoolean(CAREGIVER_QUICK_CALL_ENABLED, mode, mode == INTERFACE_MODE_SIMPLE)
+            caregiverQuickCallEnabled = getModeBoolean(CAREGIVER_QUICK_CALL_ENABLED, mode, mode == INTERFACE_MODE_SIMPLE),
+            showRecentsTodaySummary = getModeBoolean(SHOW_RECENTS_TODAY_SUMMARY, mode, true)
         )
     }
 
@@ -263,7 +265,8 @@ class Config(context: Context) : BaseConfig(context) {
             showEmergencySOSTile = isSimple,
             showPostCallSummary = true,
             spamShieldEnabled = true,
-            caregiverQuickCallEnabled = (mode == INTERFACE_MODE_SIMPLE)
+            caregiverQuickCallEnabled = (mode == INTERFACE_MODE_SIMPLE),
+            showRecentsTodaySummary = true
         )
     }
 
@@ -289,6 +292,7 @@ class Config(context: Context) : BaseConfig(context) {
             .putBoolean(SHOW_POST_CALL_SUMMARY, features.showPostCallSummary)
             .putBoolean(SPAM_SHIELD_ENABLED, features.spamShieldEnabled)
             .putBoolean(CAREGIVER_QUICK_CALL_ENABLED, features.caregiverQuickCallEnabled)
+            .putBoolean(SHOW_RECENTS_TODAY_SUMMARY, features.showRecentsTodaySummary)
             .apply()
     }
 
@@ -433,5 +437,10 @@ class Config(context: Context) : BaseConfig(context) {
             prefs.edit().putString(key, tag.trim()).apply()
         }
     }
+
+
+    var showRecentsTodaySummary: Boolean
+        get() = getModeBoolean(SHOW_RECENTS_TODAY_SUMMARY, interfaceMode, true)
+        set(value) = setModeBoolean(SHOW_RECENTS_TODAY_SUMMARY, interfaceMode, value)
 
 }

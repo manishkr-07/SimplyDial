@@ -21,6 +21,7 @@ import org.fossify.phone.activities.SimpleActivity
 import org.fossify.phone.adapters.RecentCallsAdapter
 import org.fossify.phone.databinding.FragmentRecentsBinding
 import org.fossify.phone.extensions.config
+import org.fossify.phone.extensions.getDayCode
 import org.fossify.phone.extensions.startCallWithConfirmationCheck
 import org.fossify.phone.extensions.startContactDetailsIntent
 import org.fossify.phone.helpers.RecentsHelper
@@ -847,7 +848,7 @@ class RecentsFragment(
 
     private fun updateAnalyticsAndFrequentContacts() {
         val recentCalls = allRecentCalls.filterIsInstance<RecentCall>()
-        if (recentCalls.isEmpty()) {
+        if (recentCalls.isEmpty() || !context.config.showRecentsTodaySummary) {
             binding.recentsAnalyticsCard.beGone()
             binding.frequentContactsScrollView.beGone()
             return
@@ -856,14 +857,8 @@ class RecentsFragment(
         analyticsJob?.cancel()
         analyticsJob = (activity as? androidx.lifecycle.LifecycleOwner)?.lifecycleScope?.launch(Dispatchers.Default) {
             // 1. Today's Call Analytics
-            val calendar = java.util.Calendar.getInstance()
-            calendar.set(java.util.Calendar.HOUR_OF_DAY, 0)
-            calendar.set(java.util.Calendar.MINUTE, 0)
-            calendar.set(java.util.Calendar.SECOND, 0)
-            calendar.set(java.util.Calendar.MILLISECOND, 0)
-            val todayStartTS = (calendar.timeInMillis / 1000).toInt()
-
-            val todayCalls = recentCalls.filter { it.startTS >= todayStartTS }
+            val todayDayCode = org.joda.time.DateTime.now().millis.getDayCode()
+            val todayCalls = recentCalls.filter { it.dayCode == todayDayCode }
             val hasTodayCalls = todayCalls.isNotEmpty()
             val totalSeconds = if (hasTodayCalls) todayCalls.sumOf { it.duration.toLong() } else 0L
             val missedToday = if (hasTodayCalls) todayCalls.count { it.type == Calls.MISSED_TYPE || it.type == Calls.REJECTED_TYPE } else 0
@@ -880,7 +875,7 @@ class RecentsFragment(
             withContext(Dispatchers.Main) {
                 if (!isActive) return@withContext
 
-                if (hasTodayCalls) {
+                if (hasTodayCalls && context.config.showRecentsTodaySummary) {
                     val formattedTime = (activity as? org.fossify.phone.activities.SimpleActivity)?.formatSecondsToShortTimeString(totalSeconds.toInt()) ?: "${totalSeconds / 60}m"
                     val missedPart = if (missedToday > 0) " • $missedToday missed" else ""
                     binding.recentsAnalyticsText.text = "Today: $todayCallsCount calls • $formattedTime talk time$missedPart"

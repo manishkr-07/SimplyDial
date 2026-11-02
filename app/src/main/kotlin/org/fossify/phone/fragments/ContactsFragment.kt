@@ -180,6 +180,7 @@ override fun setupFragment() {
 
     private fun setupLetterFastScroller(contacts: ArrayList<Contact>) {
         binding.horizontalAlphabetSlider.beVisible()
+        binding.horizontalAlphabetSlider.letterPopupView = binding.letterFastscrollPopup
         binding.horizontalAlphabetSlider.setupWithContacts(binding.fragmentList, contacts)
     }
 

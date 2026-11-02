@@ -99,6 +99,7 @@ class CallActivity : SimpleActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+        setupDefaultWindowInsets(binding.callHolder)
 
         if (CallManager.getPhoneState() == NoCall) {
             finish()

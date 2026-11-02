@@ -195,6 +195,7 @@ class FavoritesFragment(context: Context, attributeSet: AttributeSet) : MyViewPa
     }
 
     private fun setupLetterFastScroller(contacts: List<Contact>) {
+        binding.horizontalAlphabetSlider.letterPopupView = binding.letterFastscrollPopup
         binding.horizontalAlphabetSlider.setupWithContacts(binding.fragmentList, contacts)
     }
 

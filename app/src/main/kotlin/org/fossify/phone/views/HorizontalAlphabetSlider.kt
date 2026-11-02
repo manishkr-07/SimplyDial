@@ -8,6 +8,7 @@ import android.graphics.RectF
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
+import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -27,6 +28,10 @@ class HorizontalAlphabetSlider @JvmOverloads constructor(
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
 ) : View(context, attrs, defStyleAttr) {
+
+    var letterPopupView: TextView? = null
+    var onLetterSelected: ((String) -> Unit)? = null
+    var onScrollStateChanged: ((Boolean) -> Unit)? = null
 
     private val linePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         strokeWidth = 4f
@@ -215,13 +220,39 @@ class HorizontalAlphabetSlider @JvmOverloads constructor(
             canvas.drawCircle(popupX, popupY, popupRadius, popupStrokePaint)
 
             // Draw bold contrast letter
-            val textY = popupY + (popupTextPaint.textSize - popupTextPaint.descent() - popupTextPaint.ascent()) / 2
+            val textY = popupY - (popupTextPaint.descent() + popupTextPaint.ascent()) / 2f
             canvas.drawText(letter, popupX, textY, popupTextPaint)
 
             // Restore alpha
             popupPaint.alpha = bgOldAlpha
             popupStrokePaint.alpha = strokeOldAlpha
             popupTextPaint.alpha = textOldAlpha
+        }
+    }
+
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        if (letterPopupView == null) {
+            letterPopupView = (parent as? View)?.findViewById(R.id.letter_fastscroll_popup)
+        }
+    }
+
+    private fun showLetterPopup(letter: String) {
+        letterPopupView?.apply {
+            text = letter
+            if (visibility != View.VISIBLE) {
+                alpha = 0f
+                visibility = View.VISIBLE
+                animate().alpha(1f).setDuration(120).start()
+            }
+        }
+    }
+
+    private fun hideLetterPopup() {
+        letterPopupView?.apply {
+            animate().alpha(0f).setDuration(200).withEndAction {
+                visibility = View.GONE
+            }.start()
         }
     }
 
@@ -232,6 +263,10 @@ class HorizontalAlphabetSlider @JvmOverloads constructor(
                 showPopup = true
                 animatePopupAlpha(1f)
                 updateDotPosition(event.y)
+                val letter = getCurrentLetter()
+                showLetterPopup(letter)
+                onScrollStateChanged?.invoke(true)
+                onLetterSelected?.invoke(letter)
                 removeHidePopupCallback()
                 parent.requestDisallowInterceptTouchEvent(true)
                 return true
@@ -239,6 +274,9 @@ class HorizontalAlphabetSlider @JvmOverloads constructor(
             MotionEvent.ACTION_MOVE -> {
                 if (isDragging) {
                     updateDotPosition(event.y)
+                    val letter = getCurrentLetter()
+                    showLetterPopup(letter)
+                    onLetterSelected?.invoke(letter)
                     return true
                 }
             }
@@ -246,6 +284,8 @@ class HorizontalAlphabetSlider @JvmOverloads constructor(
                 if (isDragging) {
                     isDragging = false
                     scheduleHidePopup()
+                    hideLetterPopup()
+                    onScrollStateChanged?.invoke(false)
                     parent.requestDisallowInterceptTouchEvent(false)
                     return true
                 }

@@ -163,6 +163,7 @@ class MainActivity : SimpleActivity() {
 
         updateMenuColors()
         org.fossify.phone.helpers.CaregiverQuickCallNotifier.updateNotification(this)
+        org.fossify.phone.helpers.InCallBannerHelper.setupBanner(this, binding.inCallTopBanner, binding.inCallBannerText, binding.inCallBannerAction)
         val properPrimaryColor = getProperPrimaryColor()
         val dialpadIcon = resources.getColoredDrawableWithColor(R.drawable.ic_dialpad_vector, properPrimaryColor.getContrastColor())
         binding.mainDialpadButton.setImageDrawable(dialpadIcon)

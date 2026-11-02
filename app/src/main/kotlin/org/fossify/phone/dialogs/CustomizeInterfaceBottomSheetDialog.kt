@@ -188,6 +188,7 @@ class CustomizeInterfaceBottomSheetDialog : BaseBottomSheetDialogFragment() {
             switchPostCallSummary.isChecked = features.showPostCallSummary
             switchSpamShield.isChecked = features.spamShieldEnabled
             switchCaregiverQuickCall.isChecked = features.caregiverQuickCallEnabled
+            switchShowRecentsTodaySummary.isChecked = features.showRecentsTodaySummary
         }
     }
 
@@ -212,6 +213,7 @@ class CustomizeInterfaceBottomSheetDialog : BaseBottomSheetDialogFragment() {
             features.showPostCallSummary = switchPostCallSummary.isChecked
             features.spamShieldEnabled = switchSpamShield.isChecked
             features.caregiverQuickCallEnabled = switchCaregiverQuickCall.isChecked
+            features.showRecentsTodaySummary = switchShowRecentsTodaySummary.isChecked
         }
     }
 
@@ -235,6 +237,7 @@ class CustomizeInterfaceBottomSheetDialog : BaseBottomSheetDialogFragment() {
             holderPostCallSummary.setOnClickListener { switchPostCallSummary.toggle() }
             holderSpamShield.setOnClickListener { switchSpamShield.toggle() }
             holderCaregiverQuickCall.setOnClickListener { switchCaregiverQuickCall.toggle() }
+            holderShowRecentsTodaySummary.setOnClickListener { switchShowRecentsTodaySummary.toggle() }
 
             btnResetDefaults.setOnClickListener {
                 it.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
