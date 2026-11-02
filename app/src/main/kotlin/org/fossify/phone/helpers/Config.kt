@@ -166,7 +166,8 @@ class Config(context: Context) : BaseConfig(context) {
         var groupSubsequentCalls: Boolean,
         var announceCallerName: Boolean,
         var smartDualSIM: Boolean,
-        var showEmergencySOSTile: Boolean
+        var showEmergencySOSTile: Boolean,
+        var showPostCallSummary: Boolean
     )
 
     fun getModePrefKey(baseKey: String, mode: Int = interfaceMode): String {
@@ -210,7 +211,8 @@ class Config(context: Context) : BaseConfig(context) {
             groupSubsequentCalls = getModeBoolean(GROUP_SUBSEQUENT_CALLS, mode, true),
             announceCallerName = getModeBoolean(ANNOUNCE_CALLER_NAME, mode, isSimple),
             smartDualSIM = getModeBoolean(SMART_DUAL_SIM, mode, true),
-            showEmergencySOSTile = getModeBoolean(SHOW_EMERGENCY_SOS_TILE, mode, isSimple)
+            showEmergencySOSTile = getModeBoolean(SHOW_EMERGENCY_SOS_TILE, mode, isSimple),
+            showPostCallSummary = getModeBoolean(SHOW_POST_CALL_SUMMARY, mode, true)
         )
     }
 
@@ -230,6 +232,7 @@ class Config(context: Context) : BaseConfig(context) {
         setModeBoolean(ANNOUNCE_CALLER_NAME, mode, features.announceCallerName)
         setModeBoolean(SMART_DUAL_SIM, mode, features.smartDualSIM)
         setModeBoolean(SHOW_EMERGENCY_SOS_TILE, mode, features.showEmergencySOSTile)
+        setModeBoolean(SHOW_POST_CALL_SUMMARY, mode, features.showPostCallSummary)
         if (mode == interfaceMode) {
             syncModePreferences(mode)
         }
@@ -252,7 +255,8 @@ class Config(context: Context) : BaseConfig(context) {
             groupSubsequentCalls = true,
             announceCallerName = isSimple,
             smartDualSIM = true,
-            showEmergencySOSTile = isSimple
+            showEmergencySOSTile = isSimple,
+            showPostCallSummary = true
         )
     }
 
@@ -275,6 +279,7 @@ class Config(context: Context) : BaseConfig(context) {
             .putBoolean(ANNOUNCE_CALLER_NAME, features.announceCallerName)
             .putBoolean(SMART_DUAL_SIM, features.smartDualSIM)
             .putBoolean(SHOW_EMERGENCY_SOS_TILE, features.showEmergencySOSTile)
+            .putBoolean(SHOW_POST_CALL_SUMMARY, features.showPostCallSummary)
             .apply()
     }
 
@@ -342,6 +347,10 @@ class Config(context: Context) : BaseConfig(context) {
     var showEmergencySOSTile: Boolean
         get() = getModeBoolean(SHOW_EMERGENCY_SOS_TILE, interfaceMode, isSimpleMode)
         set(value) = setModeBoolean(SHOW_EMERGENCY_SOS_TILE, interfaceMode, value)
+
+    var showPostCallSummary: Boolean
+        get() = getModeBoolean(SHOW_POST_CALL_SUMMARY, interfaceMode, true)
+        set(value) = setModeBoolean(SHOW_POST_CALL_SUMMARY, interfaceMode, value)
 
     var emergencySOSNumber: String
         get() = prefs.getString(EMERGENCY_SOS_NUMBER, "112") ?: "112"

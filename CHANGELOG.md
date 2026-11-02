@@ -6,7 +6,47 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ---
 
-## [1.8.5] - 2026-11-02 - Senior Care, TTS Caller Announcement, Smart Dual-SIM & SOS
+## [1.9.0] - 2026-11-02 - Call Notes, Post-Call Summary, Analytics & Media Studio
+
+### 📝 Feature — In-Call Notes & Post-Call Summary Dialog
+- **Live In-Call Notes Badge**:
+  - Displays the caller's saved custom note prominently in a sleek rounded pill badge on the incoming and active call screen.
+  - 1-tap note editing live during an active call (`showInCallNoteDialog`), allowing users to jot down critical info while speaking.
+- **Smart Post-Call Summary Bottom Sheet (`PostCallSummaryDialog`)**:
+  - Appears automatically upon call completion (with 8-second auto-dismiss progress timer).
+  - Displays formatted call duration, caller name/number, and an inline scratchpad to quickly update or save contact notes.
+  - 1-tap quick actions: **WhatsApp**, **Telegram**, and **Call Back**.
+  - Distinctly toggleable per mode in "Customize Interface Features".
+
+### 📊 Feature — Call Insights & Analytics Dashboard (`CallAnalyticsDialog`)
+- **100% Offline Telecom Intelligence**:
+  - Computes complete call analytics from device call logs (`CallLog.Calls`) without any cloud reliance.
+  - KPI Hero Card displaying total talk time (hours/minutes) and total calls over the last 30 days.
+  - Breakdowns for Incoming, Outgoing, and Missed calls with durations.
+  - **Missed Call Callback Rate**: Tracks and calculates the percentage of missed calls that were subsequently returned.
+  - **Peak Calling Hours**: Visual distribution bar across Morning (6am-12pm), Afternoon (12pm-6pm), Evening (6pm-10pm), and Night.
+  - **Top 5 Frequent Contacts**: Contact rank, name, number, call count, and total duration.
+  - Accessible via 3-dots overflow menu ("Call Insights & Analytics").
+
+### 🎙️ Feature — In-App Call Recording Audio Player (`CallRecordingPlayerDialog`)
+- **Visual Audio Studio**:
+  - Interactive playback modal with SeekBar, play/pause controls, current time, and total duration.
+  - 5-second rewind and forward skip buttons for quick audio scrubbing.
+  - Variable playback speed controls (`1.0x`, `1.25x`, `1.5x`, `2.0x`).
+  - 1-tap direct audio file sharing via Android FileProvider to WhatsApp, Drive, Gmail, or any messenger.
+  - Quick action integration: shows a recording badge directly in contact quick action sheets when recordings exist for that caller.
+  - Linked "Call Recordings" (`RecordingHistoryActivity`) directly into the main 3-dots menu.
+
+### ✈️ Feature — Direct WhatsApp & Telegram Communication
+- **Unified Chat Launcher (`CommunicationHelper`)**:
+  - 1-tap WhatsApp and Telegram direct chat action from Contact Quick Actions, Recent Calls, and Post-Call Summary without requiring the caller to be saved in contacts.
+  - International number cleaning and E.164 formatting.
+
+### 🔍 Feature — Contact Notes T9 Search Integration
+- **Search by Note**:
+  - T9 keypad algorithm in `DialpadActivity` now searches across both contact names, phone numbers, and custom contact notes (e.g., typing "Doctor" or its keypad digits finds contacts with that note).
+
+---
 
 ### 🗣️ Feature — Spoken Caller Name Announcement (TTS Engine)
 - **Voice Caller Announcement**:

@@ -326,4 +326,26 @@
     <string name="block_contact">Block contact</string>
     <string name="unblock_contact">Unblock contact</string>
     <string name="paste">Paste</string>
+
+    <string name="call_analytics">Call Insights &amp; Analytics</string>
+    <string name="call_analytics_desc">Detailed statistics, calling trends, and top contacted numbers</string>
+    <string name="post_call_summary_title">Post-Call Summary</string>
+    <string name="post_call_summary_desc">Show duration, quick note editor, and instant messaging after a call ends</string>
+    <string name="in_call_notes">Call Notes</string>
+    <string name="in_call_notes_hint">Add a note for this contact...</string>
+    <string name="open_whatsapp">WhatsApp</string>
+    <string name="open_telegram">Telegram</string>
+    <string name="call_recordings_title">Call Recordings</string>
+    <string name="playback_speed">Speed</string>
+    <string name="call_duration">Duration</string>
+    <string name="weekly_stats">Weekly Insights</string>
+    <string name="total_talk_time">Total Talk Time</string>
+    <string name="incoming_calls">Incoming</string>
+    <string name="outgoing_calls">Outgoing</string>
+    <string name="missed_calls">Missed</string>
+    <string name="top_contacts">Top Contacts</string>
+    <string name="peak_hours">Peak Calling Hours</string>
+    <string name="callback_rate">Callback Rate</string>
+    <string name="call_back">Call Back</string>
+    <string name="no_analytics_data">No call history available to analyze</string>
 </resources>

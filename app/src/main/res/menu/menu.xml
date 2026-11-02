@@ -35,6 +35,16 @@
         android:title="@string/column_count"
         app:showAsAction="never" />
     <item
+        android:id="@+id/call_analytics"
+        android:icon="@drawable/ic_analytics_vector"
+        android:title="@string/call_analytics"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/call_recordings"
+        android:icon="@drawable/ic_mic_vector"
+        android:title="@string/call_recordings_title"
+        app:showAsAction="never" />
+    <item
         android:id="@+id/interface_mode"
         android:icon="@drawable/ic_interface_mode_vector"
         android:title="@string/interface_mode"

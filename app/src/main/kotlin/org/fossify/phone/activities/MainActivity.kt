@@ -309,6 +309,8 @@ onSearchTextChangedListener = { text ->
                     R.id.sort -> showSortingDialog(showCustomSorting = getCurrentFragment() is FavoritesFragment)
                     R.id.filter -> showFilterDialog()
                     R.id.interface_mode -> showInterfaceModeDialog()
+                    R.id.call_analytics -> org.fossify.phone.dialogs.CallAnalyticsDialog.show(supportFragmentManager)
+                    R.id.call_recordings -> launchRecordingHistory()
                     R.id.settings -> launchSettings()
                     R.id.change_view_type -> changeViewType()
                     R.id.column_count -> changeColumnCount()
@@ -316,6 +318,12 @@ onSearchTextChangedListener = { text ->
                 }
                 return@setOnMenuItemClickListener true
             }
+        }
+    }
+
+    private fun launchRecordingHistory() {
+        Intent(this, RecordingHistoryActivity::class.java).apply {
+            startActivity(this)
         }
     }
 

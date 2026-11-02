@@ -54,6 +54,7 @@ const val SHOW_CALL_CONFIRMATION = "show_call_confirmation"
 const val ANNOUNCE_CALLER_NAME = "announce_caller_name"
 const val SMART_DUAL_SIM = "smart_dual_sim"
 const val SHOW_EMERGENCY_SOS_TILE = "show_emergency_sos_tile"
+const val SHOW_POST_CALL_SUMMARY = "show_post_call_summary"
 const val EMERGENCY_SOS_CONTACT = "emergency_sos_contact"
 const val EMERGENCY_SOS_NUMBER = "emergency_sos_number"
 

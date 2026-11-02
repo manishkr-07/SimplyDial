@@ -412,7 +412,21 @@ class DialpadActivity : SimpleActivity() {
                     convertedName = currConvertedName
                 }
 
-                contact.doesContainPhoneNumber(text) || (convertedName.contains(text, true))
+                val matchesNameOrPhone = contact.doesContainPhoneNumber(text) || (convertedName.contains(text, true))
+                if (matchesNameOrPhone) {
+                    true
+                } else {
+                    val primaryNum = contact.phoneNumbers.firstOrNull()?.normalizedNumber ?: ""
+                    val note = if (primaryNum.isNotEmpty()) config.getContactNote(primaryNum) else ""
+                    if (note.isNotEmpty()) {
+                        val convertedNote = KeypadHelper.convertKeypadLettersToDigits(
+                            note.normalizeString()
+                        ).filterNot { it.isWhitespace() }
+                        note.contains(text, true) || convertedNote.contains(text, true)
+                    } else {
+                        false
+                    }
+                }
             }.sortedWith(compareBy {
                 !it.doesContainPhoneNumber(text)
             }).toMutableList() as ArrayList<Contact>

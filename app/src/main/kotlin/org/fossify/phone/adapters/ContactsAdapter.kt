@@ -709,25 +709,12 @@ class ContactsAdapter(
             // Action: WhatsApp Direct Chat (Modern & Advanced Mode)
             contactActionWhatsapp.setOnClickListener {
                 dialog.dismiss()
-                val cleanNumber = primaryNumber.filter { it.isDigit() }
-                if (cleanNumber.isNotEmpty()) {
-                    try {
-                        val waIntent = Intent(Intent.ACTION_VIEW).apply {
-                            data = Uri.parse("https://api.whatsapp.com/send?phone=$cleanNumber")
-                            `package` = "com.whatsapp"
-                        }
-                        activity.startActivity(waIntent)
-                    } catch (e: Exception) {
-                        try {
-                            val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://api.whatsapp.com/send?phone=$cleanNumber"))
-                            activity.startActivity(browserIntent)
-                        } catch (e2: Exception) {
-                            activity.toast("Could not open WhatsApp")
-                        }
-                    }
-                } else {
-                    activity.toast("No valid number found")
-                }
+                org.fossify.phone.helpers.CommunicationHelper.openWhatsApp(activity, primaryNumber)
+            }
+
+            contactActionTelegram.setOnClickListener {
+                dialog.dismiss()
+                org.fossify.phone.helpers.CommunicationHelper.openTelegram(activity, primaryNumber)
             }
 
             // Action: Share Contact

@@ -731,6 +731,12 @@ class CallActivity : SimpleActivity() {
                 callerNumber.beGone()
             }
 
+            val currentNumber = callContact?.number ?: ""
+            updateCallerNote(currentNumber)
+            callerNoteBadge.setOnClickListener {
+                showInCallNoteDialog(currentNumber)
+            }
+
             callerAvatar.apply {
                 if (avatarUri.isNullOrEmpty()) {
                     val bgColor = getProperPrimaryColor()
@@ -751,6 +757,36 @@ class CallActivity : SimpleActivity() {
                 addAnimatedGradientRing()
             }
         }
+    }
+
+    private fun updateCallerNote(number: String) {
+        val note = config.getContactNote(number)
+        if (note.isNotEmpty()) {
+            binding.callerNoteText.text = note
+            binding.callerNoteBadge.beVisible()
+        } else {
+            binding.callerNoteBadge.beGone()
+        }
+    }
+
+    private fun showInCallNoteDialog(number: String) {
+        if (number.isEmpty()) return
+        val currentNote = config.getContactNote(number)
+        val editText = android.widget.EditText(this).apply {
+            setText(currentNote)
+            hint = getString(R.string.in_call_notes_hint)
+            if (text != null) setSelection(text.length)
+        }
+        androidx.appcompat.app.AlertDialog.Builder(this)
+            .setTitle(R.string.in_call_notes)
+            .setView(editText)
+            .setPositiveButton(R.string.save) { _, _ ->
+                val newNote = editText.text.toString().trim()
+                config.setContactNote(number, newNote)
+                updateCallerNote(number)
+            }
+            .setNegativeButton(R.string.cancel, null)
+            .show()
     }
 
     private fun getContactNameOrNumber(contact: CallContact): String {
@@ -1028,8 +1064,21 @@ class CallActivity : SimpleActivity() {
                 disableAllActionButtons()
                 @SuppressLint("SetTextI18n")
                 binding.callStatusLabel.text = "${callDuration.getFormattedDuration()} (${getString(R.string.call_ended)})"
-                Handler(mainLooper).postDelayed(3000) {
-                    safeFinishAndRemoveTask()
+                if (config.showPostCallSummary && !isDestroyed && !isFinishing) {
+                    val name = binding.callerNameLabel.text.toString()
+                    val number = callContact?.number ?: ""
+                    org.fossify.phone.dialogs.PostCallSummaryDialog.show(
+                        supportFragmentManager,
+                        name,
+                        number,
+                        callDuration
+                    ) {
+                        safeFinishAndRemoveTask()
+                    }
+                } else {
+                    Handler(mainLooper).postDelayed(3000) {
+                        safeFinishAndRemoveTask()
+                    }
                 }
             } else {
                 disableAllActionButtons()

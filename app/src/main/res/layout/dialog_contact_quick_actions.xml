@@ -319,6 +319,37 @@
             android:textStyle="bold" />
 
         <TextView
+            android:id="@+id/contact_action_telegram"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="6dp"
+            android:background="@drawable/settings_chip_bg"
+            android:clickable="true"
+            android:focusable="true"
+            android:paddingHorizontal="11dp"
+            android:paddingVertical="7dp"
+            android:text="Telegram"
+            android:textColor="#229ED9"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/contact_action_recording"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="6dp"
+            android:background="@drawable/settings_chip_bg"
+            android:clickable="true"
+            android:focusable="true"
+            android:paddingHorizontal="11dp"
+            android:paddingVertical="7dp"
+            android:text="🎙️ Recording"
+            android:textColor="@color/primary_color"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:visibility="gone" />
+
+        <TextView
             android:id="@+id/contact_action_share"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

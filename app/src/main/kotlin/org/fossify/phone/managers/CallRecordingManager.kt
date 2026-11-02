@@ -406,6 +406,18 @@ class CallRecordingManager(private val context: Context) {
         
         return recordings.sortedByDescending { it.timestamp }
     }
+
+    /**
+     * Get recordings matching a specific phone number
+     */
+    fun getRecordingsForNumber(phoneNumber: String): List<CallRecording> {
+        val cleanDigits = phoneNumber.filter { it.isDigit() }.takeLast(10)
+        if (cleanDigits.isEmpty()) return emptyList()
+        return getAllRecordings().filter { recording ->
+            val fileDigits = recording.fileName.filter { it.isDigit() }
+            fileDigits.contains(cleanDigits)
+        }
+    }
     
     /**
      * Delete a recording

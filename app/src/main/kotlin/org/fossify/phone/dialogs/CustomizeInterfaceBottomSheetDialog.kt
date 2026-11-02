@@ -185,6 +185,7 @@ class CustomizeInterfaceBottomSheetDialog : BaseBottomSheetDialogFragment() {
             switchAnnounceCallerName.isChecked = features.announceCallerName
             switchShowEmergencySosTile.isChecked = features.showEmergencySOSTile
             switchSmartDualSim.isChecked = features.smartDualSIM
+            switchPostCallSummary.isChecked = features.showPostCallSummary
         }
     }
 
@@ -206,6 +207,7 @@ class CustomizeInterfaceBottomSheetDialog : BaseBottomSheetDialogFragment() {
             features.announceCallerName = switchAnnounceCallerName.isChecked
             features.showEmergencySOSTile = switchShowEmergencySosTile.isChecked
             features.smartDualSIM = switchSmartDualSim.isChecked
+            features.showPostCallSummary = switchPostCallSummary.isChecked
         }
     }
 
@@ -226,6 +228,7 @@ class CustomizeInterfaceBottomSheetDialog : BaseBottomSheetDialogFragment() {
             holderAnnounceCallerName.setOnClickListener { switchAnnounceCallerName.toggle() }
             holderShowEmergencySosTile.setOnClickListener { switchShowEmergencySosTile.toggle() }
             holderSmartDualSim.setOnClickListener { switchSmartDualSim.toggle() }
+            holderPostCallSummary.setOnClickListener { switchPostCallSummary.toggle() }
 
             btnResetDefaults.setOnClickListener {
                 it.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)

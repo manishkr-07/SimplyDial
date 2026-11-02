@@ -25,6 +25,7 @@ import org.fossify.phone.R
 import org.fossify.phone.activities.MainActivity
 import org.fossify.phone.activities.SimpleActivity
 import org.fossify.phone.databinding.DialogContactQuickActionsBinding
+import org.fossify.phone.managers.CallRecordingManager
 import org.fossify.phone.dialogs.ShowGroupedCallsDialog
 import org.fossify.phone.dialogs.VideoCallOptionsDialog
 import org.fossify.phone.extensions.addAnimatedGradientRing
@@ -157,7 +158,26 @@ object QuickActionsHelper {
             // WhatsApp Direct Chat
             contactActionWhatsapp.setOnClickListener {
                 dialog.dismiss()
-                openWhatsApp(activity, call.phoneNumber)
+                CommunicationHelper.openWhatsApp(activity, call.phoneNumber)
+            }
+
+            // Telegram Direct Chat
+            contactActionTelegram.setOnClickListener {
+                dialog.dismiss()
+                CommunicationHelper.openTelegram(activity, call.phoneNumber)
+            }
+
+            // Call Recordings
+            val recordings = CallRecordingManager(activity).getRecordingsForNumber(call.phoneNumber)
+            if (recordings.isNotEmpty()) {
+                contactActionRecording.beVisible()
+                contactActionRecording.text = "🎙️ ${recordings.size} Rec"
+                contactActionRecording.setOnClickListener {
+                    dialog.dismiss()
+                    org.fossify.phone.dialogs.CallRecordingPlayerDialog.show(activity.supportFragmentManager, recordings.first())
+                }
+            } else {
+                contactActionRecording.beGone()
             }
 
             // Share Contact Text

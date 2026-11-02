@@ -167,4 +167,27 @@
     <string name="block_contact">संपर्क ब्लॉक करें</string>
     <string name="unblock_contact">संपर्क अनब्लॉक करें</string>
     <string name="paste">पेस्ट करें</string>
+
+    <string name="call_analytics">कॉल इनसाइट्स और एनालिटिक्स</string>
+    <string name="call_analytics_desc">विस्तृत आंकड़े, कॉलिंग रुझान और शीर्ष संपर्क</string>
+    <string name="post_call_summary_title">कॉल समाप्त सारांश</string>
+    <string name="post_call_summary_desc">कॉल समाप्त होने के बाद कॉल अवधि, त्वरित नोट और मैसेजिंग शॉर्टकट दिखाएं</string>
+    <string name="in_call_notes">कॉल नोट्स</string>
+    <string name="in_call_notes_hint">इस संपर्क के लिए एक नोट लिखें...</string>
+    <string name="open_whatsapp">व्हाट्सएप</string>
+    <string name="open_telegram">टेलीग्राम</string>
+    <string name="call_recordings_title">कॉल रिकॉर्डिंग्स</string>
+    <string name="play_recording">रिकॉर्डिंग चलाएं</string>
+    <string name="playback_speed">गति</string>
+    <string name="call_duration">अवधि</string>
+    <string name="weekly_stats">साप्ताहिक इनसाइट्स</string>
+    <string name="total_talk_time">कुल बातचीत का समय</string>
+    <string name="incoming_calls">इनकमिंग</string>
+    <string name="outgoing_calls">आउटगोइंग</string>
+    <string name="missed_calls">मिस्ड कॉल</string>
+    <string name="top_contacts">शीर्ष संपर्क</string>
+    <string name="peak_hours">शीर्ष कॉलिंग समय</string>
+    <string name="callback_rate">कॉल बैक दर</string>
+    <string name="call_back">पुनः कॉल करें</string>
+    <string name="no_analytics_data">विश्लेषण के लिए कोई कॉल इतिहास उपलब्ध नहीं है</string>
 </resources>
