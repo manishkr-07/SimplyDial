@@ -102,6 +102,8 @@ class SettingsActivity : SimpleActivity() {
     override fun onResume() {
         super.onResume()
         setupToolbar(binding.settingsToolbar, NavigationIcon.Arrow)
+        binding.settingsToolbar.popupTheme = R.style.ThemeOverlay_SimplyDial_PopupMenu
+        binding.settingsHeroVersion.text = "v${org.fossify.phone.BuildConfig.VERSION_NAME} • EaseUI Suite"
 
         setupUseEnglish()
         setupLanguage()

@@ -80,7 +80,8 @@
                             android:background="@drawable/settings_chip_bg"
                             android:paddingHorizontal="8dp"
                             android:paddingVertical="2dp"
-                            android:text="v1.7.0 • EaseUI Suite"
+                            android:id="@+id/settings_hero_version"
+                            android:text="v1.8.2 • EaseUI Suite"
                             android:textColor="@color/primary_color"
                             android:textSize="11sp"
                             android:textStyle="bold" />

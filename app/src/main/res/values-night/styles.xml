@@ -43,29 +43,49 @@
         <item name="android:colorBackgroundFloating">@color/dialog_background</item>
         
         <!-- Modern 3-Dots Popup Menu Styling -->
+        <item name="android:itemTextAppearance">@style/TextAppearance.SimplyDial.PopupMenu.Item</item>
+        <item name="itemTextAppearance">@style/TextAppearance.SimplyDial.PopupMenu.Item</item>
         <item name="actionOverflowMenuStyle">@style/Widget.SimplyDial.PopupMenu.Overflow</item>
         <item name="popupMenuStyle">@style/Widget.SimplyDial.PopupMenu</item>
         <item name="actionBarPopupTheme">@style/ThemeOverlay.SimplyDial.PopupMenu</item>
     </style>
 
-    <style name="ThemeOverlay.SimplyDial.PopupMenu" parent="ThemeOverlay.MaterialComponents.Toolbar.Surface">
-        <item name="android:colorBackground">@color/elevated_surface_color</item>
+    <style name="TextAppearance.SimplyDial.PopupMenu.Item" parent="TextAppearance.MaterialComponents.Subtitle1">
         <item name="android:textColor">@color/text_primary</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+
+    <style name="ThemeOverlay.SimplyDial.PopupMenu" parent="ThemeOverlay.MaterialComponents.Dark">
+        <item name="android:colorBackground">@color/elevated_surface_color</item>
+        <item name="colorSurface">@color/elevated_surface_color</item>
+        <item name="colorOnSurface">@color/text_primary</item>
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:textColorPrimary">@color/text_primary</item>
+        <item name="android:textColorSecondary">@color/text_secondary</item>
         <item name="android:popupBackground">@drawable/popup_menu_modern_bg</item>
+        <item name="android:itemTextAppearance">@style/TextAppearance.SimplyDial.PopupMenu.Item</item>
+        <item name="itemTextAppearance">@style/TextAppearance.SimplyDial.PopupMenu.Item</item>
+        <item name="actionMenuTextColor">@color/text_primary</item>
+        <item name="colorControlNormal">@color/primary_color</item>
+        <item name="iconTint">@color/primary_color</item>
+        <item name="android:tint">@color/primary_color</item>
         <item name="actionOverflowMenuStyle">@style/Widget.SimplyDial.PopupMenu.Overflow</item>
         <item name="popupMenuStyle">@style/Widget.SimplyDial.PopupMenu</item>
     </style>
 
     <style name="Widget.SimplyDial.PopupMenu" parent="Widget.MaterialComponents.PopupMenu">
         <item name="android:popupBackground">@drawable/popup_menu_modern_bg</item>
-        
+        <item name="android:itemTextAppearance">@style/TextAppearance.SimplyDial.PopupMenu.Item</item>
+        <item name="itemTextAppearance">@style/TextAppearance.SimplyDial.PopupMenu.Item</item>
         <item name="android:overlapAnchor">false</item>
         <item name="android:dropDownVerticalOffset">4dp</item>
     </style>
 
     <style name="Widget.SimplyDial.PopupMenu.Overflow" parent="Widget.MaterialComponents.PopupMenu.Overflow">
         <item name="android:popupBackground">@drawable/popup_menu_modern_bg</item>
-        
+        <item name="android:itemTextAppearance">@style/TextAppearance.SimplyDial.PopupMenu.Item</item>
+        <item name="itemTextAppearance">@style/TextAppearance.SimplyDial.PopupMenu.Item</item>
         <item name="android:overlapAnchor">false</item>
         <item name="android:dropDownVerticalOffset">4dp</item>
     </style>
@@ -78,20 +98,44 @@
         <item name="android:paddingTop">@dimen/one_dp</item>
     </style>
 
-    <!-- Dark Theme Button Style -->
     <style name="ButtonStyle">
         <item name="android:padding">@dimen/medium_margin</item>
-        <item name="android:textAllCaps">false</item>
+        <item name="android:textSize">@dimen/normal_text_size</item>
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:background">?attr/colorSurface</item>
+    </style>
+    
+    <style name="AppTheme.ActionBar.TitleTextStyle" parent="TextAppearance.MaterialComponents.Headline6">
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+    
+    <!-- Modern Outlined Action Pill Style -->
+    <style name="ModernActionPill">
+        <item name="android:layout_height">44dp</item>
+        <item name="android:paddingStart">16dp</item>
+        <item name="android:paddingEnd">16dp</item>
+        <item name="android:textColor">@color/primary_color</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:background">@drawable/contact_action_pill_bg</item>
+        <item name="android:gravity">center</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+    </style>
+    
+    <style name="ModernActionPill.Primary">
+        <item name="android:textColor">@color/fab_icon</item>
+        <item name="android:background">@drawable/contact_action_pill_primary_bg</item>
     </style>
 
-    <!-- Dark Theme Dialpad Number Style -->
     <style name="DialpadNumberStyle">
         <item name="android:includeFontPadding">false</item>
         <item name="android:textSize">@dimen/dialpad_text_size</item>
         <item name="android:layout_centerHorizontal">true</item>
     </style>
 
-    <!-- Dark Theme Dialpad Letter Style -->
     <style name="DialpadLetterStyle">
         <item name="android:textSize">@dimen/dialpad_letters_text_size</item>
         <item name="android:alpha">0.8</item>
@@ -99,7 +143,6 @@
         <item name="android:textColor">?android:textColorSecondary</item>
     </style>
     
-    <!-- Dark theme dialog style -->
     <style name="Theme.Fossify.Dialog" parent="ThemeOverlay.MaterialComponents.Dialog">
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:windowIsFloating">true</item>
@@ -111,5 +154,4 @@
         <item name="colorSurface">?attr/colorSurface</item>
         <item name="colorOnSurface">?attr/colorOnSurface</item>
     </style>
-
 </resources>

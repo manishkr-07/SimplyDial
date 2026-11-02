@@ -282,6 +282,7 @@ class DialpadActivity : SimpleActivity() {
         binding.dialpadClearChar.beVisibleIf(binding.dialpadInput.value.isNotEmpty())
         updateNavigationBarColor(getProperBackgroundColor())
         setupToolbar(binding.dialpadToolbar, NavigationIcon.Arrow)
+        binding.dialpadToolbar.popupTheme = R.style.ThemeOverlay_SimplyDial_PopupMenu
         styleDialpadKeys()
         styleActionButtons()
         updateSmartBar(binding.dialpadInput.value)
@@ -826,6 +827,12 @@ class DialpadActivity : SimpleActivity() {
         val density = resources.displayMetrics.density
 
         binding.apply {
+            // Smart chips styling
+            dialpadPasteChip.setTextColor(properTextColor)
+            dialpadPasteChip.chipIconTint = android.content.res.ColorStateList.valueOf(properPrimaryColor)
+            dialpadAddContactChip.setTextColor(properTextColor)
+            dialpadAddContactChip.chipIconTint = android.content.res.ColorStateList.valueOf(properPrimaryColor)
+
             // Call button styling
             val callBtnSize = ((if (isSimple) 74 else 68) * density).toInt()
             dialpadCallButton.layoutParams.width = callBtnSize

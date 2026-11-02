@@ -7,6 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.8.2] - 2026-11-02 - Text Visibility Architecture Fix & Version Alignment
+
+### 🌟 Fixed — 3-Dots Popup Menu Text Visibility in Dark & Light Modes
+- **Theme Inheritance Fix**: Replaced `ThemeOverlay.MaterialComponents.Toolbar.Surface` with `ThemeOverlay.MaterialComponents.Dark` in Dark Mode and `ThemeOverlay.MaterialComponents.Light` in Light Mode, eliminating black-on-black text rendering inside the Toolbar overflow menu.
+- **Explicit Menu Item Typography (`TextAppearance.SimplyDial.PopupMenu.Item`)**: Wired explicit item typography (`android:itemTextAppearance` and `itemTextAppearance`) to `Widget.SimplyDial.PopupMenu` and `Widget.SimplyDial.PopupMenu.Overflow`, ensuring 100% readable text in all popup menus across the app.
+- **Dynamic 3-Dots Menu Icon Tinting**: Tinted all popup menu icons dynamically with `@color/primary_color` (Electric Cyan neon `#00E5FF` in Dark Mode, Royal Blue `#2563EB` in Light Mode) for high contrast and visual polish.
+- **Direct PopupMenu Compatibility**: Updated `RecentCallsAdapter` and `DialpadActivity` to use `ThemeOverlay.SimplyDial.PopupMenu` and explicit chip text and icon tints.
+
+### 🌓 Fixed — Light & Dark Mode Text & Contrast Inconsistencies
+- **Call Confirmation Dialog (`call_confirmation_dialog_background`)**: Upgraded background from hardcoded white (`#FFFFFF`/`#FFFFDD`) to theme-adaptive `@color/dialog_background` with `@color/primary_color` border, fixing invisible white-on-white text in Dark Mode.
+- **Leadership & About Dialog Cards (`card_background_dark`)**: Refactored card background to use theme-adaptive `@color/card_background` and `@color/border_color`, preventing dark card collision in Light Mode.
+- **Settings Version Badge**: Added dynamic data binding (`binding.settingsHeroVersion.text`) to ensure the Settings Hero Banner accurately reflects `BuildConfig.VERSION_NAME` (`v1.8.2 • EaseUI Suite`) at runtime.
+- **Chip Contrast Outline**: Added 1dp `@color/divider_color` border to `settings_chip_bg.xml` for sharp contrast on elevated white surfaces.
+
+### 📦 Maintenance & Release Alignment
+- Bumped `VERSION_NAME` to `1.8.2` and `VERSION_CODE` to `16` in `gradle.properties`.
+- Synchronized all documentation and release descriptions to `1.8.2`.
+
 ## [1.8.0] - 2026-11-02 - Multi-Segment UI/UX Polish, Material 3 Light Mode & Deduplication
 
 ### 🎨 Added — Material 3 Slate Light Theme (Dark Mode 100% Preserved)

@@ -250,6 +250,17 @@ class MainActivity : SimpleActivity() {
         EventBus.getDefault().unregister(this)
     }
 
+    private fun tintMenuIcons(menu: android.view.Menu) {
+        val iconColor = androidx.core.content.ContextCompat.getColor(this, R.color.primary_color)
+        for (i in 0 until menu.size()) {
+            val item = menu.getItem(i)
+            item.icon?.mutate()?.setTint(iconColor)
+            if (item.hasSubMenu()) {
+                item.subMenu?.let { tintMenuIcons(it) }
+            }
+        }
+    }
+
     private fun refreshMenuItems() {
         val currentFragment = getCurrentFragment()
         binding.mainMenu.getToolbar().menu.apply {
@@ -259,12 +270,13 @@ class MainActivity : SimpleActivity() {
             findItem(R.id.create_new_contact).isVisible = currentFragment == getContactsFragment()
             findItem(R.id.change_view_type).isVisible = currentFragment == getFavoritesFragment()
             findItem(R.id.column_count).isVisible = currentFragment == getFavoritesFragment() && config.viewType == VIEW_TYPE_GRID
-
+            tintMenuIcons(this)
         }
     }
 
     private fun setupOptionsMenu() {
         binding.mainMenu.apply {
+            getToolbar().popupTheme = R.style.ThemeOverlay_SimplyDial_PopupMenu
             getToolbar().inflateMenu(R.menu.menu)
             toggleHideOnScroll(false)
             setupMenu()
@@ -273,6 +285,7 @@ class MainActivity : SimpleActivity() {
                 val method = menu.javaClass.getDeclaredMethod("setOptionalIconsVisible", Boolean::class.javaPrimitiveType)
                 method.isAccessible = true
                 method.invoke(menu, true)
+                tintMenuIcons(menu)
             } catch (_: Exception) {}
 
             onSearchClosedListener = {

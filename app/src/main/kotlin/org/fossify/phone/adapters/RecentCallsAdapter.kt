@@ -355,8 +355,7 @@ class RecentCallsAdapter(
 
     private fun showPopupMenu(view: View, call: RecentCall) {
         finishActMode()
-        val theme = activity.getPopupMenuTheme()
-        val contextTheme = ContextThemeWrapper(activity, theme)
+        val contextTheme = ContextThemeWrapper(activity, R.style.ThemeOverlay_SimplyDial_PopupMenu)
         val contact = findContactByCall(call)
         val selectedNumber = "tel:${call.phoneNumber}"
 
@@ -375,6 +374,10 @@ class RecentCallsAdapter(
                 findItem(R.id.cab_block_number).title = activity.getString(R.string.block_number)
                 findItem(R.id.cab_block_number).isVisible = isNougatPlus() && !call.isUnknownNumber
                 findItem(R.id.cab_remove_default_sim).isVisible = (activity.config.getCustomSIM(selectedNumber) ?: "") != "" && !call.isUnknownNumber
+                val iconColor = ContextCompat.getColor(activity, R.color.primary_color)
+                for (i in 0 until size()) {
+                    getItem(i).icon?.mutate()?.setTint(iconColor)
+                }
             }
 
             setOnMenuItemClickListener { item ->

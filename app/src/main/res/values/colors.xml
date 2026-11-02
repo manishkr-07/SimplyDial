@@ -14,6 +14,7 @@
     
     <!-- Primary Accent - Modern Vibrant Royal Blue -->
     <color name="primary_color">#2563EB</color>
+    <color name="color_primary">@color/primary_color</color>
     <color name="primary_variant_color">#1D4ED8</color>
     <color name="primary_dark_color">#1E40AF</color>
     
