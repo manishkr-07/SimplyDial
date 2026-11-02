@@ -6,210 +6,101 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ---
 
-## [2.1.0] - 2026-11-02 - Caregiver Quick-Call, Emergency GPS SOS, Quick Decline SMS, Call Reminders, Biometric Lock & Haptic Profiles
+## [1.9.0] - 2026-11-03 - Major Feature Expansion, In-Call Responsiveness & Automation Suite
 
-### 🆘 Feature — Auto-GPS Location & Battery in Emergency SOS SMS
-- **Emergency Location Broadcast**:
-  - Automatically queries the device's fine/coarse GPS coordinates and battery percentage when triggering Emergency SOS.
-  - Sends a direct SMS with Google Maps link (`https://maps.google.com/?q=lat,lng`) to designated family contacts.
-  - Graceful fallback: sends emergency notification with battery percentage even if location permissions or GPS are unavailable.
+### 📱 In-Call Responsive UI/UX & System Integration
+- **Full System Bar & Navigation Insets**:
+  - Integrated `setupDefaultWindowInsets(binding.callHolder)` in `CallActivity` to automatically apply status bar and navigation bar padding.
+  - Eliminated navigation bar and gesture pill clipping on incoming call buttons (`call_decline` and `call_accept`) and `call_end`.
+  - Re-anchored call action buttons with clean bottom constraints so text labels and touch targets sit safely above the home gesture area.
+- **Persistent In-Call Notification & Clean Dismissal**:
+  - Maintained `.setOngoing(true)` notification during active and ringing calls.
+  - Fixed an asynchronous contact lookup race condition in `CallNotificationManager`: notifications are immediately cancelled and will not linger after call termination.
+- **In-App "Back to Call" Top Bar (`in_call_top_banner`)**:
+  - Floating 42dp banner in `MainActivity` and `DialpadActivity` displaying live call duration and caller info.
+  - 1-tap return to the full-screen call activity.
+- **Recent Apps App Switcher Integration**:
+  - Changed `android:excludeFromRecents="false"` for `CallActivity` in `AndroidManifest.xml`, allowing users to switch between SimplyDial, other apps, and return directly to the active call screen via Android's Recent Apps overview.
+- **Alphabet Fast-Scroll Slider Visibility**:
+  - Added dedicated high-contrast preview bubble (`letter_fastscroll_popup`) in `fragment_letters_layout.xml`.
+  - Fixed vertical font metrics centering math in `HorizontalAlphabetSlider` to ensure the dragged letter is always prominently visible without clipping.
+- **Recents "Today" Summary Calculation & Toggle**:
+  - Fixed date code comparison in `RecentsFragment` by replacing milliseconds-vs-seconds math with `DateTime.now().millis.getDayCode()`.
+  - Added mode-scoped toggle (Feature 19: `showRecentsTodaySummary`) in Customize Interface Features and Settings.
 
-### ✉️ Feature — 1-Tap Quick Decline SMS ("Quick Replies")
-- **Instant Message on Call Rejection**:
-  - Long-press or 1-tap quick decline drawer (`QuickDeclineSmsDialog`) on incoming call screen.
-  - Bilingual presets for English & Hindi:
-    - *"I am in a meeting, will call you back."* / *"मैं अभी बैठक में हूँ, बाद में बात करता हूँ।"*
-    - *"Driving right now, please message."* / *"मैं गाड़ी चला रहा हूँ, कृपया संदेश भेजें।"*
-    - *"Can't talk now. What's up?"*
-  - Custom quick reply composer for instant typing and sending.
-
-### ⏰ Feature — Post-Call Follow-Up Reminder ("Remind Me to Call Back")
-- **Intelligent Scheduled Callback Alarm**:
-  - 1-tap chip in `PostCallSummaryDialog`: choose 15 minutes, 1 hour, or tomorrow morning (9:00 AM).
-  - Background `CallReminderReceiver` schedules exact alarm and triggers a rich notification with instant **"Call Back"** and **"WhatsApp"** action buttons.
-
-### 👨‍👩‍👧 Feature — Caregiver / Family Persistent Quick-Call Notification
-- **Lock Screen & Notification Shade Quick Calling**:
-  - Displays persistent, low-priority family call buttons in the notification drawer:
-    - 📞 Call Trusted Family Contact
-    - 📞 Call Speed Dial #1
-    - 🚨 Emergency SOS (112)
-  - Mode-scoped toggle (Feature 18) in "Customize Interface Features" (default ON in Simpler Mode).
-
-### 🔒 Feature — Biometric & Device PIN Privacy Lock
-- **Secure Call Logs & Notes**:
-  - Native Android `KeyguardManager` integration: requires fingerprint, face unlock, or device PIN to access Call History and private contact notes.
-  - Accessible via Settings: preserves privacy when devices are shared within families.
-
-### 📳 Feature — Tactile Haptic Feedback Profiles & Relationship Tags
-- **Tactile Profile Selector**:
-  - Choose between **"Reassuring Heavy Buzz"** (long-press haptic feel tailored for elders) and **"Crisp Tactile Click"** (modern subtle tap).
-- **Contact Relationship Tags**:
-  - Assign relationship chips (👨‍👩‍👧 Family, 🩺 Doctor, 💼 Work, 🤝 Friend, 🚨 Emergency) directly from contact quick action sheets.
-
----
-
-## [2.0.0] - 2026-11-02 - Offline Spam Shield, Home Widgets Suite & Data Backup/Restore
-
-### 🛡️ Feature — Offline Spam & Robocall Shield (`SpamShieldManager`)
-- **100% On-Device Offline Heuristics Engine**:
-  - Automatically identifies suspected spam, telemarketers, and robocalls offline without sending user data or phone numbers to any third-party server.
-  - Pattern matching for Indian telemarketing prefixes (`140xxxxxxx`, `160xxxxxxx`), commercial toll-free blocks (`1800xxxxxxx`), US/North American telemarketing toll-free series (`+1800`, `+1888`, `+1877`, `+1866`, `+1855`, `+1844`, `+1833`), and repetitive spoofed digit sequences (`00000`, `99999`, etc.).
-  - User custom spam blacklist: easily add or remove any phone number to personal offline spam registry.
-  - **Live Visual Spam Warning**: Prominent red warning banner (`⚠️ Suspected Spam / Telemarketer`) in `CallActivity` during incoming calls.
-  - **Telecom Call Screening Integration**: Automatically silences or auto-declines suspected spam calls in `SimpleCallScreeningService` when auto-decline option is enabled.
-  - Mode-scoped toggle (Feature 17) in "Customize Interface Features" with independent toggling for Simpler Mode and Modern Mode.
-
-### 📱 Feature — Home Screen Widgets Suite
-- **Speed Dial Photo Favorites Widget (`SpeedDialWidgetProvider`)**:
-  - Compact 2x2 / 4x2 home screen widget showing user's top favorite speed-dial contacts.
-  - 1-tap direct dialing straight from the Android home screen without launching the full dialer first.
-  - Dynamically renders contact photo avatars or stylish initial badges.
-- **Quick Dialpad Widget (`DialpadWidgetProvider`)**:
-  - Sleek 4x2 home screen dialpad widget with 1-tap quick buttons (`Phone`, `Favorites`, `Recents`, `Search`).
-  - Seamlessly launches into `DialpadActivity` with haptic feedback and immediate numeric input readiness.
-
-### 💾 Feature — Local Data Backup & Restore (`BackupManager`)
-- **Structured JSON Backup Engine**:
-  - Export and restore all SimplyDial custom data in an encrypted/human-readable JSON package:
-    - Contact Notes (`contact_note_*`)
-    - Speed Dial Favorites with custom photo URI metadata
-    - Emergency SOS configuration & designated contacts
-    - Custom Spam List & telemarketing filters
-    - Complete matrix of all 17 mode-scoped interface customization preferences across Simpler Mode and Modern Mode.
-  - Integrated into Settings under the Migration & Data section with native Android Storage Access Framework (`CreateDocument` & `OpenDocument`).
-  - Granular restore statistics dialog reporting the exact count of notes, speed dials, and preferences restored.
-
----
-
-## [1.9.0] - 2026-11-02 - Call Notes, Post-Call Summary, Analytics & Media Studio
-
-### 📝 Feature — In-Call Notes & Post-Call Summary Dialog
-- **Live In-Call Notes Badge**:
-  - Displays the caller's saved custom note prominently in a sleek rounded pill badge on the incoming and active call screen.
-  - 1-tap note editing live during an active call (`showInCallNoteDialog`), allowing users to jot down critical info while speaking.
-- **Smart Post-Call Summary Bottom Sheet (`PostCallSummaryDialog`)**:
-  - Appears automatically upon call completion (with 8-second auto-dismiss progress timer).
-  - Displays formatted call duration, caller name/number, and an inline scratchpad to quickly update or save contact notes.
-  - 1-tap quick actions: **WhatsApp**, **Telegram**, and **Call Back**.
-  - Distinctly toggleable per mode in "Customize Interface Features".
-
-### 📊 Feature — Call Insights & Analytics Dashboard (`CallAnalyticsDialog`)
-- **100% Offline Telecom Intelligence**:
-  - Computes complete call analytics from device call logs (`CallLog.Calls`) without any cloud reliance.
-  - KPI Hero Card displaying total talk time (hours/minutes) and total calls over the last 30 days.
-  - Breakdowns for Incoming, Outgoing, and Missed calls with durations.
-  - **Missed Call Callback Rate**: Tracks and calculates the percentage of missed calls that were subsequently returned.
-  - **Peak Calling Hours**: Visual distribution bar across Morning (6am-12pm), Afternoon (12pm-6pm), Evening (6pm-10pm), and Night.
-  - **Top 5 Frequent Contacts**: Contact rank, name, number, call count, and total duration.
-  - Accessible via 3-dots overflow menu ("Call Insights & Analytics").
-
-### 🎙️ Feature — In-App Call Recording Audio Player (`CallRecordingPlayerDialog`)
-- **Visual Audio Studio**:
-  - Interactive playback modal with SeekBar, play/pause controls, current time, and total duration.
-  - 5-second rewind and forward skip buttons for quick audio scrubbing.
-  - Variable playback speed controls (`1.0x`, `1.25x`, `1.5x`, `2.0x`).
-  - 1-tap direct audio file sharing via Android FileProvider to WhatsApp, Drive, Gmail, or any messenger.
-  - Quick action integration: shows a recording badge directly in contact quick action sheets when recordings exist for that caller.
-  - Linked "Call Recordings" (`RecordingHistoryActivity`) directly into the main 3-dots menu.
-
-### ✈️ Feature — Direct WhatsApp & Telegram Communication
-- **Unified Chat Launcher (`CommunicationHelper`)**:
-  - 1-tap WhatsApp and Telegram direct chat action from Contact Quick Actions, Recent Calls, and Post-Call Summary without requiring the caller to be saved in contacts.
-  - International number cleaning and E.164 formatting.
-
-### 🔍 Feature — Contact Notes T9 Search Integration
-- **Search by Note**:
-  - T9 keypad algorithm in `DialpadActivity` now searches across both contact names, phone numbers, and custom contact notes (e.g., typing "Doctor" or its keypad digits finds contacts with that note).
-
----
-
-### 🗣️ Feature — Spoken Caller Name Announcement (TTS Engine)
-- **Voice Caller Announcement**:
-  - Implemented `CallerNameAnnouncer` utilizing Android's `TextToSpeech` engine to announce incoming caller names or numbers aloud when an incoming call arrives.
-  - Periodic announcement loop (every 3.5s) ensuring elder users and hands-free callers immediately know who is calling before picking up.
-  - Multilingual support with automatic locale detection (supports Hindi and English pronunciation).
-  - Strict privacy and etiquette controls: automatically mutes when the device is set to Silent or Vibrate mode.
-  - Instant audio interrupt: announcements immediately stop when pressing the physical volume rocker, accepting the call, or declining.
-  - Added Android 11+ `<queries>` declaration for `android.intent.action.TTS_SERVICE` to ensure zero permission issues.
-  - Distinctly toggleable per interface mode via "Customize Interface Features".
-
-### 📶 Feature — Smart Dual-SIM Rules Engine
-- **Intelligent SIM Memory**:
-  - Implemented `SmartSIMManager` to eliminate repetitive and frustrating SIM selection prompts on dual-SIM devices.
-  - Automatically queries the device's call history (`CallLog.Calls`) to detect which SIM slot was previously used for any specific contact or phone number.
-  - Caches and remembers the preferred SIM, automatically pre-routing outgoing calls through the appropriate SIM card.
-  - Fully integrated into `Activity.getHandleToUse` with fallback to manual prompt if no historical call record exists or if the SIM card was removed.
-  - Distinctly configurable per interface mode.
-
-### 🚨 Feature — One-Tap Emergency SOS Floating Pill & Dialog
-- **Instant Emergency Access**:
-  - Added a high-visibility, accessible Emergency SOS floating pill directly above the Dialpad.
-  - Opens `EmergencySOSDialog` with one tap, offering immediate one-touch dialing for universal emergency services (112, 911, etc.) or a designated trusted family emergency contact.
-  - Built-in emergency contact setup and configuration flow directly from the dialog.
-  - Designed specifically for elder care, senior safety, and urgent crisis situations.
-  - Distinctly toggleable per interface mode.
-
-### 🔢 Feature — Dialpad Quick-Action Telecom Shortcuts
-- **Telecom Long-Press Key Shortcuts**:
-  - Long-press `#`: Instantly toggles the phone between Normal sound and Vibrate mode with clear Toast and haptic feedback.
-  - Long-press `*`: Inserts a standard 2-second telecom pause (`,`) for automated phone tree, IVR, and PIN extension dialing.
-  - Long-press `0`: Inserts the `+` international country calling prefix.
-  - Fully compatible with 1-9 speed dial shortcuts without collision.
-
-### 🎛️ Architecture — 15-Feature Mode-Scoped Customization
+### 🎛️ 19-Feature Mode-Scoped Interface Customization
 - **Total Preference Isolation**:
-  - Expanded mode-scoped preference architecture to all 15 interface features.
-  - All features are isolated with `_simple` and `_modern` preference keys—enabling or disabling features in Simpler Mode has zero effect on Modern Mode.
-  - Interactive segmented mode tabs (`[Simpler Mode]` | `[Modern & Advanced]`) with live `ACTIVE` mode badges and per-mode default reset.
+  - Engineered independent preference storage for **Simpler Mode** (`_simple` suffix) and **Modern & Advanced Mode** (`_modern` suffix) across all 19 interface features.
+  - Toggling any feature in Simpler Mode has zero effect on Modern Mode, preserving distinct workflows for different user needs.
+- **Revamped Interactive Customization Bottom Sheet**:
+  - Segmented mode tabs (`[Simpler Mode]` | `[Modern & Advanced]`) with live `ACTIVE` mode badges and targeted "Reset to Mode Defaults".
+- **Comprehensive 19-Feature Suite**:
+  1. *Direct 1-Tap Calling*
+  2. *Accidental Call Shield (Call Confirmation Dialog)*
+  3. *Modern Quick Actions Sheet*
+  4. *Tap Avatar for Contact Details*
+  5. *Large Tap Answer Buttons (vs Modern Swipe)*
+  6. *Fullscreen Incoming Call Display*
+  7. *Dialpad Keypad Vibrations*
+  8. *Dialpad Audible Tones / Beeps*
+  9. *Auto-Open Dialpad on Launch*
+  10. *Minimal Dialpad (Digits Only / Hide Letters)*
+  11. *Floating Quick-Message JoyStick*
+  12. *Group Repeated Recent Calls*
+  13. *Smart Dual-SIM Rules Engine*
+  14. *Emergency SOS Floating Pill*
+  15. *Spoken Caller Name Announcement (TTS Engine)*
+  16. *Post-Call Summary Dialog*
+  17. *Offline Spam & Robocall Shield*
+  18. *Caregiver Persistent Quick-Call Notification*
+  19. *Recents Today Call Summary Banner*
 
+### 🆘 Caregiver Safety & Emergency SOS
+- **Emergency GPS Location & Battery Broadcast**:
+  - Automatically queries fine/coarse GPS coordinates and device battery percentage during SOS trigger.
+  - Sends emergency SMS with Google Maps link (`https://maps.google.com/?q=lat,lng`) to designated emergency contacts.
+- **Caregiver / Family Quick-Call Notification**:
+  - Persistent, low-priority family call buttons in the notification drawer: Call Trusted Family Contact, Call Speed Dial #1, and Emergency SOS (112).
+- **1-Tap Emergency SOS Floating Pill**:
+  - Accessible floating pill directly above the dialpad opening `EmergencySOSDialog` for instant dialing and emergency contact setup.
+
+### 🛡️ Privacy, Spam Shield & Telecom Intelligence
+- **100% On-Device Offline Spam Shield (`SpamShieldManager`)**:
+  - Identifies suspected spam and telemarketing calls offline without sending numbers to third parties.
+  - Pattern matching for Indian telemarketers (`140`, `160`), toll-free series, and spoofed sequences.
+  - Prominent red warning banner in `CallActivity` and optional automatic call decline in `SimpleCallScreeningService`.
+- **Biometric & Device PIN Privacy Lock**:
+  - Android `KeyguardManager` integration requiring fingerprint, face unlock, or device PIN to view call logs or contact notes.
+- **Offline Call Analytics Dashboard (`CallAnalyticsDialog`)**:
+  - Calculates 30-day KPIs: total talk time, total calls, incoming/outgoing/missed breakdown, missed call callback rate, and peak calling hour distributions.
+- **In-Call Notes & Live Scratchpad**:
+  - Displays saved caller note badge on call screens with 1-tap in-call note editing and T9 keypad note search.
+- **In-App Call Recording Audio Player (`CallRecordingPlayerDialog`)**:
+  - Audio studio with playback controls, 5-second skips, variable speeds (`1.0x` - `2.0x`), and direct audio sharing.
+- **Spoken Caller Name Announcement (`CallerNameAnnouncer`)**:
+  - Text-to-speech announcement of incoming callers in English and Hindi with automatic mute during silent/vibrate modes.
+- **Smart Dual-SIM Memory (`SmartSIMManager`)**:
+  - Remembers preferred SIM slots from call history to avoid repetitive SIM selection prompts.
+
+### ✉️ Messaging & Quick Actions
+- **1-Tap Quick Decline SMS ("Quick Replies")**:
+  - Quick decline drawer (`QuickDeclineSmsDialog`) with English and Hindi presets or custom quick composer.
+- **Post-Call Follow-Up Reminder ("Remind Me to Call Back")**:
+  - Scheduled callbacks (15m, 1h, next morning) triggering rich notifications with instant "Call Back" and "WhatsApp" actions.
+- **Unified WhatsApp & Telegram Launchers (`CommunicationHelper`)**:
+  - 1-tap direct chat launch from contact sheets, recents, and post-call summaries without saving numbers.
+
+### 📱 Home Screen Widgets Suite & Backup
+- **Speed Dial Photo Favorites Widget (`SpeedDialWidgetProvider`)**: Compact 2x2 / 4x2 home widget for direct 1-tap dialing.
+- **Quick Dialpad Widget (`DialpadWidgetProvider`)**: 4x2 home screen dialpad widget with quick navigation shortcuts.
+- **Structured JSON Backup Engine (`BackupManager`)**: Export and restore contact notes, speed dials, spam lists, and mode preferences.
+
+### 🤖 GitHub Release Automation CI/CD
+- **Automated Release Pipeline (`.github/workflows/release.yml`)**:
+  - Automatically triggered when drafting or publishing releases on GitHub.
+  - Builds release and debug APKs, auto-signs with universal key if keystore secret is not present, packages `.zip` and `.tar.gz` archives, and generates `SHA256SUMS.txt`.
 
 ---
-
-## [1.8.2] - 2026-11-02 - Text Visibility Architecture Fix & Version Alignment
-
-### 🎛️ Feature — Mode-Scoped Interface Customization Architecture
-- **Independent Feature Configuration per Interface Mode**:
-  - Engineered a mode-scoped preference architecture (`Config.getModeBoolean` / `Config.setModeBoolean`) storing settings independently for **Simpler Mode** (`_simple` suffix) and **Modern & Advanced Mode** (`_modern` suffix).
-  - Toggling or fine-tuning any interface feature in Simpler Mode is distinctive and completely isolated from Modern Mode—switching modes never resets or overrides custom user configurations.
-- **Revamped Interactive "Customize Interface Features" Bottom Sheet**:
-  - Integrated interactive segmented mode selector tabs (`[Simpler Mode]` | `[Modern & Advanced]`) directly at the top with an `ACTIVE` badge reflecting the app's current mode.
-  - Users can freely toggle and customize settings for either mode on the fly with instant animated switch states.
-  - Added "Reset to Mode Defaults" targeting specifically the currently viewed mode.
-- **Expanded from 6 to 12 Customizable Interface Features**:
-  - **Calling & Contact Actions**: Direct 1-Tap Calling, Accidental Call Shield (Call Confirmation Dialog), Modern Quick Actions Sheet, Tap Avatar for Contact Details.
-  - **Incoming & In-Call Screen**: Large Tap Answer Buttons (vs Modern Swipe), Fullscreen Incoming Call Display.
-  - **Dialpad & Keypad Experience**: Dialpad Keypad Vibrations, Dialpad Audible Tones / Beeps, Auto-Open Dialpad on Launch, Minimal Dialpad (Digits Only / Hide Letters).
-  - **Recents & Messaging Shortcuts**: Floating Quick-Message JoyStick, Group Repeated Recent Calls.
-
-### 🌟 Fixed — 3-Dots Popup Menu Text Visibility in Dark & Light Modes
-- **Theme Inheritance Fix**: Replaced `ThemeOverlay.MaterialComponents.Toolbar.Surface` with `ThemeOverlay.MaterialComponents.Dark` in Dark Mode and `ThemeOverlay.MaterialComponents.Light` in Light Mode, eliminating black-on-black text rendering inside the Toolbar overflow menu.
-- **Explicit Menu Item Typography (`TextAppearance.SimplyDial.PopupMenu.Item`)**: Wired explicit item typography (`android:itemTextAppearance` and `itemTextAppearance`) to `Widget.SimplyDial.PopupMenu` and `Widget.SimplyDial.PopupMenu.Overflow`, ensuring 100% readable text in all popup menus across the app.
-- **Dynamic 3-Dots Menu Icon Tinting**: Tinted all popup menu icons dynamically with `@color/primary_color` (Electric Cyan neon `#00E5FF` in Dark Mode, Royal Blue `#2563EB` in Light Mode) for high contrast and visual polish.
-- **Direct PopupMenu Compatibility**: Updated `RecentCallsAdapter` and `DialpadActivity` to use `ThemeOverlay.SimplyDial.PopupMenu` and explicit chip text and icon tints.
-
-### 🌓 Fixed — Light & Dark Mode Text & Contrast Inconsistencies
-- **Call Confirmation Dialog (`call_confirmation_dialog_background`)**: Upgraded background from hardcoded white (`#FFFFFF`/`#FFFFDD`) to theme-adaptive `@color/dialog_background` with `@color/primary_color` border, fixing invisible white-on-white text in Dark Mode.
-- **Leadership & About Dialog Cards (`card_background_dark`)**: Refactored card background to use theme-adaptive `@color/card_background` and `@color/border_color`, preventing dark card collision in Light Mode.
-- **Settings Version Badge**: Added dynamic data binding (`binding.settingsHeroVersion.text`) to ensure the Settings Hero Banner accurately reflects `BuildConfig.VERSION_NAME` (`v1.8.2 • EaseUI Suite`) at runtime.
-- **Chip Contrast Outline**: Added 1dp `@color/divider_color` border to `settings_chip_bg.xml` for sharp contrast on elevated white surfaces.
-
-### ⚡ Performance & Loading Experience Optimization
-- **Centralized In-Memory Contacts Repository (`ContactsRepository`)**:
-  - Implemented single-flight asynchronous request deduplication across Contacts, Favorites, Recents, and Dialpad, preventing 3-4 simultaneous duplicate queries against the Android ContactsProvider on cold launch.
-  - Startup background preloading initiated immediately in `SplashActivity.initActivity()` and `MainActivity.onCreate()` for sub-second first-screen delivery.
-  - 0ms zero-latency instant rendering for tab switching, app resumptions, and T9 dialer lookups via cached memory snapshots.
-- **Top-Notch Interactive Shimmer Skeletons**:
-  - Completely revamped skeleton drawables (`skeleton_bg`, `skeleton_circle_bg`, `skeleton_rounded`, `skeleton_circle`) to use adaptive `@color/surface_color` cards with subtle `@color/divider_color` outlines, replacing miscolored static blocks.
-  - Enabled active shimmering (`app:shimmer_auto_start="true"`, 1100ms fluid wave) with explicit start hooks in `LightContactsAdapter` and `RecentCallsAdapter` for a modern, responsive loading aesthetic.
-  - Instant skeleton attachment (<1ms) eliminating blank screens and layout pops during initial cold start.
-- **Recents Query & Blocked Numbers Acceleration**:
-  - Added a 30s session TTL cache for `context.getBlockedNumbers()`, eliminating blocking content-provider IPC roundtrips during fast recents filtering.
-  - Linked `RecentsHelper` directly to `ContactsRepository` to skip redundant contact enrichment passes.
-
-### 📦 Maintenance & Release Alignment
-- Bumped `VERSION_NAME` to `1.8.2` and `VERSION_CODE` to `16` in `gradle.properties`.
-- Synchronized all documentation and release descriptions to `1.8.2`.
 
 ## [1.8.0] - 2026-11-02 - Multi-Segment UI/UX Polish, Material 3 Light Mode & Deduplication
 

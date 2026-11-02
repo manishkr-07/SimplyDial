@@ -81,7 +81,7 @@
                             android:paddingHorizontal="8dp"
                             android:paddingVertical="2dp"
                             android:id="@+id/settings_hero_version"
-                            android:text="v2.1.0 • EaseUI Suite"
+                            android:text="v1.9.0 • EaseUI Suite"
                             android:textColor="@color/primary_color"
                             android:textSize="11sp"
                             android:textStyle="bold" />

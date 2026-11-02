@@ -10,7 +10,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/manishkr-07/SimplyDial/releases/latest"><img src="https://img.shields.io/badge/Download-APK%20v1.8.2-2563EB?style=for-the-badge&logo=android&logoColor=white" alt="Download APK v1.8.2"></a>
+  <a href="https://github.com/manishkr-07/SimplyDial/releases/latest"><img src="https://img.shields.io/badge/Download-APK%20v1.9.0-2563EB?style=for-the-badge&logo=android&logoColor=white" alt="Download APK v1.9.0"></a>
 </p>
 
 <p align="center">
@@ -45,9 +45,9 @@ You can download and install SimplyDial directly onto any Android device running
 
 1. **Download the Latest APK**:
    * Grab the latest pre-compiled build directly from [GitHub Releases](https://github.com/manishkr-07/SimplyDial/releases/latest):
-     * **[Download SimplyDial-v1.8.2.apk](https://github.com/manishkr-07/SimplyDial/releases/latest)** (~37.9 MB)
+     * **[Download SimplyDial-v1.9.0.apk](https://github.com/manishkr-07/SimplyDial/releases/latest)** (~37.9 MB)
 2. **Open the APK on Your Android Device**:
-   * Open your device's **Files**, **Downloads**, or file manager app and tap `SimplyDial-v1.8.2.apk`.
+   * Open your device's **Files**, **Downloads**, or file manager app and tap `SimplyDial-v1.9.0.apk`.
 3. **Allow Installation from Unknown Sources** *(if prompted)*:
    * If Android warns: *"For your security, your phone is not allowed to install unknown apps from this source"*:
      1. Tap **Settings** in the popup.
@@ -73,7 +73,7 @@ If you have your Android phone connected to your PC via USB with USB Debugging e
 adb devices
 
 # Install APK (use -r to reinstall/update while keeping app data)
-adb install -r SimplyDial-v1.8.2.apk
+adb install -r SimplyDial-v1.9.0.apk
 ```
 
 ---
@@ -254,7 +254,7 @@ For detailed technical specifications, architectural diagrams, and flowcharts, r
 
 During the intensive **July 2025 – October 2025** phase, all core features of SimplyDial were designed and implemented—including the senior-friendly **EaseUI** accessibility suite, Black Diamond AMOLED dark theming, studio-grade HD call recording, Jitsi Meet video conferencing, and instant offline voice dialing.
 
-In **Late 2026 (v1.7.0 – v1.8.2)**, the project underwent a dedicated engineering re-update to solve critical telephony call waiting and caller ID challenges, alongside Dynamic Interface Modes, cold start optimizations, deduplication, Material 3 Light Mode, and open-source release polish.
+In **Late 2026 (v1.7.0 – v1.9.0)**, the project underwent a dedicated engineering re-update to solve critical telephony call waiting and caller ID challenges, alongside Dynamic Interface Modes, cold start optimizations, deduplication, Material 3 Light Mode, in-call responsive UI, and open-source release polish.
 
 ### 📅 Project Evolution & Milestones
 
@@ -263,6 +263,7 @@ In **Late 2026 (v1.7.0 – v1.8.2)**, the project underwent a dedicated engineer
 | **July 2025 – October 2025** | **Core Build & Complete Feature Suite**<br>• Conceptualized, initiated, and built from the ground up<br>• **EaseUI Accessibility Suite**: Accidental call shield dialog, messages joystick (`JoystickMessageButton`), tactile swipe answer, ripple feedback, Hindi localization<br>• **Black Diamond AMOLED Theme**: Pure black `#000000`, electric cyan glow, glassmorphism (`BlurBackgroundView`)<br>• **HD Call Recording**: 256 kbps stereo AAC `.m4a`, compliance tones, legal consent flow, recording history explorer<br>• **Jitsi Meet Video Calls**: One-tap conference rooms, cellular mic conflict auto-mute, rejoin dialog<br>• **Smart Offline Voice**: Instant speech-to-dial with local fuzzy fallback | **Piyush Kumar** (Creator & Primary Owner)<br>with **Manish Kumar** (Collaborator & Co-Manager) |
 | **Late 2026 (v1.7.0)** | **Call Waiting, Dynamic Interface Modes & Release Polish**<br>• **Dynamic Interface Modes**: Simple Mode (senior-friendly) vs. Modern & Advanced Mode (power-user)<br>• **Interactive Modern UI/UX**: Live filter chips with missed call count badges, universal Quick Actions bottom sheet (WhatsApp, Jitsi Video, SMS, Copy, Share), smart clipboard paste chip<br>• **Official 3D Logo**: High-res transparent 3D launcher mipmaps and in-app branding<br>• **Call Waiting & Caller ID**: Standard 5s alert tone & vibration, HUD caller banner, non-interruptive second-call decline<br>• **Security Hardening**: Removed cloud AI dependencies, sanitized repo, standalone GitHub Actions CI | **Piyush Kumar** & **Manish Kumar** |
 | **Late 2026 (v1.8.2)** | **Multi-Segment UI/UX Polish, Material 3 Light Mode & Deduplication Engine**<br>• **Multi-Segment Mode Differentiation**: Deeply differentiated both visual styling and active features across Contacts, Recents, Favorites, Dialpad, and Call Confirmation<br>• **Material 3 Slate Light Mode**: Redesigned Light Theme with `#F8FAFC` slate canvas, elevated `#FFFFFF` cards, `#2563EB` Royal Blue accents, and `#0F172A` deep ink text with WCAG AAA contrast, keeping Dark Mode 100% intact<br>• **Contact & Favorites Deduplication**: High-speed `$O(N)$` deduplication engine merging multi-account sync duplicates across Contacts, Favorites, and T9 dialer<br>• **Sub-Second Cold Start Optimization**: Indexed SQLite queries, off-thread cursor retrieval, 2-stage UI batching (<15ms first paint), and cross-tab cache sharing | **Piyush Kumar** & **Manish Kumar** |
+| **Late 2026 (v1.9.0)** | **Major Feature Expansion, In-Call Responsiveness & Automation Suite**<br>• **19-Feature Mode-Scoped Customization**: Isolated feature toggling across Simpler & Modern modes with bottom sheet controls<br>• **Full In-Call Responsiveness & Return-to-Call**: System window insets padding eliminating navigation bar overlap, in-app top banner for instant full-screen return, and Recent Apps overview integration (`excludeFromRecents=false`)<br>• **Persistent In-Call Notification**: Reliable ongoing notification during active calls with clean removal upon disconnect<br>• **Emergency GPS SOS & Caregiver Quick-Call**: Real-time GPS location + battery in SOS SMS, lockscreen family quick-call buttons<br>• **Offline Spam Shield, Call Notes, Audio Studio & Home Widgets**: 100% offline spam heuristics, in-call live notes scratchpad, in-app recording player, and speed dial home screen widgets | **Piyush Kumar** & **Manish Kumar** |
 
 ### 🌐 Official Links & Community
 - 🌐 **Website**: [manish.dev](https://manishkr-dev.vercel.app/)

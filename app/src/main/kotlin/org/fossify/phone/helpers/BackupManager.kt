@@ -16,7 +16,7 @@ object BackupManager {
 
     data class BackupData(
         val version: Int = 1,
-        val appVersion: String = "2.0.0",
+        val appVersion: String = "1.9.0",
         val timestamp: Long = System.currentTimeMillis(),
         val interfaceMode: Int = 0,
         val contactNotes: Map<String, String> = emptyMap(),
