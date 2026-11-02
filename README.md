@@ -176,10 +176,14 @@ Designed from the ground up to eliminate dialing anxiety, accidental calls, and 
 ## 📱 Screenshots
 
 <div align="center">
-  <img alt="Dialer Screen" src="fastlane/metadata/android/en-US/images/phoneScreenshots/1_en-US.png" width="30%">&nbsp;
-  <img alt="Call Screen" src="fastlane/metadata/android/en-US/images/phoneScreenshots/2_en-US.png" width="30%">&nbsp;
-  <img alt="Contacts List" src="fastlane/metadata/android/en-US/images/phoneScreenshots/3_en-US.png" width="30%">
+  <img alt="Modern Dialpad &amp; T9 Search" src="fastlane/metadata/android/en-US/images/phoneScreenshots/1_en-US.png" width="31%">&nbsp;
+  <img alt="In-Call Responsive UI" src="fastlane/metadata/android/en-US/images/phoneScreenshots/2_en-US.png" width="31%">&nbsp;
+  <img alt="Contacts &amp; Quick Actions Sheet" src="fastlane/metadata/android/en-US/images/phoneScreenshots/3_en-US.png" width="31%">
 </div>
+
+<p align="center">
+  <em>Left: Modern Dialpad with Emergency SOS &amp; T9 Search • Center: In-Call Responsive UI with Live Notes &amp; Safe Insets • Right: Contacts &amp; Quick Actions Sheet with Centered Fast-Scroller</em>
+</p>
 
 ---
 
