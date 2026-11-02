@@ -527,7 +527,7 @@ class RecentsFragment(
                 },
                 itemClick = {
                     val recentCall = it as RecentCall
-                    if (!context.config.isSimpleMode && context.config.showQuickActionsSheet && !context.config.directOneTapCalling) {
+                    if (context.config.showQuickActionsSheet && !context.config.directOneTapCalling) {
                         (activity as? org.fossify.phone.activities.SimpleActivity)?.let { act ->
                             org.fossify.phone.helpers.QuickActionsHelper.showRecentCallQuickActions(act, recentCall) {
                                 refreshItems(invalidate = false)

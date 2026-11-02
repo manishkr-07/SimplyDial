@@ -423,7 +423,7 @@ class DialpadActivity : SimpleActivity() {
                     highlightText = text,
                     itemClick = {
                         val contact = it as Contact
-                        if (!config.isSimpleMode && config.showQuickActionsSheet && !config.directOneTapCalling) {
+                        if (config.showQuickActionsSheet && !config.directOneTapCalling) {
                             (binding.dialpadList.adapter as? ContactsAdapter)?.showContactQuickActions(contact)
                         } else {
                             startCallWithConfirmationCheck(contact)

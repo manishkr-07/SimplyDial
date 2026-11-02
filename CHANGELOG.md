@@ -9,6 +9,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.8.2] - 2026-11-02 - Text Visibility Architecture Fix & Version Alignment
 
+### 🎛️ Feature — Mode-Scoped Interface Customization Architecture
+- **Independent Feature Configuration per Interface Mode**:
+  - Engineered a mode-scoped preference architecture (`Config.getModeBoolean` / `Config.setModeBoolean`) storing settings independently for **Simpler Mode** (`_simple` suffix) and **Modern & Advanced Mode** (`_modern` suffix).
+  - Toggling or fine-tuning any interface feature in Simpler Mode is distinctive and completely isolated from Modern Mode—switching modes never resets or overrides custom user configurations.
+- **Revamped Interactive "Customize Interface Features" Bottom Sheet**:
+  - Integrated interactive segmented mode selector tabs (`[Simpler Mode]` | `[Modern & Advanced]`) directly at the top with an `ACTIVE` badge reflecting the app's current mode.
+  - Users can freely toggle and customize settings for either mode on the fly with instant animated switch states.
+  - Added "Reset to Mode Defaults" targeting specifically the currently viewed mode.
+- **Expanded from 6 to 12 Customizable Interface Features**:
+  - **Calling & Contact Actions**: Direct 1-Tap Calling, Accidental Call Shield (Call Confirmation Dialog), Modern Quick Actions Sheet, Tap Avatar for Contact Details.
+  - **Incoming & In-Call Screen**: Large Tap Answer Buttons (vs Modern Swipe), Fullscreen Incoming Call Display.
+  - **Dialpad & Keypad Experience**: Dialpad Keypad Vibrations, Dialpad Audible Tones / Beeps, Auto-Open Dialpad on Launch, Minimal Dialpad (Digits Only / Hide Letters).
+  - **Recents & Messaging Shortcuts**: Floating Quick-Message JoyStick, Group Repeated Recent Calls.
+
 ### 🌟 Fixed — 3-Dots Popup Menu Text Visibility in Dark & Light Modes
 - **Theme Inheritance Fix**: Replaced `ThemeOverlay.MaterialComponents.Toolbar.Surface` with `ThemeOverlay.MaterialComponents.Dark` in Dark Mode and `ThemeOverlay.MaterialComponents.Light` in Light Mode, eliminating black-on-black text rendering inside the Toolbar overflow menu.
 - **Explicit Menu Item Typography (`TextAppearance.SimplyDial.PopupMenu.Item`)**: Wired explicit item typography (`android:itemTextAppearance` and `itemTextAppearance`) to `Widget.SimplyDial.PopupMenu` and `Widget.SimplyDial.PopupMenu.Overflow`, ensuring 100% readable text in all popup menus across the app.

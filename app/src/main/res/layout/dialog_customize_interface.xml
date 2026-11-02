@@ -6,14 +6,17 @@
     android:layout_height="wrap_content"
     android:background="@drawable/dialog_rounded_background"
     android:orientation="vertical"
-    android:padding="20dp">
+    android:paddingStart="20dp"
+    android:paddingTop="14dp"
+    android:paddingEnd="20dp"
+    android:paddingBottom="20dp">
 
     <!-- Handle Bar -->
     <View
         android:layout_width="40dp"
         android:layout_height="4dp"
         android:layout_gravity="center_horizontal"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="12dp"
         android:alpha="0.3"
         android:background="@color/text_secondary" />
 
@@ -25,8 +28,9 @@
         android:orientation="horizontal">
 
         <ImageView
-            android:layout_width="32dp"
-            android:layout_height="32dp"
+            android:id="@+id/dialog_customize_icon"
+            android:layout_width="34dp"
+            android:layout_height="34dp"
             android:background="@drawable/settings_icon_pill"
             android:contentDescription="@null"
             android:padding="6dp"
@@ -62,18 +66,158 @@
 
     </LinearLayout>
 
-    <View
+    <!-- Mode Selector Segmented Tabs -->
+    <LinearLayout
+        android:id="@+id/mode_tab_container"
         android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="12dp"
-        android:background="@color/divider_color" />
+        android:layout_height="wrap_content"
+        android:layout_marginTop="14dp"
+        android:orientation="horizontal"
+        android:weightSum="2">
+
+        <!-- Tab 1: Simpler Mode -->
+        <LinearLayout
+            android:id="@+id/tab_mode_simple"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="6dp"
+            android:layout_weight="1"
+            android:background="@drawable/mode_card_selected_bg"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackground"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="10dp">
+
+            <ImageView
+                android:id="@+id/tab_icon_simple"
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_senior_mode_vector"
+                app:tint="@color/primary_color" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tab_text_simple"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text="@string/mode_tab_simple"
+                    android:textColor="@color/text_primary"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/badge_active_simple"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:background="@drawable/settings_chip_bg"
+                    android:paddingHorizontal="5dp"
+                    android:paddingVertical="1dp"
+                    android:text="@string/active_badge"
+                    android:textColor="@color/primary_color"
+                    android:textSize="9sp"
+                    android:textStyle="bold"
+                    android:visibility="gone"
+                    tools:visibility="visible" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- Tab 2: Modern & Advanced Mode -->
+        <LinearLayout
+            android:id="@+id/tab_mode_modern"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="6dp"
+            android:layout_weight="1"
+            android:background="@drawable/mode_card_unselected_bg"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackground"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="10dp">
+
+            <ImageView
+                android:id="@+id/tab_icon_modern"
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_modern_mode_vector"
+                app:tint="@color/text_secondary" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tab_text_modern"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text="@string/mode_tab_modern"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/badge_active_modern"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:background="@drawable/settings_chip_bg"
+                    android:paddingHorizontal="5dp"
+                    android:paddingVertical="1dp"
+                    android:text="@string/active_badge"
+                    android:textColor="@color/primary_color"
+                    android:textSize="9sp"
+                    android:textStyle="bold"
+                    android:visibility="gone"
+                    tools:visibility="visible" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- Helper banner showing which mode is currently being edited -->
+    <TextView
+        android:id="@+id/tv_mode_helper"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/settings_chip_bg"
+        android:paddingHorizontal="10dp"
+        android:paddingVertical="6dp"
+        android:text="@string/customizing_mode_helper"
+        android:textColor="@color/text_secondary"
+        android:textSize="11sp" />
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:maxHeight="420dp"
+        android:maxHeight="440dp"
         android:scrollbars="vertical">
 
         <LinearLayout
@@ -81,13 +225,25 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <!-- Switch 1: Direct 1-Tap Calling -->
+            <!-- CATEGORY 1: CALLING & CONTACT ACTIONS -->
+            <TextView
+                android:id="@+id/header_calling_actions"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="6dp"
+                android:text="@string/category_calling_actions"
+                android:textColor="@color/primary_color"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <!-- Feature 1: Direct 1-Tap Calling -->
             <RelativeLayout
                 android:id="@+id/holder_direct_one_tap"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="?attr/selectableItemBackground"
-                android:paddingVertical="10dp">
+                android:paddingVertical="8dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -99,6 +255,7 @@
                     android:paddingEnd="12dp">
 
                     <TextView
+                        android:id="@+id/title_direct_one_tap"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/direct_one_tap_calling_title"
@@ -107,6 +264,7 @@
                         android:textStyle="bold" />
 
                     <TextView
+                        android:id="@+id/desc_direct_one_tap"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="2dp"
@@ -130,13 +288,64 @@
                 android:layout_height="1dp"
                 android:background="@color/divider_color" />
 
-            <!-- Switch 2: Quick Action Sheet -->
+            <!-- Feature 2: Accidental Call Shield (Call Confirmation) -->
+            <RelativeLayout
+                android:id="@+id/holder_call_confirmation"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackground"
+                android:paddingVertical="8dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:layout_toStartOf="@+id/switch_call_confirmation"
+                    android:orientation="vertical"
+                    android:paddingEnd="12dp">
+
+                    <TextView
+                        android:id="@+id/title_call_confirmation"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/call_confirmation_title"
+                        android:textColor="@color/text_primary"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/desc_call_confirmation"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:text="@string/call_confirmation_desc"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="12sp" />
+
+                </LinearLayout>
+
+                <org.fossify.commons.views.MyMaterialSwitch
+                    android:id="@+id/switch_call_confirmation"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true" />
+
+            </RelativeLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/divider_color" />
+
+            <!-- Feature 3: Modern Quick Action Sheet -->
             <RelativeLayout
                 android:id="@+id/holder_quick_actions"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="?attr/selectableItemBackground"
-                android:paddingVertical="10dp">
+                android:paddingVertical="8dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -148,6 +357,7 @@
                     android:paddingEnd="12dp">
 
                     <TextView
+                        android:id="@+id/title_quick_actions"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/quick_actions_sheet_title"
@@ -156,6 +366,7 @@
                         android:textStyle="bold" />
 
                     <TextView
+                        android:id="@+id/desc_quick_actions"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="2dp"
@@ -179,13 +390,71 @@
                 android:layout_height="1dp"
                 android:background="@color/divider_color" />
 
-            <!-- Switch 3: Large Tap Answer Buttons -->
+            <!-- Feature 4: Avatar Click for Details -->
+            <RelativeLayout
+                android:id="@+id/holder_profile_picture_click"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackground"
+                android:paddingVertical="8dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:layout_toStartOf="@+id/switch_profile_picture_click"
+                    android:orientation="vertical"
+                    android:paddingEnd="12dp">
+
+                    <TextView
+                        android:id="@+id/title_profile_picture_click"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/avatar_click_details_title"
+                        android:textColor="@color/text_primary"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/desc_profile_picture_click"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:text="@string/avatar_click_details_desc"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="12sp" />
+
+                </LinearLayout>
+
+                <org.fossify.commons.views.MyMaterialSwitch
+                    android:id="@+id/switch_profile_picture_click"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true" />
+
+            </RelativeLayout>
+
+            <!-- CATEGORY 2: INCOMING & IN-CALL SCREEN -->
+            <TextView
+                android:id="@+id/header_incoming_incall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="6dp"
+                android:text="@string/category_incoming_incall"
+                android:textColor="@color/primary_color"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <!-- Feature 5: Large Tap Answer Buttons -->
             <RelativeLayout
                 android:id="@+id/holder_large_answer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="?attr/selectableItemBackground"
-                android:paddingVertical="10dp">
+                android:paddingVertical="8dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -197,6 +466,7 @@
                     android:paddingEnd="12dp">
 
                     <TextView
+                        android:id="@+id/title_large_answer"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/large_answer_buttons_title"
@@ -205,6 +475,7 @@
                         android:textStyle="bold" />
 
                     <TextView
+                        android:id="@+id/desc_large_answer"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="2dp"
@@ -228,13 +499,13 @@
                 android:layout_height="1dp"
                 android:background="@color/divider_color" />
 
-            <!-- Switch 4: Fullscreen Incoming Call Display -->
+            <!-- Feature 6: Fullscreen Incoming Calls -->
             <RelativeLayout
                 android:id="@+id/holder_fullscreen_call"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="?attr/selectableItemBackground"
-                android:paddingVertical="10dp">
+                android:paddingVertical="8dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -246,6 +517,7 @@
                     android:paddingEnd="12dp">
 
                     <TextView
+                        android:id="@+id/title_fullscreen_call"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/fullscreen_call_title"
@@ -254,6 +526,7 @@
                         android:textStyle="bold" />
 
                     <TextView
+                        android:id="@+id/desc_fullscreen_call"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="2dp"
@@ -272,18 +545,25 @@
 
             </RelativeLayout>
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/divider_color" />
+            <!-- CATEGORY 3: DIALPAD & KEYPAD EXPERIENCE -->
+            <TextView
+                android:id="@+id/header_dialpad_keypad"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="6dp"
+                android:text="@string/category_dialpad_keypad"
+                android:textColor="@color/primary_color"
+                android:textSize="12sp"
+                android:textStyle="bold" />
 
-            <!-- Switch 5: Dialpad Vibration -->
+            <!-- Feature 7: Dialpad Vibrations -->
             <RelativeLayout
                 android:id="@+id/holder_dialpad_vibration"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="?attr/selectableItemBackground"
-                android:paddingVertical="10dp">
+                android:paddingVertical="8dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -295,12 +575,22 @@
                     android:paddingEnd="12dp">
 
                     <TextView
+                        android:id="@+id/title_dialpad_vibration"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/dialpad_vibrations"
+                        android:text="@string/dialpad_vibration_title"
                         android:textColor="@color/text_primary"
                         android:textSize="14sp"
                         android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/desc_dialpad_vibration"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:text="@string/dialpad_vibration_desc"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="12sp" />
 
                 </LinearLayout>
 
@@ -318,13 +608,13 @@
                 android:layout_height="1dp"
                 android:background="@color/divider_color" />
 
-            <!-- Switch 6: Dialpad Beeps -->
+            <!-- Feature 8: Dialpad Beeps -->
             <RelativeLayout
                 android:id="@+id/holder_dialpad_beeps"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="?attr/selectableItemBackground"
-                android:paddingVertical="10dp">
+                android:paddingVertical="8dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -336,17 +626,238 @@
                     android:paddingEnd="12dp">
 
                     <TextView
+                        android:id="@+id/title_dialpad_beeps"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/dialpad_beeps"
+                        android:text="@string/dialpad_beeps_title"
                         android:textColor="@color/text_primary"
                         android:textSize="14sp"
                         android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/desc_dialpad_beeps"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:text="@string/dialpad_beeps_desc"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="12sp" />
 
                 </LinearLayout>
 
                 <org.fossify.commons.views.MyMaterialSwitch
                     android:id="@+id/switch_dialpad_beeps"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true" />
+
+            </RelativeLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/divider_color" />
+
+            <!-- Feature 9: Auto-Open Dialpad on Launch -->
+            <RelativeLayout
+                android:id="@+id/holder_open_dialpad_at_launch"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackground"
+                android:paddingVertical="8dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:layout_toStartOf="@+id/switch_open_dialpad_at_launch"
+                    android:orientation="vertical"
+                    android:paddingEnd="12dp">
+
+                    <TextView
+                        android:id="@+id/title_open_dialpad_at_launch"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/open_dialpad_at_launch_title"
+                        android:textColor="@color/text_primary"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/desc_open_dialpad_at_launch"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:text="@string/open_dialpad_at_launch_desc"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="12sp" />
+
+                </LinearLayout>
+
+                <org.fossify.commons.views.MyMaterialSwitch
+                    android:id="@+id/switch_open_dialpad_at_launch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true" />
+
+            </RelativeLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/divider_color" />
+
+            <!-- Feature 10: Minimal Dialpad (Digits Only) -->
+            <RelativeLayout
+                android:id="@+id/holder_hide_dialpad_numbers"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackground"
+                android:paddingVertical="8dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:layout_toStartOf="@+id/switch_hide_dialpad_numbers"
+                    android:orientation="vertical"
+                    android:paddingEnd="12dp">
+
+                    <TextView
+                        android:id="@+id/title_hide_dialpad_numbers"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/hide_dialpad_letters_title"
+                        android:textColor="@color/text_primary"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/desc_hide_dialpad_numbers"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:text="@string/hide_dialpad_letters_desc"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="12sp" />
+
+                </LinearLayout>
+
+                <org.fossify.commons.views.MyMaterialSwitch
+                    android:id="@+id/switch_hide_dialpad_numbers"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true" />
+
+            </RelativeLayout>
+
+            <!-- CATEGORY 4: RECENTS & MESSAGING SHORTCUTS -->
+            <TextView
+                android:id="@+id/header_recents_messaging"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="6dp"
+                android:text="@string/category_recents_messaging"
+                android:textColor="@color/primary_color"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <!-- Feature 11: Floating Messages JoyStick -->
+            <RelativeLayout
+                android:id="@+id/holder_messages_joystick"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackground"
+                android:paddingVertical="8dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:layout_toStartOf="@+id/switch_messages_joystick"
+                    android:orientation="vertical"
+                    android:paddingEnd="12dp">
+
+                    <TextView
+                        android:id="@+id/title_messages_joystick"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/messages_joystick_title"
+                        android:textColor="@color/text_primary"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/desc_messages_joystick"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:text="@string/messages_joystick_desc"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="12sp" />
+
+                </LinearLayout>
+
+                <org.fossify.commons.views.MyMaterialSwitch
+                    android:id="@+id/switch_messages_joystick"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true" />
+
+            </RelativeLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/divider_color" />
+
+            <!-- Feature 12: Group Subsequent Calls -->
+            <RelativeLayout
+                android:id="@+id/holder_group_subsequent_calls"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackground"
+                android:paddingVertical="8dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:layout_toStartOf="@+id/switch_group_subsequent_calls"
+                    android:orientation="vertical"
+                    android:paddingEnd="12dp">
+
+                    <TextView
+                        android:id="@+id/title_group_subsequent_calls"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/group_subsequent_calls_title"
+                        android:textColor="@color/text_primary"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/desc_group_subsequent_calls"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:text="@string/group_subsequent_calls_desc"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="12sp" />
+
+                </LinearLayout>
+
+                <org.fossify.commons.views.MyMaterialSwitch
+                    android:id="@+id/switch_group_subsequent_calls"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
@@ -401,4 +912,3 @@
     </LinearLayout>
 
 </LinearLayout>
-

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="clear_call_history">कॉल इतिहास साफ़ करें</string>
     <string name="asterisk">तारांकन</string>
@@ -102,15 +102,45 @@
     <string name="apply">लागू करें</string>
     <!-- Customize Interface Mode -->
     <string name="customize_interface_features">इंटरफ़ेस सुविधाएँ कस्टमाइज़ करें</string>
-    <string name="customize_interface_features_desc">1-टैप कॉलिंग, हैप्टिक्स, उत्तर बटन और एक्शन शीट कस्टमाइज़ करें</string>
+    <string name="customize_interface_features_desc">सरल मोड बनाम आधुनिक मोड के लिए सुविधाओं को स्वतंत्र रूप से कस्टमाइज़ करें</string>
+    <string name="mode_tab_simple">सरल मोड</string>
+    <string name="mode_tab_modern">आधुनिक व उन्नत</string>
+    <string name="active_badge">सक्रिय</string>
+    <string name="customizing_mode_helper">%s के लिए सुविधाएँ कॉन्फ़िगर की जा रही हैं। सेटिंग्स प्रत्येक मोड के लिए अलग से सहेजी जाती हैं।</string>
+    <string name="defaults_restored_msg">%s डिफ़ॉल्ट बहाल किए गए</string>
+
+    <string name="category_calling_actions">कॉलिंग और संपर्क क्रियाएं</string>
     <string name="direct_one_tap_calling_title">डायरेक्ट 1-टैप कॉलिंग</string>
     <string name="direct_one_tap_calling_desc">संपर्कों या कॉल इतिहास पर टैप करते ही बिना किसी अतिरिक्त मेनू के तुरंत कॉल करें।</string>
+    <string name="call_confirmation_title">आकस्मिक कॉल शील्ड</string>
+    <string name="call_confirmation_desc">गलती से या जेब में कॉल लगने से बचाने के लिए कॉल करने से पहले पुष्टि संवाद दिखाएं।</string>
     <string name="quick_actions_sheet_title">आधुनिक त्वरित एक्शन शीट</string>
     <string name="quick_actions_sheet_desc">एसएमएस, व्हाट्सएप, एचडी वीडियो कॉल, इतिहास और शेयर शॉर्टकट वाली शीट खोलें।</string>
+    <string name="avatar_click_details_title">संपर्क विवरण के लिए अवतार पर टैप करें</string>
+    <string name="avatar_click_details_desc">कॉल करने के बजाय संपर्क प्रोफ़ाइल तस्वीर पर टैप करने से पूरा विवरण खुलेगा।</string>
+
+    <string name="category_incoming_incall">इनकमिंग और इन-कॉल स्क्रीन</string>
     <string name="large_answer_buttons_title">बड़े टैप उत्तर बटन</string>
     <string name="large_answer_buttons_desc">स्वाइप के बजाय बड़े हरे \'स्वीकार\' और लाल \'अस्वीकार\' बटन दिखाएं।</string>
     <string name="fullscreen_call_title">फ़ुलस्क्रीन इनकमिंग कॉल</string>
     <string name="fullscreen_call_desc">हमेशा इनकमिंग कॉल को फ़ुल स्क्रीन में दिखाएं ताकि कोई कॉल न छूटे।</string>
+
+    <string name="category_dialpad_keypad">डायलपैड और कीपैड अनुभव</string>
+    <string name="dialpad_vibration_title">डायलपैड कीपैड कंपन</string>
+    <string name="dialpad_vibration_desc">डायलपैड नंबर दबाने पर स्पष्ट हैप्टिक कंपन प्रतिक्रिया।</string>
+    <string name="dialpad_beeps_title">डायलपैड बीप्स व टोन</string>
+    <string name="dialpad_beeps_desc">नंबर दबाने पर स्पष्ट DTMF टोन बीप्स सुनें।</string>
+    <string name="open_dialpad_at_launch_title">लॉन्च पर डायलपैड स्वतः खोलें</string>
+    <string name="open_dialpad_at_launch_desc">सिम्पलीडायल शुरू होते ही सीधे डायलपैड स्क्रीन दिखाएं।</string>
+    <string name="hide_dialpad_letters_title">सरल डायलपैड (केवल अंक)</string>
+    <string name="hide_dialpad_letters_desc">साफ़ व बड़े अंकों के लिए कीपैड अक्षरों को छुपाएं।</string>
+
+    <string name="category_recents_messaging">हालिया कॉल और मैसेजिंग शॉर्टकट</string>
+    <string name="messages_joystick_title">फ्लोटिंग मैसेज जॉयस्टिक</string>
+    <string name="messages_joystick_desc">तेज़ एसएमएस भेजने के लिए स्क्रीन पर फ्लोटिंग बटन दिखाएं।</string>
+    <string name="group_subsequent_calls_title">बार-बार आने वाली कॉल्स को समूहित करें</string>
+    <string name="group_subsequent_calls_desc">एक ही नंबर से लगातार आई कॉलों को एक प्रविष्टि में जोड़ें।</string>
+
     <string name="reset_to_mode_defaults">मोड डिफ़ॉल्ट पर रीसेट करें</string>
     <string name="apply_and_save">लागू करें और सहेजें</string>
     <string name="settings_updated">सेटिंग्स सफलतापूर्वक अपडेट की गईं</string>

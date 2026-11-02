@@ -209,24 +209,8 @@ class InterfaceModeBottomSheetDialog : BaseBottomSheetDialogFragment() {
         val config = activity.config
 
         config.interfaceMode = newMode
-
-        if (newMode == INTERFACE_MODE_SIMPLE) {
-            // Senior-friendly defaults
-            config.directOneTapCalling = true
-            config.showQuickActionsSheet = false
-            config.fontSize = FONT_SIZE_EXTRA_LARGE
-            config.dialpadVibration = true
-            config.dialpadBeeps = true
-            config.alwaysShowFullscreen = true
-            config.disableSwipeToAnswer = true
-        } else {
-            // Modern & Advanced defaults
-            config.directOneTapCalling = false
-            config.showQuickActionsSheet = true
-            config.fontSize = FONT_SIZE_MEDIUM
-            config.alwaysShowFullscreen = false
-            config.disableSwipeToAnswer = false
-        }
+        config.syncModePreferences(newMode)
+        config.fontSize = if (newMode == INTERFACE_MODE_SIMPLE) FONT_SIZE_EXTRA_LARGE else FONT_SIZE_MEDIUM
 
         val modeTitle = if (newMode == INTERFACE_MODE_SIMPLE) {
             getString(R.string.interface_mode_simple_title)

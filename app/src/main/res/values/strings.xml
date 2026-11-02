@@ -261,15 +261,45 @@
     <string name="apply">Apply</string>
     <!-- Customize Interface Mode -->
     <string name="customize_interface_features">Customize Interface Features</string>
-    <string name="customize_interface_features_desc">Fine-tune 1-tap calling, haptics, answer buttons &amp; action sheets</string>
+    <string name="customize_interface_features_desc">Fine-tune features independently for Simpler Mode vs Modern &amp; Advanced</string>
+    <string name="mode_tab_simple">Simpler Mode</string>
+    <string name="mode_tab_modern">Modern &amp; Advanced</string>
+    <string name="active_badge">ACTIVE</string>
+    <string name="customizing_mode_helper">Configuring features specifically for %s. Settings are preserved independently per interface mode.</string>
+    <string name="defaults_restored_msg">Restored %s defaults</string>
+
+    <string name="category_calling_actions">Calling &amp; Contact Actions</string>
     <string name="direct_one_tap_calling_title">Direct 1-Tap Calling</string>
     <string name="direct_one_tap_calling_desc">Immediately place calls when tapping contacts or call history without opening action sheets.</string>
+    <string name="call_confirmation_title">Accidental Call Shield</string>
+    <string name="call_confirmation_desc">Ask for confirmation before dialing to prevent accidental calls in pockets or on quick taps.</string>
     <string name="quick_actions_sheet_title">Modern Quick Action Sheet</string>
     <string name="quick_actions_sheet_desc">Slide-up sheet with SMS, WhatsApp, HD Video Call, History, and Share shortcuts.</string>
+    <string name="avatar_click_details_title">Tap Avatar for Contact Details</string>
+    <string name="avatar_click_details_desc">Tapping contact picture opens full contact details screen instead of calling.</string>
+
+    <string name="category_incoming_incall">Incoming &amp; In-Call Screen</string>
     <string name="large_answer_buttons_title">Large Tap Answer Buttons</string>
     <string name="large_answer_buttons_desc">Show prominent Green Accept and Red Decline buttons instead of swipe gestures.</string>
     <string name="fullscreen_call_title">Fullscreen Incoming Calls</string>
     <string name="fullscreen_call_desc">Always display incoming calls full screen so calls are never missed in notifications.</string>
+
+    <string name="category_dialpad_keypad">Dialpad &amp; Keypad Experience</string>
+    <string name="dialpad_vibration_title">Dialpad Keypad Vibrations</string>
+    <string name="dialpad_vibration_desc">Strong haptic vibration feedback whenever a dialpad number is tapped.</string>
+    <string name="dialpad_beeps_title">Dialpad Audible Tones / Beeps</string>
+    <string name="dialpad_beeps_desc">Audible DTMF tone beeps on every number press for hearing reassurance.</string>
+    <string name="open_dialpad_at_launch_title">Auto-Open Dialpad on Launch</string>
+    <string name="open_dialpad_at_launch_desc">Automatically display the dialpad screen whenever SimplyDial starts.</string>
+    <string name="hide_dialpad_letters_title">Minimal Dialpad (Digits Only)</string>
+    <string name="hide_dialpad_letters_desc">Hide small alphabet letters under keypad numbers for maximum uncluttered clarity.</string>
+
+    <string name="category_recents_messaging">Recents &amp; Messaging Shortcuts</string>
+    <string name="messages_joystick_title">Floating Quick-Message JoyStick</string>
+    <string name="messages_joystick_desc">Display floating shortcut button on dialer screens for quick SMS composition.</string>
+    <string name="group_subsequent_calls_title">Group Repeated Recent Calls</string>
+    <string name="group_subsequent_calls_desc">Combine consecutive calls from the same number into a single recent entry.</string>
+
     <string name="reset_to_mode_defaults">Reset to Mode Defaults</string>
     <string name="apply_and_save">Apply &amp; Save</string>
     <string name="settings_updated">Settings updated successfully</string>

@@ -50,6 +50,7 @@ const val INTERFACE_MODE_MODERN = 1
 // Customizable Interface Features
 const val DIRECT_ONE_TAP_CALLING = "direct_one_tap_calling"
 const val SHOW_QUICK_ACTIONS_SHEET = "show_quick_actions_sheet"
+const val SHOW_CALL_CONFIRMATION = "show_call_confirmation"
 
 // Theme Settings (Independent of System Dark Mode)
 const val IS_DARK_THEME_ENABLED = "is_dark_theme_enabled"

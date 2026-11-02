@@ -419,10 +419,10 @@ class SettingsActivity : SimpleActivity() {
 
     private fun setupShowCallConfirmation() {
         binding.apply {
-            settingsShowCallConfirmation.isChecked = config.showCallConfirmation
+            settingsShowCallConfirmation.isChecked = config.isCallConfirmationEnabled
             settingsShowCallConfirmationHolder.setOnClickListener {
                 settingsShowCallConfirmation.toggle()
-                config.showCallConfirmation = settingsShowCallConfirmation.isChecked
+                config.isCallConfirmationEnabled = settingsShowCallConfirmation.isChecked
             }
         }
     }

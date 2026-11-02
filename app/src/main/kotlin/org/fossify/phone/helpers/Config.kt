@@ -100,41 +100,13 @@ class Config(context: Context) : BaseConfig(context) {
         get() = prefs.getInt(SHOW_TABS, ALL_TABS_MASK)
         set(showTabs) = prefs.edit().putInt(SHOW_TABS, showTabs).apply()
 
-    var groupSubsequentCalls: Boolean
-        get() = prefs.getBoolean(GROUP_SUBSEQUENT_CALLS, true)
-        set(groupSubsequentCalls) = prefs.edit().putBoolean(GROUP_SUBSEQUENT_CALLS, groupSubsequentCalls).apply()
-
-    var openDialPadAtLaunch: Boolean
-        get() = prefs.getBoolean(OPEN_DIAL_PAD_AT_LAUNCH, false)
-        set(openDialPad) = prefs.edit().putBoolean(OPEN_DIAL_PAD_AT_LAUNCH, openDialPad).apply()
-
     var disableProximitySensor: Boolean
         get() = prefs.getBoolean(DISABLE_PROXIMITY_SENSOR, false)
         set(disableProximitySensor) = prefs.edit().putBoolean(DISABLE_PROXIMITY_SENSOR, disableProximitySensor).apply()
 
-    var disableSwipeToAnswer: Boolean
-        get() = prefs.getBoolean(DISABLE_SWIPE_TO_ANSWER, false)
-        set(disableSwipeToAnswer) = prefs.edit().putBoolean(DISABLE_SWIPE_TO_ANSWER, disableSwipeToAnswer).apply()
-
     var wasOverlaySnackbarConfirmed: Boolean
         get() = prefs.getBoolean(WAS_OVERLAY_SNACKBAR_CONFIRMED, false)
         set(wasOverlaySnackbarConfirmed) = prefs.edit().putBoolean(WAS_OVERLAY_SNACKBAR_CONFIRMED, wasOverlaySnackbarConfirmed).apply()
-
-    var dialpadVibration: Boolean
-        get() = prefs.getBoolean(DIALPAD_VIBRATION, true)
-        set(dialpadVibration) = prefs.edit().putBoolean(DIALPAD_VIBRATION, dialpadVibration).apply()
-
-    var hideDialpadNumbers: Boolean
-        get() = prefs.getBoolean(HIDE_DIALPAD_NUMBERS, false)
-        set(hideDialpadNumbers) = prefs.edit().putBoolean(HIDE_DIALPAD_NUMBERS, hideDialpadNumbers).apply()
-
-    var dialpadBeeps: Boolean
-        get() = prefs.getBoolean(DIALPAD_BEEPS, true)
-        set(dialpadBeeps) = prefs.edit().putBoolean(DIALPAD_BEEPS, dialpadBeeps).apply()
-
-    var alwaysShowFullscreen: Boolean
-        get() = prefs.getBoolean(ALWAYS_SHOW_FULLSCREEN, false)
-        set(alwaysShowFullscreen) = prefs.edit().putBoolean(ALWAYS_SHOW_FULLSCREEN, alwaysShowFullscreen).apply()
 
     var appLanguage: String
         get() = prefs.getString(APP_LANGUAGE, LANGUAGE_ENGLISH) ?: LANGUAGE_ENGLISH
@@ -155,29 +127,20 @@ class Config(context: Context) : BaseConfig(context) {
     var autoRecordCalls: Boolean
         get() = prefs.getBoolean(AUTO_RECORD_CALLS, false)
         set(autoRecordCalls) = prefs.edit().putBoolean(AUTO_RECORD_CALLS, autoRecordCalls).apply()
-    
+
     // MANDATORY: Call recording consent for Google Play compliance
-    // User must explicitly consent to recording laws and beep notification
     var callRecordingConsentGiven: Boolean
         get() = prefs.getBoolean(CALL_RECORDING_CONSENT_GIVEN, false)
         set(callRecordingConsentGiven) = prefs.edit().putBoolean(CALL_RECORDING_CONSENT_GIVEN, callRecordingConsentGiven).apply()
-    
+
     // App Theme Settings (Independent of System Dark Mode)
     var isDarkThemeEnabled: Boolean
         get() = prefs.getBoolean(IS_DARK_THEME_ENABLED, false)
         set(isDarkThemeEnabled) = prefs.edit().putBoolean(IS_DARK_THEME_ENABLED, isDarkThemeEnabled).apply()
-    
+
     var themeMode: String
         get() = prefs.getString(THEME_MODE, THEME_MODE_LIGHT) ?: THEME_MODE_LIGHT
         set(themeMode) = prefs.edit().putString(THEME_MODE, themeMode).apply()
-    
-    var enableProfilePictureClick: Boolean
-        get() = prefs.getBoolean(ENABLE_PROFILE_PICTURE_CLICK, false)
-        set(enableProfilePictureClick) = prefs.edit().putBoolean(ENABLE_PROFILE_PICTURE_CLICK, enableProfilePictureClick).apply()
-
-    var enableMessagesJoystick: Boolean
-        get() = prefs.getBoolean(ENABLE_MESSAGES_JOYSTICK, true)
-        set(enableMessagesJoystick) = prefs.edit().putBoolean(ENABLE_MESSAGES_JOYSTICK, enableMessagesJoystick).apply()
 
     var interfaceMode: Int
         get() = prefs.getInt(APP_INTERFACE_MODE, INTERFACE_MODE_MODERN)
@@ -186,13 +149,172 @@ class Config(context: Context) : BaseConfig(context) {
     val isSimpleMode: Boolean
         get() = interfaceMode == INTERFACE_MODE_SIMPLE
 
+    // --- Mode-Scoped Interface Features Architecture ---
+
+    data class ModeFeatures(
+        var directOneTapCalling: Boolean,
+        var showCallConfirmation: Boolean,
+        var showQuickActionsSheet: Boolean,
+        var enableProfilePictureClick: Boolean,
+        var disableSwipeToAnswer: Boolean,
+        var alwaysShowFullscreen: Boolean,
+        var dialpadVibration: Boolean,
+        var dialpadBeeps: Boolean,
+        var openDialPadAtLaunch: Boolean,
+        var hideDialpadNumbers: Boolean,
+        var enableMessagesJoystick: Boolean,
+        var groupSubsequentCalls: Boolean
+    )
+
+    fun getModePrefKey(baseKey: String, mode: Int = interfaceMode): String {
+        val modeSuffix = if (mode == INTERFACE_MODE_SIMPLE) "_simple" else "_modern"
+        return "${baseKey}${modeSuffix}"
+    }
+
+    fun getModeBoolean(baseKey: String, mode: Int, defaultForMode: Boolean): Boolean {
+        val modeKey = getModePrefKey(baseKey, mode)
+        return if (prefs.contains(modeKey)) {
+            prefs.getBoolean(modeKey, defaultForMode)
+        } else if (prefs.contains(baseKey)) {
+            prefs.getBoolean(baseKey, defaultForMode)
+        } else {
+            defaultForMode
+        }
+    }
+
+    fun setModeBoolean(baseKey: String, mode: Int, value: Boolean) {
+        val modeKey = getModePrefKey(baseKey, mode)
+        prefs.edit().putBoolean(modeKey, value).apply()
+        if (mode == interfaceMode) {
+            prefs.edit().putBoolean(baseKey, value).apply()
+        }
+    }
+
+    fun getModeFeatures(mode: Int): ModeFeatures {
+        val isSimple = mode == INTERFACE_MODE_SIMPLE
+        return ModeFeatures(
+            directOneTapCalling = getModeBoolean(DIRECT_ONE_TAP_CALLING, mode, isSimple),
+            showCallConfirmation = getModeBoolean(SHOW_CALL_CONFIRMATION, mode, isSimple),
+            showQuickActionsSheet = getModeBoolean(SHOW_QUICK_ACTIONS_SHEET, mode, !isSimple),
+            enableProfilePictureClick = getModeBoolean(ENABLE_PROFILE_PICTURE_CLICK, mode, !isSimple),
+            disableSwipeToAnswer = getModeBoolean(DISABLE_SWIPE_TO_ANSWER, mode, isSimple),
+            alwaysShowFullscreen = getModeBoolean(ALWAYS_SHOW_FULLSCREEN, mode, isSimple),
+            dialpadVibration = getModeBoolean(DIALPAD_VIBRATION, mode, isSimple),
+            dialpadBeeps = getModeBoolean(DIALPAD_BEEPS, mode, isSimple),
+            openDialPadAtLaunch = getModeBoolean(OPEN_DIAL_PAD_AT_LAUNCH, mode, false),
+            hideDialpadNumbers = getModeBoolean(HIDE_DIALPAD_NUMBERS, mode, false),
+            enableMessagesJoystick = getModeBoolean(ENABLE_MESSAGES_JOYSTICK, mode, !isSimple),
+            groupSubsequentCalls = getModeBoolean(GROUP_SUBSEQUENT_CALLS, mode, true)
+        )
+    }
+
+    fun saveModeFeatures(mode: Int, features: ModeFeatures) {
+        setModeBoolean(DIRECT_ONE_TAP_CALLING, mode, features.directOneTapCalling)
+        setModeBoolean(SHOW_CALL_CONFIRMATION, mode, features.showCallConfirmation)
+        setModeBoolean(SHOW_QUICK_ACTIONS_SHEET, mode, features.showQuickActionsSheet)
+        setModeBoolean(ENABLE_PROFILE_PICTURE_CLICK, mode, features.enableProfilePictureClick)
+        setModeBoolean(DISABLE_SWIPE_TO_ANSWER, mode, features.disableSwipeToAnswer)
+        setModeBoolean(ALWAYS_SHOW_FULLSCREEN, mode, features.alwaysShowFullscreen)
+        setModeBoolean(DIALPAD_VIBRATION, mode, features.dialpadVibration)
+        setModeBoolean(DIALPAD_BEEPS, mode, features.dialpadBeeps)
+        setModeBoolean(OPEN_DIAL_PAD_AT_LAUNCH, mode, features.openDialPadAtLaunch)
+        setModeBoolean(HIDE_DIALPAD_NUMBERS, mode, features.hideDialpadNumbers)
+        setModeBoolean(ENABLE_MESSAGES_JOYSTICK, mode, features.enableMessagesJoystick)
+        setModeBoolean(GROUP_SUBSEQUENT_CALLS, mode, features.groupSubsequentCalls)
+        if (mode == interfaceMode) {
+            syncModePreferences(mode)
+        }
+    }
+
+    fun getDefaultModeFeatures(mode: Int): ModeFeatures {
+        val isSimple = mode == INTERFACE_MODE_SIMPLE
+        return ModeFeatures(
+            directOneTapCalling = isSimple,
+            showCallConfirmation = isSimple,
+            showQuickActionsSheet = !isSimple,
+            enableProfilePictureClick = !isSimple,
+            disableSwipeToAnswer = isSimple,
+            alwaysShowFullscreen = isSimple,
+            dialpadVibration = isSimple,
+            dialpadBeeps = isSimple,
+            openDialPadAtLaunch = false,
+            hideDialpadNumbers = false,
+            enableMessagesJoystick = !isSimple,
+            groupSubsequentCalls = true
+        )
+    }
+
+    fun syncModePreferences(mode: Int = interfaceMode) {
+        val features = getModeFeatures(mode)
+        showCallConfirmation = features.showCallConfirmation
+        prefs.edit()
+            .putBoolean(DIRECT_ONE_TAP_CALLING, features.directOneTapCalling)
+            .putBoolean(SHOW_CALL_CONFIRMATION, features.showCallConfirmation)
+            .putBoolean(SHOW_QUICK_ACTIONS_SHEET, features.showQuickActionsSheet)
+            .putBoolean(ENABLE_PROFILE_PICTURE_CLICK, features.enableProfilePictureClick)
+            .putBoolean(DISABLE_SWIPE_TO_ANSWER, features.disableSwipeToAnswer)
+            .putBoolean(ALWAYS_SHOW_FULLSCREEN, features.alwaysShowFullscreen)
+            .putBoolean(DIALPAD_VIBRATION, features.dialpadVibration)
+            .putBoolean(DIALPAD_BEEPS, features.dialpadBeeps)
+            .putBoolean(OPEN_DIAL_PAD_AT_LAUNCH, features.openDialPadAtLaunch)
+            .putBoolean(HIDE_DIALPAD_NUMBERS, features.hideDialpadNumbers)
+            .putBoolean(ENABLE_MESSAGES_JOYSTICK, features.enableMessagesJoystick)
+            .putBoolean(GROUP_SUBSEQUENT_CALLS, features.groupSubsequentCalls)
+            .apply()
+    }
+
+    // Property accessors automatically scoped to the active interfaceMode:
+
+    var isCallConfirmationEnabled: Boolean
+        get() = getModeBoolean(SHOW_CALL_CONFIRMATION, interfaceMode, isSimpleMode)
+        set(value) {
+            showCallConfirmation = value
+            setModeBoolean(SHOW_CALL_CONFIRMATION, interfaceMode, value)
+        }
+
     var directOneTapCalling: Boolean
-        get() = prefs.getBoolean(DIRECT_ONE_TAP_CALLING, isSimpleMode)
-        set(value) = prefs.edit().putBoolean(DIRECT_ONE_TAP_CALLING, value).apply()
+        get() = getModeBoolean(DIRECT_ONE_TAP_CALLING, interfaceMode, isSimpleMode)
+        set(value) = setModeBoolean(DIRECT_ONE_TAP_CALLING, interfaceMode, value)
 
     var showQuickActionsSheet: Boolean
-        get() = prefs.getBoolean(SHOW_QUICK_ACTIONS_SHEET, !isSimpleMode)
-        set(value) = prefs.edit().putBoolean(SHOW_QUICK_ACTIONS_SHEET, value).apply()
+        get() = getModeBoolean(SHOW_QUICK_ACTIONS_SHEET, interfaceMode, !isSimpleMode)
+        set(value) = setModeBoolean(SHOW_QUICK_ACTIONS_SHEET, interfaceMode, value)
+
+    var enableProfilePictureClick: Boolean
+        get() = getModeBoolean(ENABLE_PROFILE_PICTURE_CLICK, interfaceMode, !isSimpleMode)
+        set(value) = setModeBoolean(ENABLE_PROFILE_PICTURE_CLICK, interfaceMode, value)
+
+    var disableSwipeToAnswer: Boolean
+        get() = getModeBoolean(DISABLE_SWIPE_TO_ANSWER, interfaceMode, isSimpleMode)
+        set(value) = setModeBoolean(DISABLE_SWIPE_TO_ANSWER, interfaceMode, value)
+
+    var alwaysShowFullscreen: Boolean
+        get() = getModeBoolean(ALWAYS_SHOW_FULLSCREEN, interfaceMode, isSimpleMode)
+        set(value) = setModeBoolean(ALWAYS_SHOW_FULLSCREEN, interfaceMode, value)
+
+    var dialpadVibration: Boolean
+        get() = getModeBoolean(DIALPAD_VIBRATION, interfaceMode, isSimpleMode)
+        set(value) = setModeBoolean(DIALPAD_VIBRATION, interfaceMode, value)
+
+    var dialpadBeeps: Boolean
+        get() = getModeBoolean(DIALPAD_BEEPS, interfaceMode, isSimpleMode)
+        set(value) = setModeBoolean(DIALPAD_BEEPS, interfaceMode, value)
+
+    var openDialPadAtLaunch: Boolean
+        get() = getModeBoolean(OPEN_DIAL_PAD_AT_LAUNCH, interfaceMode, false)
+        set(value) = setModeBoolean(OPEN_DIAL_PAD_AT_LAUNCH, interfaceMode, value)
+
+    var hideDialpadNumbers: Boolean
+        get() = getModeBoolean(HIDE_DIALPAD_NUMBERS, interfaceMode, false)
+        set(value) = setModeBoolean(HIDE_DIALPAD_NUMBERS, interfaceMode, value)
+
+    var enableMessagesJoystick: Boolean
+        get() = getModeBoolean(ENABLE_MESSAGES_JOYSTICK, interfaceMode, !isSimpleMode)
+        set(value) = setModeBoolean(ENABLE_MESSAGES_JOYSTICK, interfaceMode, value)
+
+    var groupSubsequentCalls: Boolean
+        get() = getModeBoolean(GROUP_SUBSEQUENT_CALLS, interfaceMode, true)
+        set(value) = setModeBoolean(GROUP_SUBSEQUENT_CALLS, interfaceMode, value)
 
     fun getContactNote(number: String): String {
         val cleanNumber = number.filter { it.isDigit() }
