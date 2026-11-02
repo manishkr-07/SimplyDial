@@ -248,6 +248,30 @@
             android:foregroundServiceType="microphone" />
 
         <receiver
+            android:name=".widgets.SpeedDialWidgetProvider"
+            android:exported="true"
+            android:label="@string/speed_dial_widget_name">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_speed_dial_info" />
+        </receiver>
+
+        <receiver
+            android:name=".widgets.DialpadWidgetProvider"
+            android:exported="true"
+            android:label="@string/dialpad_widget_name">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_dialpad_info" />
+        </receiver>
+
+        <receiver
             android:name=".receivers.CallActionReceiver"
             android:enabled="true"
             android:exported="false" />

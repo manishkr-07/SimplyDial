@@ -25,7 +25,6 @@ import org.fossify.phone.R
 import org.fossify.phone.activities.MainActivity
 import org.fossify.phone.activities.SimpleActivity
 import org.fossify.phone.databinding.DialogContactQuickActionsBinding
-import org.fossify.phone.managers.CallRecordingManager
 import org.fossify.phone.dialogs.ShowGroupedCallsDialog
 import org.fossify.phone.dialogs.VideoCallOptionsDialog
 import org.fossify.phone.extensions.addAnimatedGradientRing
@@ -34,6 +33,7 @@ import org.fossify.phone.extensions.launchSendSMSIntent
 import org.fossify.phone.extensions.startCallWithConfirmationCheck
 import org.fossify.phone.extensions.startContactDetailsIntent
 import org.fossify.phone.models.RecentCall
+import org.fossify.phone.managers.CallRecordingManager
 import java.io.File
 
 object QuickActionsHelper {

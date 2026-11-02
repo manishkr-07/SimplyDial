@@ -348,4 +348,21 @@
     <string name="callback_rate">Callback Rate</string>
     <string name="call_back">Call Back</string>
     <string name="no_analytics_data">No call history available to analyze</string>
+
+    <string name="spam_shield_title">Offline Spam &amp; Robocall Shield</string>
+    <string name="spam_shield_desc">Flag suspected telemarketing and robocalls with an offline warning badge on incoming calls</string>
+    <string name="suspected_spam_warning">⚠️ Suspected Spam / Telemarketer</string>
+    <string name="block_and_decline">Block &amp; Decline</string>
+    <string name="auto_decline_spam_title">Auto-Decline Suspected Spam</string>
+    <string name="auto_decline_spam_desc">Automatically reject calls flagged with high confidence as spam</string>
+    <string name="backup_and_restore_title">Backup &amp; Restore</string>
+    <string name="create_backup">Create Backup</string>
+    <string name="create_backup_desc">Export your contact notes, speed dials, and interface preferences to a file</string>
+    <string name="restore_backup">Restore from Backup</string>
+    <string name="restore_backup_desc">Restore notes and preferences from a previously saved backup file</string>
+    <string name="backup_created_success">Backup saved successfully</string>
+    <string name="backup_restored_success">Restored: %1$d notes, %2$d speed dials, %3$d preferences</string>
+    <string name="invalid_backup_file">Invalid or corrupted backup file</string>
+    <string name="speed_dial_widget_name">SimplyDial: Speed Dial (Favorites)</string>
+    <string name="dialpad_widget_name">SimplyDial: Quick Dialpad</string>
 </resources>

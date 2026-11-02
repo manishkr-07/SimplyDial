@@ -6,6 +6,39 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ---
 
+## [2.0.0] - 2026-11-02 - Offline Spam Shield, Home Widgets Suite & Data Backup/Restore
+
+### 🛡️ Feature — Offline Spam & Robocall Shield (`SpamShieldManager`)
+- **100% On-Device Offline Heuristics Engine**:
+  - Automatically identifies suspected spam, telemarketers, and robocalls offline without sending user data or phone numbers to any third-party server.
+  - Pattern matching for Indian telemarketing prefixes (`140xxxxxxx`, `160xxxxxxx`), commercial toll-free blocks (`1800xxxxxxx`), US/North American telemarketing toll-free series (`+1800`, `+1888`, `+1877`, `+1866`, `+1855`, `+1844`, `+1833`), and repetitive spoofed digit sequences (`00000`, `99999`, etc.).
+  - User custom spam blacklist: easily add or remove any phone number to personal offline spam registry.
+  - **Live Visual Spam Warning**: Prominent red warning banner (`⚠️ Suspected Spam / Telemarketer`) in `CallActivity` during incoming calls.
+  - **Telecom Call Screening Integration**: Automatically silences or auto-declines suspected spam calls in `SimpleCallScreeningService` when auto-decline option is enabled.
+  - Mode-scoped toggle (Feature 17) in "Customize Interface Features" with independent toggling for Simpler Mode and Modern Mode.
+
+### 📱 Feature — Home Screen Widgets Suite
+- **Speed Dial Photo Favorites Widget (`SpeedDialWidgetProvider`)**:
+  - Compact 2x2 / 4x2 home screen widget showing user's top favorite speed-dial contacts.
+  - 1-tap direct dialing straight from the Android home screen without launching the full dialer first.
+  - Dynamically renders contact photo avatars or stylish initial badges.
+- **Quick Dialpad Widget (`DialpadWidgetProvider`)**:
+  - Sleek 4x2 home screen dialpad widget with 1-tap quick buttons (`Phone`, `Favorites`, `Recents`, `Search`).
+  - Seamlessly launches into `DialpadActivity` with haptic feedback and immediate numeric input readiness.
+
+### 💾 Feature — Local Data Backup & Restore (`BackupManager`)
+- **Structured JSON Backup Engine**:
+  - Export and restore all SimplyDial custom data in an encrypted/human-readable JSON package:
+    - Contact Notes (`contact_note_*`)
+    - Speed Dial Favorites with custom photo URI metadata
+    - Emergency SOS configuration & designated contacts
+    - Custom Spam List & telemarketing filters
+    - Complete matrix of all 17 mode-scoped interface customization preferences across Simpler Mode and Modern Mode.
+  - Integrated into Settings under the Migration & Data section with native Android Storage Access Framework (`CreateDocument` & `OpenDocument`).
+  - Granular restore statistics dialog reporting the exact count of notes, speed dials, and preferences restored.
+
+---
+
 ## [1.9.0] - 2026-11-02 - Call Notes, Post-Call Summary, Analytics & Media Studio
 
 ### 📝 Feature — In-Call Notes & Post-Call Summary Dialog

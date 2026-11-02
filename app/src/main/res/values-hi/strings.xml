@@ -190,4 +190,21 @@
     <string name="callback_rate">कॉल बैक दर</string>
     <string name="call_back">पुनः कॉल करें</string>
     <string name="no_analytics_data">विश्लेषण के लिए कोई कॉल इतिहास उपलब्ध नहीं है</string>
+
+    <string name="spam_shield_title">ऑफ़लाइन स्पैम व रोबोकॉल शील्ड</string>
+    <string name="spam_shield_desc">इनकमिंग कॉल पर संदिग्ध टेलीमार्केटिंग व स्पैम कॉल की चेतावनी बैज दिखाएं</string>
+    <string name="suspected_spam_warning">⚠️ संदिग्ध स्पैम / टेलीमार्केटर</string>
+    <string name="block_and_decline">ब्लॉक व अस्वीकार करें</string>
+    <string name="auto_decline_spam_title">संदिग्ध स्पैम स्वतः अस्वीकार करें</string>
+    <string name="auto_decline_spam_desc">अत्यधिक संदिग्ध मानी गई कॉलों को अपने आप अस्वीकार करें</string>
+    <string name="backup_and_restore_title">बैकअप और पुनर्स्थापना</string>
+    <string name="create_backup">बैकअप बनाएं</string>
+    <string name="create_backup_desc">अपने संपर्क नोट्स, स्पीड डायल और इंटरफ़ेस सेटिंग्स का बैकअप लें</string>
+    <string name="restore_backup">बैकअप से पुनर्स्थापित करें</string>
+    <string name="restore_backup_desc">पहले से सहेजी गई फ़ाइल से नोट्स और सेटिंग्स पुनर्स्थापित करें</string>
+    <string name="backup_created_success">बैकअप सफलतापूर्वक सहेजा गया</string>
+    <string name="backup_restored_success">सफलतापूर्वक पुनर्स्थापित: %1$d नोट्स, %2$d स्पीड डायल, %3$d सेटिंग्स</string>
+    <string name="invalid_backup_file">अमान्य बैकअप फ़ाइल</string>
+    <string name="speed_dial_widget_name">सिम्पली डायल: स्पीड डायल (पसंदीदा)</string>
+    <string name="dialpad_widget_name">सिम्पली डायल: त्वरित डायलपैड</string>
 </resources>

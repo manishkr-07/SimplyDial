@@ -737,6 +737,15 @@ class CallActivity : SimpleActivity() {
                 showInCallNoteDialog(currentNumber)
             }
 
+            val isSpam = org.fossify.phone.helpers.SpamShieldManager.isSuspectedSpam(this@CallActivity, currentNumber)
+            if (isSpam) {
+                val reason = org.fossify.phone.helpers.SpamShieldManager.getSpamReason(this@CallActivity, currentNumber)
+                callerSpamText.text = "⚠️ $reason"
+                callerSpamBanner.beVisible()
+            } else {
+                callerSpamBanner.beGone()
+            }
+
             callerAvatar.apply {
                 if (avatarUri.isNullOrEmpty()) {
                     val bgColor = getProperPrimaryColor()

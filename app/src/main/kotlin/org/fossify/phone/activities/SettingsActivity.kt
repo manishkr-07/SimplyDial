@@ -48,8 +48,11 @@ import org.fossify.phone.extensions.launchAccountsConfiguration
 import org.fossify.phone.helpers.LANGUAGE_ENGLISH
 import org.fossify.phone.helpers.LANGUAGE_HINDI
 import org.fossify.phone.helpers.RecentsHelper
-import org.fossify.phone.models.RecentCall
+import org.fossify.phone.helpers.BackupManager
+import java.text.SimpleDateFormat
+import java.util.Date
 import java.util.Locale
+import org.fossify.phone.models.RecentCall
 import kotlin.system.exitProcess
 
 class SettingsActivity : SimpleActivity() {
@@ -73,6 +76,20 @@ class SettingsActivity : SimpleActivity() {
             }
         }
 
+
+    private val saveBackupDocument = registerForActivityResult(ActivityResultContracts.CreateDocument("application/json")) { uri ->
+        if (uri != null) {
+            toast(R.string.exporting)
+            exportAppDataBackup(uri)
+        }
+    }
+
+    private val restoreBackupDocument = registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
+        if (uri != null) {
+            toast(R.string.importing)
+            importAppDataBackup(uri)
+        }
+    }
     private val saveDocument = registerForActivityResult(ActivityResultContracts.CreateDocument(CALL_HISTORY_FILE_TYPE)) { uri ->
         if (uri != null) {
             toast(R.string.exporting)
@@ -133,6 +150,7 @@ class SettingsActivity : SimpleActivity() {
         setupAlwaysShowFullscreen()
         setupCallsExport()
         setupCallsImport()
+        setupBackupAndRestore()
         setupAboutSection()
         updateTextColors(binding.settingsHolder)
 
@@ -565,4 +583,51 @@ class SettingsActivity : SimpleActivity() {
             toast("Could not open link: $url")
         }
     }
+
+    private fun setupBackupAndRestore() {
+        binding.settingsBackupAppHolder.setOnClickListener {
+            val timestamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+            saveBackupDocument.launch("SimplyDial_Backup_$timestamp.json")
+        }
+
+        binding.settingsRestoreAppHolder.setOnClickListener {
+            restoreBackupDocument.launch(arrayOf("application/json", "text/*", "*/*"))
+        }
+    }
+
+    private fun exportAppDataBackup(uri: Uri) {
+        try {
+            val jsonString = BackupManager.getBackupJsonString(this)
+            contentResolver.openOutputStream(uri)?.use { outputStream ->
+                outputStream.write(jsonString.toByteArray(Charsets.UTF_8))
+            }
+            toast(R.string.backup_created_success)
+        } catch (e: Exception) {
+            showErrorToast(e)
+        }
+    }
+
+    private fun importAppDataBackup(uri: Uri) {
+        try {
+            val jsonString = contentResolver.openInputStream(uri)?.use { inputStream ->
+                inputStream.bufferedReader().readText()
+            } ?: ""
+
+            if (jsonString.isEmpty()) {
+                toast(R.string.invalid_backup_file)
+                return
+            }
+
+            val result = BackupManager.restoreBackupFromJson(this, jsonString)
+            if (result.success) {
+                val msg = getString(R.string.backup_restored_success, result.notesCount, result.speedDialsCount, result.preferencesCount)
+                toast(msg)
+            } else {
+                toast(R.string.invalid_backup_file)
+            }
+        } catch (e: Exception) {
+            showErrorToast(e)
+        }
+    }
+
 }

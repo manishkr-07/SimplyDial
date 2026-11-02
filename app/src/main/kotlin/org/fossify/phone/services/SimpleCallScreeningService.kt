@@ -5,6 +5,7 @@ import android.telecom.Call
 import android.telecom.CallScreeningService
 import androidx.annotation.RequiresApi
 import org.fossify.commons.extensions.baseConfig
+import org.fossify.phone.extensions.config
 import org.fossify.commons.extensions.getMyContactsCursor
 import org.fossify.commons.extensions.isNumberBlocked
 import org.fossify.commons.extensions.normalizePhoneNumber
@@ -17,6 +18,10 @@ class SimpleCallScreeningService : CallScreeningService() {
         val number = callDetails.handle?.schemeSpecificPart
         when {
             number != null && isNumberBlocked(number.normalizePhoneNumber()) -> {
+                respondToCall(callDetails, isBlocked = true)
+            }
+
+            number != null && config.autoDeclineSpam && org.fossify.phone.helpers.SpamShieldManager.isSuspectedSpam(this, number) -> {
                 respondToCall(callDetails, isBlocked = true)
             }
 

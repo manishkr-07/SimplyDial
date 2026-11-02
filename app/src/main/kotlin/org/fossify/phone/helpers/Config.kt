@@ -167,7 +167,8 @@ class Config(context: Context) : BaseConfig(context) {
         var announceCallerName: Boolean,
         var smartDualSIM: Boolean,
         var showEmergencySOSTile: Boolean,
-        var showPostCallSummary: Boolean
+        var showPostCallSummary: Boolean,
+        var spamShieldEnabled: Boolean
     )
 
     fun getModePrefKey(baseKey: String, mode: Int = interfaceMode): String {
@@ -212,7 +213,8 @@ class Config(context: Context) : BaseConfig(context) {
             announceCallerName = getModeBoolean(ANNOUNCE_CALLER_NAME, mode, isSimple),
             smartDualSIM = getModeBoolean(SMART_DUAL_SIM, mode, true),
             showEmergencySOSTile = getModeBoolean(SHOW_EMERGENCY_SOS_TILE, mode, isSimple),
-            showPostCallSummary = getModeBoolean(SHOW_POST_CALL_SUMMARY, mode, true)
+            showPostCallSummary = getModeBoolean(SHOW_POST_CALL_SUMMARY, mode, true),
+            spamShieldEnabled = getModeBoolean(SPAM_SHIELD_ENABLED, mode, true)
         )
     }
 
@@ -233,6 +235,7 @@ class Config(context: Context) : BaseConfig(context) {
         setModeBoolean(SMART_DUAL_SIM, mode, features.smartDualSIM)
         setModeBoolean(SHOW_EMERGENCY_SOS_TILE, mode, features.showEmergencySOSTile)
         setModeBoolean(SHOW_POST_CALL_SUMMARY, mode, features.showPostCallSummary)
+        setModeBoolean(SPAM_SHIELD_ENABLED, mode, features.spamShieldEnabled)
         if (mode == interfaceMode) {
             syncModePreferences(mode)
         }
@@ -256,7 +259,8 @@ class Config(context: Context) : BaseConfig(context) {
             announceCallerName = isSimple,
             smartDualSIM = true,
             showEmergencySOSTile = isSimple,
-            showPostCallSummary = true
+            showPostCallSummary = true,
+            spamShieldEnabled = true
         )
     }
 
@@ -280,6 +284,7 @@ class Config(context: Context) : BaseConfig(context) {
             .putBoolean(SMART_DUAL_SIM, features.smartDualSIM)
             .putBoolean(SHOW_EMERGENCY_SOS_TILE, features.showEmergencySOSTile)
             .putBoolean(SHOW_POST_CALL_SUMMARY, features.showPostCallSummary)
+            .putBoolean(SPAM_SHIELD_ENABLED, features.spamShieldEnabled)
             .apply()
     }
 
@@ -351,6 +356,24 @@ class Config(context: Context) : BaseConfig(context) {
     var showPostCallSummary: Boolean
         get() = getModeBoolean(SHOW_POST_CALL_SUMMARY, interfaceMode, true)
         set(value) = setModeBoolean(SHOW_POST_CALL_SUMMARY, interfaceMode, value)
+
+    var spamShieldEnabled: Boolean
+        get() = getModeBoolean(SPAM_SHIELD_ENABLED, interfaceMode, true)
+        set(value) = setModeBoolean(SPAM_SHIELD_ENABLED, interfaceMode, value)
+
+    var autoDeclineSpam: Boolean
+        get() = prefs.getBoolean(AUTO_DECLINE_SPAM, false)
+        set(value) = prefs.edit().putBoolean(AUTO_DECLINE_SPAM, value).apply()
+
+    fun getCustomSpamList(): Set<String> {
+        return prefs.getStringSet(CUSTOM_SPAM_LIST, emptySet()) ?: emptySet()
+    }
+
+    fun addCustomSpamNumber(number: String) {
+        val current = getCustomSpamList().toMutableSet()
+        current.add(number.trim())
+        prefs.edit().putStringSet(CUSTOM_SPAM_LIST, current).apply()
+    }
 
     var emergencySOSNumber: String
         get() = prefs.getString(EMERGENCY_SOS_NUMBER, "112") ?: "112"

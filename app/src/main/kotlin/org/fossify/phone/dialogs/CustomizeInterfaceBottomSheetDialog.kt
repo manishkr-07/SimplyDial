@@ -186,6 +186,7 @@ class CustomizeInterfaceBottomSheetDialog : BaseBottomSheetDialogFragment() {
             switchShowEmergencySosTile.isChecked = features.showEmergencySOSTile
             switchSmartDualSim.isChecked = features.smartDualSIM
             switchPostCallSummary.isChecked = features.showPostCallSummary
+            switchSpamShield.isChecked = features.spamShieldEnabled
         }
     }
 
@@ -208,6 +209,7 @@ class CustomizeInterfaceBottomSheetDialog : BaseBottomSheetDialogFragment() {
             features.showEmergencySOSTile = switchShowEmergencySosTile.isChecked
             features.smartDualSIM = switchSmartDualSim.isChecked
             features.showPostCallSummary = switchPostCallSummary.isChecked
+            features.spamShieldEnabled = switchSpamShield.isChecked
         }
     }
 
@@ -229,6 +231,7 @@ class CustomizeInterfaceBottomSheetDialog : BaseBottomSheetDialogFragment() {
             holderShowEmergencySosTile.setOnClickListener { switchShowEmergencySosTile.toggle() }
             holderSmartDualSim.setOnClickListener { switchSmartDualSim.toggle() }
             holderPostCallSummary.setOnClickListener { switchPostCallSummary.toggle() }
+            holderSpamShield.setOnClickListener { switchSpamShield.toggle() }
 
             btnResetDefaults.setOnClickListener {
                 it.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
