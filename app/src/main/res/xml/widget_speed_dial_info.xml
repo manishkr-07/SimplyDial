@@ -7,3 +7,4 @@
     android:resizeMode="horizontal|vertical"
     android:widgetCategory="home_screen"
     android:description="@string/speed_dial_widget_name" />
+

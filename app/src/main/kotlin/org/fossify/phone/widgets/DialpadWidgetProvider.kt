@@ -64,3 +64,4 @@ class DialpadWidgetProvider : AppWidgetProvider() {
         }
     }
 }
+

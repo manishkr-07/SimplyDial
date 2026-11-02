@@ -80,3 +80,4 @@ object SpamShieldManager {
         return "Suspected Spam"
     }
 }
+
